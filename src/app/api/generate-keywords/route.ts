@@ -1,8 +1,33 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { NextRequest } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import { checkUsageAllowed, incrementUsage } from "@/lib/usage";
 
 export async function POST(request: NextRequest) {
   try {
+    // Authenticate
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return Response.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    // Rate-limit check before spending any Gemini quota
+    const allowed = await checkUsageAllowed(user.id, "keyword_generation");
+    if (!allowed) {
+      return Response.json(
+        {
+          error:
+            "Monthly keyword generation limit reached. Upgrade to Pro for unlimited access.",
+        },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     console.log("[generate-keywords] incoming body:", body);
 
@@ -27,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.1-flash-lite-preview",
       generationConfig: {
         // Force plain text so the model cannot produce markdown fences
         responseMimeType: "application/json",
@@ -74,7 +99,9 @@ export async function POST(request: NextRequest) {
       if (!Array.isArray(parsed)) {
         throw new Error(`Parsed value is not an array. Got: ${typeof parsed}`);
       }
-      keywords = parsed.filter((k): k is string => typeof k === "string" && k.trim().length > 0);
+      keywords = parsed.filter(
+        (k): k is string => typeof k === "string" && k.trim().length > 0
+      );
     } catch (parseError) {
       console.error("[generate-keywords] JSON.parse failed:", parseError);
       console.error("[generate-keywords] cleaned text that failed to parse:", cleaned);
@@ -85,6 +112,9 @@ export async function POST(request: NextRequest) {
         .filter(Boolean);
       console.log("[generate-keywords] fallback parsed keywords:", keywords);
     }
+
+    // Increment only after a successful Gemini response
+    await incrementUsage(user.id, "keyword_generation");
 
     console.log("[generate-keywords] returning keywords:", keywords);
     return Response.json({ keywords });

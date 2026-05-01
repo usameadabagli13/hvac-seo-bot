@@ -14,7 +14,9 @@ import {
   Tag,
   ChevronRight,
   CheckCircle2,
+  Pencil,
 } from "lucide-react";
+import type { Business } from "./BusinessManager";
 
 // ── Top US cities for location autocomplete ──────────────────────────────────
 const US_CITIES = [
@@ -157,7 +159,17 @@ function LocationInput({
 }
 
 // ── BusinessForm ──────────────────────────────────────────────────────────────
-export default function BusinessForm({ userId }: { userId: string }) {
+export default function BusinessForm({
+  userId,
+  editingBusiness = null,
+  onSaved,
+  onCancelEdit,
+}: {
+  userId: string;
+  editingBusiness?: Business | null;
+  onSaved?: () => void;
+  onCancelEdit?: () => void;
+}) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>({
     business_name: "",
@@ -173,6 +185,28 @@ export default function BusinessForm({ userId }: { userId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync form fields when the editing target changes
+  useEffect(() => {
+    if (editingBusiness) {
+      setForm({
+        business_name: editingBusiness.business_name,
+        service_location: editingBusiness.service_location,
+        website_url: editingBusiness.website_url ?? "",
+      });
+      setKeywords(
+        Array.isArray(editingBusiness.target_keywords)
+          ? (editingBusiness.target_keywords as string[])
+          : []
+      );
+    } else {
+      setForm({ business_name: "", service_location: "", website_url: "" });
+      setKeywords([]);
+    }
+    setError(null);
+    setSaveSuccess(false);
+    setTagInput("");
+  }, [editingBusiness]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -249,46 +283,60 @@ export default function BusinessForm({ userId }: { userId: string }) {
       return;
     }
 
+    if (form.website_url.trim()) {
+      try {
+        const raw = form.website_url.trim();
+        new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+      } catch {
+        setError("Please enter a valid website URL (e.g. https://yoursite.com).");
+        return;
+      }
+    }
+
     setIsSaving(true);
     try {
       const supabase = createClient();
 
-      const payload = {
-        user_id: userId,
+      const fields = {
         business_name: form.business_name.trim(),
         service_location: form.service_location.trim(),
         website_url: form.website_url.trim() || null,
         target_keywords: keywords,
       };
 
-      console.log("[BusinessForm] Attempting Supabase insert with payload:", payload);
-
-      const { error: dbError } = await supabase.from("businesses").insert(payload);
-
-      if (dbError) throw dbError;
+      if (editingBusiness) {
+        console.log("[BusinessForm] Updating business:", editingBusiness.id, fields);
+        const { error: dbError } = await supabase
+          .from("businesses")
+          .update(fields)
+          .eq("id", editingBusiness.id)
+          .eq("user_id", userId);
+        if (dbError) throw dbError;
+      } else {
+        console.log("[BusinessForm] Inserting new business:", fields);
+        const { error: dbError } = await supabase
+          .from("businesses")
+          .insert({ ...fields, user_id: userId });
+        if (dbError) throw dbError;
+      }
 
       setSaveSuccess(true);
-      router.refresh(); // re-fetches server components → sidebar + stats update
+      router.refresh();
       setTimeout(() => {
         setSaveSuccess(false);
-        setForm({ business_name: "", service_location: "", website_url: "" });
-        setKeywords([]);
-      }, 2000);
+        onSaved?.();
+        if (!editingBusiness) {
+          setForm({ business_name: "", service_location: "", website_url: "" });
+          setKeywords([]);
+        }
+      }, 1500);
     } catch (err: unknown) {
-      // Log the full PostgREST / Supabase error so it's visible in the browser console
-      console.error("Supabase Insert Error:", err);
-      if (err && typeof err === "object") {
-        const e = err as Record<string, unknown>;
-        console.error("  code   :", e["code"]);
-        console.error("  message:", e["message"]);
-        console.error("  hint   :", e["hint"]);
-        console.error("  details:", e["details"]);
-      }
+      const e = err as Record<string, unknown>;
+      console.error("[BusinessForm] DB error:", e?.["message"] ?? err);
       const msg =
         err instanceof Error
           ? err.message
-          : (err as Record<string, unknown>)?.["message"] as string ||
-            "Failed to save. Please try again.";
+          : (e?.["message"] as string) || "Failed to save. Please try again.";
       setError(msg);
     } finally {
       setIsSaving(false);
@@ -303,18 +351,36 @@ export default function BusinessForm({ userId }: { userId: string }) {
     >
       {/* ── Form Header ───────────────────────────────────────────────── */}
       <div className="px-6 pt-6 pb-5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-            <Building2 className="w-4 h-4 text-zinc-300" />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              {editingBusiness ? (
+                <Pencil className="w-4 h-4 text-zinc-300" />
+              ) : (
+                <Building2 className="w-4 h-4 text-zinc-300" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-zinc-100">
+                {editingBusiness ? "Edit Business" : "Add New Business"}
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                {editingBusiness
+                  ? `Editing: ${editingBusiness.business_name}`
+                  : "Set up your HVAC business profile and seed keywords"}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-base font-semibold text-zinc-100">
-              Add New Business
-            </h2>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              Set up your HVAC business profile and seed keywords
-            </p>
-          </div>
+          {editingBusiness && onCancelEdit && (
+            <button
+              type="button"
+              onClick={onCancelEdit}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-150"
+            >
+              <X className="w-3 h-3" />
+              Cancel
+            </button>
+          )}
         </div>
       </div>
 
@@ -394,7 +460,7 @@ export default function BusinessForm({ userId }: { userId: string }) {
           </div>
         </div>
 
-        {/* ── AI Generate Button — monochromatic Vercel-style ───────── */}
+        {/* ── AI Generate Button ────────────────────────────────────── */}
         <div>
           <button
             id="generate-keywords-btn"
@@ -402,21 +468,14 @@ export default function BusinessForm({ userId }: { userId: string }) {
             onClick={handleGenerateKeywords}
             disabled={isGenerating}
             className={[
-              // Layout
               "relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl",
               "text-sm font-medium select-none",
-              // Monochromatic dark glass look
               "bg-zinc-800/80 text-zinc-100",
               "border border-white/[0.10]",
-              // Subtle inner highlight at top
               "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)]",
-              // Hover — slightly lighter
               "hover:bg-zinc-700/80 hover:border-white/[0.15] hover:text-white",
-              // Press
               "active:scale-[0.97] active:bg-zinc-800",
-              // Transitions
               "transition-all duration-150",
-              // Disabled
               "disabled:opacity-40 disabled:pointer-events-none",
             ].join(" ")}
           >
@@ -547,6 +606,11 @@ export default function BusinessForm({ userId }: { userId: string }) {
             <>
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               Saved!
+            </>
+          ) : editingBusiness ? (
+            <>
+              <CheckCircle2 className="w-4 h-4" />
+              Update Business
             </>
           ) : (
             <>

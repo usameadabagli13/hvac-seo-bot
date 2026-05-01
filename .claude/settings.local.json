@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p = require\\('c:/Users/USAME/hvac-seo-bot/package.json'\\); console.log\\(JSON.stringify\\({next: p.dependencies?.next, lucide: p.dependencies?.['lucide-react'], tailwind: p.dependencies?.tailwindcss || p.devDependencies?.tailwindcss}, null, 2\\)\\)\")",
+      "Bash(node -e \"const p = require\\('c:/Users/USAME/hvac-seo-bot/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies, null, 2\\)\\)\")",
+      "Bash(node -e \"const l = require\\('c:/Users/USAME/hvac-seo-bot/node_modules/lucide-react'\\); console.log\\('Map:', !!l.Map, 'MapIcon:', !!l.MapIcon, 'FileSearch:', !!l.FileSearch, 'FileText:', !!l.FileText, 'Shield:', !!l.Shield\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(node -e \"const l = require\\('c:/Users/USAME/hvac-seo-bot/node_modules/lucide-react'\\); ['BarChart3','Settings','Zap','LogOut'].forEach\\(n => console.log\\(n + ':', !!l[n]\\)\\)\")",
+      "Bash(xargs grep *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

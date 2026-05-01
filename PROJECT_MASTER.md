@@ -93,13 +93,13 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 **Goal:** Drive signups before the product is fully built. Every day without a landing page is lost MRR.
 
 ### 1.1 Landing Page (`/`)
-- [ ] Hero section — headline, sub-headline, single CTA ("Start Free")
-- [ ] Live keyword demo widget (show AI keywords without signing up — calls rate-limited `/api/demo-keywords`)
-- [ ] Features grid — 6 features, icon + copy, zinc card style
-- [ ] Pricing section — Free / Pro / Agency tiers
-- [ ] Social proof — 3 realistic testimonials with avatar initials
-- [ ] FAQ accordion (5 questions covering trust objections)
-- [ ] Footer — links, legal, copyright
+- [x] Hero section — headline, sub-headline, single CTA ("Start Free")
+- [x] Live keyword demo widget (show AI keywords without signing up — calls rate-limited `/api/demo-keywords`)
+- [x] Features grid — 6 features, icon + copy, zinc card style
+- [x] Pricing section — Free / Pro / Agency tiers
+- [x] Social proof — 3 realistic testimonials with avatar initials
+- [x] FAQ accordion (5 questions covering trust objections)
+- [x] Footer — links, legal, copyright
 
 ### 1.2 Auth Flow
 - [ ] `/login` — Google OAuth button + email magic link option
@@ -116,7 +116,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ---
 
-## Phase 2: Core Dashboard & Onboarding
+## Phase 2: Core Dashboard & Onboarding ✅ COMPLETE
 
 **Goal:** First-run experience that reaches "aha moment" in under 3 minutes.
 
@@ -127,8 +127,9 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [ ] Step indicator (dots, not percentage bar)
 
 ### 2.2 Dashboard Home (`/dashboard`)
-- [ ] Fix `indigo-*` color leaks (see Critique #2 above)
-- [ ] Global stats: Businesses, Keywords Tracked, Reviews Fetched, Avg Rating
+- [x] Fix `indigo-*` color leaks (see Critique #2 above)
+- [x] Migrated into `(app)` route group — Sidebar layout now wraps dashboard
+- [ ] Global stats: Reviews Fetched, Avg Rating (Businesses + Keywords already live)
 - [ ] Recent activity feed (last 5 actions across all businesses)
 - [ ] Quick-action buttons: Add Business, Generate Report, View Reviews
 - [ ] Empty state with onboarding CTA for new users
@@ -138,46 +139,71 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [ ] Edit business form
 - [ ] Soft delete with `deleted_at` column (RLS filters it out)
 
-### 2.4 Settings (`/dashboard/settings`)
-- [ ] Profile tab: name, avatar upload to Supabase Storage
-- [ ] API Usage tab: visual usage bars per feature with reset date
-- [ ] Billing tab: current plan badge, Stripe Customer Portal link
-- [ ] Danger zone: Delete account with cascade
+### 2.4 Settings (`/settings`)
+- [x] Profile tab: display name (saved to auth metadata), email (read-only)
+- [x] API Usage tab: visual usage bars per feature with monthly reset date
+- [x] Billing tab: current plan badge + upgrade CTA (Stripe portal in Phase 6)
+- [x] Danger zone: Delete account with "type DELETE" confirmation + cascade
+- [ ] Avatar upload to Supabase Storage (deferred — needs Storage bucket setup)
+- [ ] Stripe Customer Portal self-serve link (Phase 6)
 
 ### 2.5 Navigation Shell
-- [ ] Sidebar (desktop) + bottom nav (mobile)
-- [ ] Active route highlight
-- [ ] Plan badge in sidebar (Free / Pro / Agency)
-- [ ] Keyboard shortcuts: `G+D` = Dashboard, `G+S` = Settings
+- [x] Sidebar (desktop) + bottom nav (mobile)
+- [x] Active route highlight
+- [x] Plan badge in sidebar (Free / Pro / Agency)
+- [x] Keyboard shortcuts: `G+D` = Dashboard, `G+S` = Settings
 
 ---
 
-## Phase 3: Review & Reputation Engine
+## Phase 3: Review & Reputation Engine 🚧 IN PROGRESS
 
 **Goal:** The feature HVAC owners will pay for on day one — responding to Google reviews is their #1 pain point.
 
+### 3.0 Review Feed UI Shell
+- [x] `/reviews` page with mock data (10 realistic HVAC reviews)
+- [x] Stats strip: Total Reviews, Avg Rating, Unreplied, This Month
+- [x] Filter bar: sentiment tabs (All / Positive / Neutral / Negative) + Unreplied toggle
+- [x] Review cards: author avatar, star rating, sentiment badge, platform, body with expand
+- [x] "Generate AI Reply" placeholder button (disabled until Phase 3.1 GBP connected)
+- [x] Reviews added to Sidebar nav (`G R` shortcut)
+
 ### 3.1 GBP OAuth Integration
-- [ ] Add `business.manage` scope to Google OAuth
-- [ ] Store access token + refresh token in `integrations` table (Supabase Vault encrypted)
-- [ ] Token refresh cron every 50 min (tokens expire at 60 min)
-- [ ] "Connect Google Business Profile" button in business settings
+- [x] `integrations` table with RLS (migration `20260501000001_add_integrations.sql`)
+- [x] `/api/auth/gbp` — initiates OAuth with `business.manage` scope + CSRF state cookie
+- [x] `/api/auth/gbp/callback` — exchanges code, resolves first account/location, upserts tokens
+- [x] `/api/auth/gbp/disconnect` — deletes integration row (POST)
+- [x] `src/lib/gbp.ts` — `getValidToken` (auto-refresh), `getGBPReviews`, `getGBPStatus`
+- [x] On-demand token refresh (5-min lookahead) — replaces cron for Phase 3.1
+- [x] `GBPConnectBanner` component — connect / connected+disconnect / api-error states
+- [x] Reviews page wired: live GBP data when connected, graceful fallback to mock on error
+- [ ] Multi-location selector (currently auto-picks first location)
+- [ ] Supabase Vault encryption for stored tokens (security hardening)
 
 ### 3.2 Review Fetcher
-- [ ] `/api/reviews/fetch` — calls GBP API, upserts into `reviews` table
-- [ ] Deduplication via `UNIQUE(business_id, platform, review_id)`
-- [ ] Daily background sync via Supabase Edge Function
+- [x] `/api/reviews/fetch` — calls GBP API, upserts into `reviews` table
+- [x] Deduplication via `UNIQUE(business_id, platform, review_id)`
+- [x] Reviews page reads from DB first; "Sync Reviews" button triggers manual re-fetch
+- [ ] Daily background sync via Supabase Edge Function (automated — Phase 3.2 stretch)
 
 ### 3.3 Sentiment Analysis Dashboard
-- [ ] Gemini classifies each review: `positive | neutral | negative` + 1-sentence summary
-- [ ] Result stored in `reviews.sentiment` (run once per review, cached)
-- [ ] Rating distribution chart (1★–5★ bar chart)
-- [ ] Filter by: rating, sentiment, date, replied/unreplied
+- [x] Gemini classifies each review: `positive | neutral | negative` (batch, single API call per sync)
+- [x] Result stored in `reviews.sentiment` — written during sync, not post-insert
+- [x] Rating distribution chart (1★–5★ bar chart with colour-coded bars)
+- [x] Filter by: rating, sentiment, date, replied/unreplied (done in 3.0 shell)
+- [ ] 1-sentence AI summary per review (requires `sentiment_summary` column — Phase 3.3 stretch)
 
 ### 3.4 AI Reply Generator
-- [ ] "Generate Reply" button per review → POST `/api/reviews/generate-reply`
-- [ ] Returns 3 reply variants (formal / friendly / apologetic)
-- [ ] User picks, edits inline, posts via GBP API write
-- [ ] **Freemium gate:** Free = 5 AI replies/month
+- [x] "Generate Reply" button per review → POST `/api/reviews/generate-reply`
+- [x] Gemini prompt: "Expert Technician + Customer First" tone, adapts to star rating
+- [x] Tone shifts: positive (gratitude) / neutral (acknowledge + improve) / negative (apology + action)
+- [x] Editable textarea draft — user can tweak before posting
+- [x] Copy-to-clipboard button with feedback state
+- [x] Character count shown in footer
+- [x] **Freemium gate:** Free = 5 AI replies/month (tracked in `ai_usage` table)
+- [x] "Post to Google" stub — enabled once Phase 3.1 GBP posting is wired
+- [x] Save Reply button — saves `ai_reply` + sets `is_replied = true` in DB, triggers router.refresh()
+- [ ] 3 reply variants (formal / friendly / apologetic) — Phase 3.4 full
+- [ ] Post reply via GBP API write — needs GBP OAuth production approval (Phase 3.4 full)
 
 ---
 
@@ -208,7 +234,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ### 5.1 Website Crawler (`/api/crawl`)
 - [ ] Server-side `fetch()` of `website_url`
-- [ ] Validate URL with `new URL()` before crawling (Critique #3)
+- [x] Validate URL with `new URL()` before crawling (Critique #3)
 - [ ] Parse: `<title>`, `<h1>`, `<h2>`, `<meta description>`, body text, image alt tags
 - [ ] Handle redirects, 5s timeout, non-HTML responses
 - [ ] Check `robots.txt` before crawling (legal + ethical requirement)
@@ -237,9 +263,9 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [ ] Update `subscriptions` table on every event
 
 ### 6.2 Usage Tracking Utilities (`src/lib/usage.ts`)
-- [ ] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1`
-- [ ] `checkUsageAllowed(userId, feature)` — compare count vs. plan limit
-- [ ] Wire into every AI route before calling Gemini
+- [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1`
+- [x] `checkUsageAllowed(userId, feature)` — compare count vs. plan limit
+- [x] Wire into every AI route before calling Gemini
 
 ### 6.3 Freemium Limits Matrix
 
@@ -329,11 +355,11 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ### 9.2 JSON-LD Schema Markup Generator ⭐ QUICK WIN
 **Why:** HVAC businesses universally have zero structured data. 30-minute build, massive perceived value.
-- [ ] Generate `LocalBusiness` + `HVACBusiness` JSON-LD from business profile data
-- [ ] Include: name, address, phone, geo, openingHours, priceRange, sameAs, aggregateRating
-- [ ] One-click copy to clipboard
-- [ ] CMS-tailored embed instructions (WordPress snippet vs. raw HTML `<head>` tag)
-- [ ] Store in `schema_markup` table with version history
+- [x] Generate `LocalBusiness` + `HVACBusiness` JSON-LD from business profile data
+- [x] Include: name, address, phone, location, openingHours, priceRange, areaServed
+- [x] One-click copy to clipboard (copies full `<script>` tag)
+- [x] CMS-tailored embed instructions (WordPress snippet vs. raw HTML `<head>` tag)
+- [ ] Store in `schema_markup` table with version history (Phase 9.2 full)
 
 ### 9.3 Google Business Profile Post Scheduler
 **Why:** Regular GBP posts improve local pack visibility. HVAC owners never do this — it's tedious.
@@ -457,9 +483,18 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 
 ## ✅ Immediate Next Actions (This Week)
 
-- [ ] Fix `indigo-*` color leaks in `dashboard/page.tsx` (lines 34, 35, 65, 81, 167, 176)
-- [ ] Add `ai_usage` table to Supabase + rate-limit check in `/api/generate-keywords`
-- [ ] Add server-side `website_url` validation (`new URL()`) before any crawl
-- [ ] Create `(marketing)` route group and scaffold landing page
-- [ ] Create `(app)` route group with sidebar layout shell
-- [ ] Add `error.tsx` to `/dashboard` route segment
+- [x] Fix `indigo-*` color leaks in `dashboard/page.tsx` (lines 34, 35, 65, 81, 167, 176)
+- [x] Add `ai_usage` table to Supabase + rate-limit check in `/api/generate-keywords`
+- [x] Add server-side `website_url` validation (`new URL()`) before any crawl
+- [x] Create `(marketing)` route group and scaffold landing page
+- [x] Create `(app)` route group with sidebar layout shell
+- [x] Add `error.tsx` to `/dashboard` route segment
+- [x] Migrate dashboard into `(app)` route group — remove inline header, wire up Sidebar (Phase 2.2 + 2.5)
+- [x] Add `G+D` / `G+S` keyboard shortcuts to Sidebar (Phase 2.5)
+- [x] Dashboard empty state — onboarding CTA for users with no businesses yet (Phase 2.2)
+- [x] JSON-LD Schema Markup Generator (`/schema`) — live at sidebar nav item (Phase 9.2)
+- [x] Settings page: Profile, API Usage, Billing, Danger Zone tabs (Phase 2.4)
+- [x] Fix logo in Sidebar — links to /dashboard (context-aware, not landing page)
+- [x] Plan badge in Sidebar deep-links to /settings?tab=billing with tab pre-selection
+- [ ] Complete Phase 1.2 Auth Flow: `/auth/error` page + check `/auth/callback` new-user redirect to `/onboarding`
+- [ ] `profiles` table migration + wire display name to DB column (Phase 2.1 prerequisite)
