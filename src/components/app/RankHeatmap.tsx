@@ -65,7 +65,7 @@ export default function RankHeatmap({ keyword, snapshotDate, points, businessId 
     setSeedMsg(null);
     try {
       const res = await fetch("/api/rank/seed-mock", { method: "POST" });
-      const data = await res.json() as { seeded?: number; error?: string };
+      const data = await res.json() as { seeded?: number; business?: string; error?: string };
       if (!res.ok) { setSeedMsg(data.error ?? "Seed failed."); return; }
       setSeedMsg(`Seeded ${data.seeded} snapshot rows for "${data.business}".`);
       router.refresh();

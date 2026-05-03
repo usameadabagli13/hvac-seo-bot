@@ -192,7 +192,7 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
         <button
           onClick={handleGenerate}
           disabled={generating}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 disabled:pointer-events-none ${
+          className={`flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 disabled:pointer-events-none min-h-[36px] ${
             generating
               ? "bg-white/[0.03] border-white/[0.07] text-zinc-600"
               : reply
@@ -303,7 +303,7 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
                   {saving ? "Saving…" : saved ? "Saved!" : "Save Reply"}
                 </button>
 
-                {/* Post to Google — active when draft is saved, posts to GBP in Phase 3.4 */}
+                {/* Post to Google — requires GBP production OAuth approval */}
                 <button
                   disabled={!saved && !review.replied}
                   onClick={() => setPostClicked(true)}
@@ -312,7 +312,7 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
                       ? "Connect Google Business Profile to post replies"
                       : !saved && !review.replied
                       ? "Save the reply first"
-                      : "GBP write posting coming in Phase 3.4"
+                      : "Copy the reply and paste it into Google Business Profile"
                   }
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-150 ${
                     saved || review.replied
@@ -330,7 +330,7 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
             )}
             {postClicked && (
               <p className="text-[11px] text-zinc-500">
-                Direct GBP posting is coming in Phase 3.4 — copy the reply and paste it into Google Business Profile for now.
+                Copy the reply above and paste it directly into Google Business Profile to publish it.
               </p>
             )}
           </div>
@@ -415,7 +415,7 @@ export default function ReviewFeed({
             <button
               key={id}
               onClick={() => setSentimentFilter(id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium transition-all duration-150 min-h-[36px] ${
                 sentimentFilter === id
                   ? "bg-white/[0.08] text-zinc-100"
                   : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
@@ -431,7 +431,7 @@ export default function ReviewFeed({
           onClick={() =>
             setRepliedFilter((v) => (v === "all" ? "unreplied" : "all"))
           }
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 ${
+          className={`flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 min-h-[36px] ${
             repliedFilter === "unreplied"
               ? "bg-white/[0.07] border-white/[0.12] text-zinc-200"
               : "bg-white/[0.02] border-white/[0.06] text-zinc-500 hover:text-zinc-300 hover:border-white/[0.10]"

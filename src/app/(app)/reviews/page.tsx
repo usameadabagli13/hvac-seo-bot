@@ -54,7 +54,8 @@ export default async function ReviewsPage({
     fromDB = true;
     lastFetchedAt = dbRows[0].fetched_at ?? null;
     reviews = dbRows.map((row) => {
-      const biz = row.businesses as { business_name: string } | null;
+      const bizRaw = row.businesses as unknown as { business_name: string } | { business_name: string }[] | null;
+      const biz = Array.isArray(bizRaw) ? bizRaw[0] ?? null : bizRaw;
       return {
         id:           row.review_id,
         author:       row.author,
@@ -93,7 +94,7 @@ export default async function ReviewsPage({
 
       <main className="relative max-w-4xl mx-auto px-6 py-12">
         {/* Page header */}
-        <div className="flex items-start justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Reputation

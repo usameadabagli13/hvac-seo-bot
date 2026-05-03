@@ -7,10 +7,10 @@ export const metadata: Metadata = {
   title: "Settings — HVAC SEO Bot",
 };
 
-// Must stay in sync with src/lib/usage.ts FREE_LIMITS
+// Must stay in sync with src/lib/usage.ts FREE_LIMITS (Starter plan limits)
 const FREE_LIMITS: Record<string, number> = {
-  keyword_generation: 2,
-  review_reply: 5,
+  keyword_generation: 1,
+  review_reply: 3,
 };
 
 const FEATURE_LABELS: Record<string, string> = {
@@ -53,8 +53,19 @@ export default async function SettingsPage({
     (usageRows ?? []).map((r) => [r.feature, r.count as number])
   );
 
+  // profiles.full_name is the source of truth; fall back to auth metadata for
+  // legacy accounts that may not have a profiles row yet.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   const devMode = process.env.NODE_ENV === "development";
-  const displayName: string = (user.user_metadata?.full_name as string) ?? "";
+  const displayName: string =
+    profile?.full_name ??
+    (user.user_metadata?.full_name as string | undefined) ??
+    "";
 
   // Build usage items — in dev mode limits are null so the bar shows "Dev Mode"
   const usageItems = Object.entries(FREE_LIMITS).map(([feature, limit]) => ({
@@ -84,6 +95,7 @@ export default async function SettingsPage({
         </div>
 
         <SettingsTabs
+          userId={user.id}
           email={user.email ?? ""}
           initialName={displayName}
           usageItems={usageItems}

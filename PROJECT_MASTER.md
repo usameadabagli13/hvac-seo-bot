@@ -1,5 +1,5 @@
 # PROJECT_MASTER.md — HVAC SEO Bot
-> **Living document. Update checkboxes as features ship. Last reviewed: 2026-04-30.**
+> **Living document. Update checkboxes as features ship. Last reviewed: 2026-05-02.**
 
 ---
 
@@ -11,7 +11,7 @@
 | Auth + DB | Supabase (PostgreSQL + RLS) | `@supabase/ssr` v0.10 |
 | AI | Gemini 2.5 Flash | JSON mode enforced |
 | Styling | Tailwind CSS v4 | Monochromatic zinc palette — **NO purple/indigo** |
-| Payments | Stripe (planned) | Webhooks via Next.js API routes |
+| Payments | LemonSqueezy → Stripe | LemonSqueezy first (Merchant of Record, no LLC needed); migrate to Stripe at $5K MRR |
 | Hosting | Vercel (recommended) | Edge middleware for auth |
 
 ---
@@ -102,11 +102,10 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Footer — links, legal, copyright
 
 ### 1.2 Auth Flow
-- [ ] `/login` — Google OAuth button + email magic link option
-- [ ] `/signup` — Same flow (Supabase handles both)
-- [ ] `/forgot-password` — Email reset form
-- [ ] `/auth/callback` — Redirect to `/onboarding` for new users, `/dashboard` for returning
-- [ ] `/auth/error` — Friendly error page for failed OAuth states
+- [x] `/login` — Google OAuth button (Google-only, no password flow)
+- [x] `/auth/callback` — Redirect to `/onboarding` for new users, `/dashboard` for returning
+- [x] `/auth/error` — Friendly error page for failed OAuth states
+- [ ] `/forgot-password` — N/A (Google OAuth only; re-evaluate if email auth added later)
 
 ### 1.3 Waitlist / Lead Capture
 - [ ] `waitlist` table: `(id, email, name, company, source, created_at)`
@@ -116,15 +115,16 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ---
 
-## Phase 2: Core Dashboard & Onboarding ✅ COMPLETE
+## Phase 2: Core Dashboard & Onboarding 🚧 PARTIAL
 
 **Goal:** First-run experience that reaches "aha moment" in under 3 minutes.
 
 ### 2.1 Onboarding Flow (`/onboarding`)
-- [ ] Multi-step wizard: Profile → Add Business → Generate Keywords → Done
-- [ ] `profiles.onboarding_complete` bool — middleware redirects new users here
-- [ ] Skip option with reminder banner
-- [ ] Step indicator (dots, not percentage bar)
+- [x] Multi-step wizard: Profile → Add Business → Generate Keywords → Done
+- [x] `profiles.onboarding_complete` bool — set true on finish; page redirects to `/dashboard` if already complete
+- [x] Skip option (both per-step and full wizard skip at bottom)
+- [x] Step indicator (pills, not percentage bar)
+- [ ] Middleware redirect for returning users who never completed onboarding (deferred)
 
 ### 2.2 Dashboard Home (`/dashboard`)
 - [x] Fix `indigo-*` color leaks (see Critique #2 above)
@@ -137,7 +137,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 ### 2.3 Business Detail Page (`/dashboard/businesses/[id]`)
 - [ ] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
 - [ ] Edit business form
-- [ ] Soft delete with `deleted_at` column (RLS filters it out)
+- [ ] Soft delete wit`deleted_at` column (RLS filters it out)
 
 ### 2.4 Settings (`/settings`)
 - [x] Profile tab: display name (saved to auth metadata), email (read-only)
@@ -151,7 +151,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Sidebar (desktop) + bottom nav (mobile)
 - [x] Active route highlight
 - [x] Plan badge in sidebar (Free / Pro / Agency)
-- [x] Keyboard shortcuts: `G+D` = Dashboard, `G+S` = Settings
+- [x] Keyboard shortcuts: `G+D` = Dashboard, `G+R` = Reviews, `G+K` = Rank Tracker, `G+S` = Settings
 
 ---
 
@@ -207,17 +207,20 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ---
 
-## Phase 4: Local Rank & Competitor Spy
+## Phase 4: Local Rank & Competitor Spy 🚧 IN PROGRESS
 
 **Goal:** The visual "wow" feature that justifies a Pro subscription renewal every month.
 
 ### 4.1 Grid-Based Local Rank Heatmap
-- [ ] User sets a target keyword per business
+- [ ] User sets a target keyword per business (UI + DB column)
 - [ ] Generate 5×5 grid of lat/lng points around business (1-mile spacing)
 - [ ] Call Google Places Text Search API for each grid point (25 calls per snapshot)
-- [ ] Store results in `rank_snapshots` table
-- [ ] Render heatmap: green (rank 1–3), yellow (4–10), red (11+)
-- [ ] Historical trend arrows (weekly snapshots on Pro)
+- [x] DB migration: `rank_snapshots` table with RLS (`20260501000002_phase4_rank_competitors.sql`)
+- [x] Mock data + dev seed route (`/api/rank/seed-mock`, `src/lib/mock-rank-snapshots.ts`)
+- [x] Render heatmap on Mapbox GL (circle + heatmap + symbol layers, dark-v11 style)
+- [x] Click-to-popup: rank, tier, trend delta
+- [x] Historical trend arrows (prev snapshot comparison)
+- [ ] "Run Snapshot" button → live Google Places API calls
 - **⚠️ Cost trap:** 25 API calls × price per call × users × keywords. Cache aggressively. Free = monthly snapshots only.
 
 ### 4.2 Competitor Tracker
@@ -254,38 +257,59 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 **Goal:** Every feature in Phases 1–5 needs a paywall retrofit. Schema is already planned above — implement it now.
 
-### 6.1 Stripe Integration
-- [ ] `npm install stripe`
-- [ ] Create products in Stripe Dashboard: Free / Pro ($49/mo) / Agency ($149/mo)
-- [ ] `/api/stripe/create-checkout` — creates Stripe Checkout session (Server Action)
-- [ ] `/api/stripe/webhook` — handles: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
-- [ ] Idempotency: upsert `stripe_events(stripe_event_id UNIQUE)` on every webhook (Critique #5)
-- [ ] Update `subscriptions` table on every event
+### 6.1 Payment Integration
+**Option A — LemonSqueezy (recommended for launch):**
+- [ ] Create LemonSqueezy account; create products: Starter ($39/mo), Pro ($69/mo), Agency ($199/mo)
+- [ ] `npm install @lemonsqueezy/lemonsqueezy-js`
+- [ ] `/api/lemonsqueezy/webhook` — handles `subscription_created`, `subscription_updated`, `subscription_cancelled`
+- [ ] Update `subscriptions` table on every webhook event
+- [ ] Idempotency: upsert `stripe_events` table (reuse schema) with LemonSqueezy event ID
 
-### 6.2 Usage Tracking Utilities (`src/lib/usage.ts`)
+**Option B — Stripe (migrate at $5K MRR):**
+- [ ] `npm install stripe`
+- [ ] Create products: Starter ($39/mo), Pro ($69/mo), Agency ($199/mo)
+- [ ] `/api/stripe/create-checkout` + `/api/stripe/webhook`
+- [ ] Idempotency: upsert `stripe_events(stripe_event_id UNIQUE)` on every webhook (Critique #5)
+
+### 6.2 14-Day Free Trial
+- [ ] Add `trial_ends_at timestamptz` to `subscriptions` table (or as a separate column on `profiles`)
+- [ ] On first signup: set `trial_ends_at = now() + interval '14 days'`
+- [ ] Day 12: email via Resend — "2 days left in your trial"
+- [ ] Day 14: account frozen (read-only) — middleware checks `trial_ends_at < now()` and `status != 'active'`
+- [ ] Frozen state: banner + upgrade CTA on every app page
+
+### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
 - [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1`
 - [x] `checkUsageAllowed(userId, feature)` — compare count vs. plan limit
 - [x] Wire into every AI route before calling Gemini
 
-### 6.3 Freemium Limits Matrix
+### 6.4 Pricing & Plan Limits
 
-| Feature | Free | Pro | Agency |
+**Decoy pricing goal: push 70%+ of users to Pro ($69).** Starter is intentionally limited.
+
+| Feature | Starter $39/mo | Pro $69/mo ⭐ | Agency $199/mo |
 |---|---|---|---|
-| Businesses | 1 | 10 | Unlimited |
-| AI Keyword Generations | 2/mo | Unlimited | Unlimited |
-| AI Review Replies | 5/mo | Unlimited | Unlimited |
-| SEO Audits | 1/mo | Unlimited | Unlimited |
-| Rank Snapshots | Monthly | Weekly | Daily |
+| Businesses | 1 | 5 | Unlimited |
+| AI Keyword Generations | 1/mo | Unlimited | Unlimited |
+| AI Review Replies | 3/mo | Unlimited | Unlimited |
+| SEO Audits | — | Unlimited | Unlimited |
+| Rank Snapshots | — | Weekly | Daily |
 | Competitor Tracking | — | 3 | 10 |
+| Schema Markup | ✓ basic | ✓ full | ✓ full |
 | PDF Reports | — | Weekly | Daily |
-| White-Label Reports | — | — | ✓ |
+| White-Label | — | — | ✓ |
+| Priority Support | — | ✓ | ✓ |
 
-### 6.4 Paywall UI Components
+Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
+
+> ⚠️ Settings page currently shows "$49" and "Phase 6 coming" — fix before any public launch.
+
+### 6.5 Paywall UI Components
 - [ ] `<UpgradeGate feature="..." />` — blurred overlay with "Upgrade to Pro" CTA
 - [ ] `<UsageBar feature="..." />` — bar for settings page
 - [ ] `<PlanBadge />` — sidebar plan indicator
 - [ ] `/pricing` page with annual toggle (2 months free)
-- [ ] Stripe Customer Portal link for self-serve cancellation
+- [ ] Payment portal link for self-serve cancellation (LemonSqueezy customer portal)
 
 ---
 
@@ -472,10 +496,10 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 
 | Month | Focus | Phases |
 |---|---|---|
-| 1 | Ship publicly, acquire first users | Phase 1 (Landing), Phase 2 (Onboarding polish) |
-| 2 | First paid feature | Phase 6 (Stripe + paywalls), Phase 3 (Review engine MVP) |
-| 3 | Expand SEO toolset | Phase 5 (Crawler), Phase 9.2 (Schema generator), Phase 9.1 (Citations MVP) |
-| 4 | Rank tracking | Phase 4 (Heatmap + competitors) |
+| 1 | Ship publicly, acquire first beta users | Phase 1 polish (Trial CTA, Privacy/ToS), Phase 2 (Onboarding ✅), pre-launch settings fixes |
+| 2 | First payment — this is the #1 milestone | Phase 6 (LemonSqueezy + 14-day trial + paywalls), Phase 3 review engine polish |
+| 3 | Expand SEO toolset | Phase 5 (Crawler), Phase 9.1 (Citations MVP) |
+| 4 | Rank tracking live + competitors | Phase 4 (live Google Places snapshots, competitor spy) |
 | 5 | Retention + agency push | Phase 7 (PDF reports), Phase 9.5 (White-label MVP) |
 | 6 | Automation + admin polish | Phase 8 (SuperAdmin), Phase 9.3 (GBP Post Scheduler) |
 
@@ -496,5 +520,16 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] Settings page: Profile, API Usage, Billing, Danger Zone tabs (Phase 2.4)
 - [x] Fix logo in Sidebar — links to /dashboard (context-aware, not landing page)
 - [x] Plan badge in Sidebar deep-links to /settings?tab=billing with tab pre-selection
-- [ ] Complete Phase 1.2 Auth Flow: `/auth/error` page + check `/auth/callback` new-user redirect to `/onboarding`
-- [ ] `profiles` table migration + wire display name to DB column (Phase 2.1 prerequisite)
+- [x] Complete Phase 1.2 Auth Flow: `/auth/error` page + check `/auth/callback` new-user redirect to `/onboarding`
+- [x] `profiles` table migration + auto-create trigger on signup (`20260502000003_add_profiles.sql`)
+- [x] Centralized auth guard in `(app)/layout.tsx` — single redirect, no per-page duplication
+- [x] Phase 2.1 onboarding wizard: 3-step wizard + skip + `onboarding_complete` flag
+- [x] **Settings quick-fixes:** billing "$49" → "$69"; remove "Phase 6 coming"; usage limits 2 kw→1, 5 reply→3; "FREE" badge → "STARTER"
+- [x] **UI label cleanup:** "Phase 4" removed from `/rank`; "Phase 3.4" removed from `/reviews`
+- [x] **Landing page:** header CTA "Start Free" → "Start Free Trial"
+- [ ] Add Privacy Policy + Terms of Service pages (footer links go to existing `/privacy` and `/terms` — check content)
+- [x] Add `loading.tsx` skeleton to `/reviews`, `/rank`, `/schema`, `/settings`
+- [x] Add `error.tsx` to `/rank` (others already existed)
+- [x] Wire `profiles.full_name` to Settings: reads from `profiles` (falls back to auth metadata), saves to both
+- [ ] Apply pending Supabase migrations: `20260502000003_add_profiles.sql` (run `supabase db push`)
+- [ ] **Start LemonSqueezy account setup** — required for any paid launch (Phase 6.1)

@@ -7,6 +7,7 @@ import {
   Users,
   FileText,
   Check,
+  Minus,
   ChevronRight,
   Zap,
   Shield,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import DemoWidget from "@/components/marketing/DemoWidget";
 import FaqAccordion from "@/components/marketing/FaqAccordion";
+import PricingToggle from "@/components/marketing/PricingToggle";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Static data — defined outside the component so the module is tree-shaken
@@ -54,55 +56,64 @@ const FEATURES = [
 
 const PLANS = [
   {
-    name: "Free",
-    price: "$0",
-    period: "/mo",
-    desc: "For contractors just getting started.",
-    cta: "Start Free",
+    name: "Starter",
+    monthlyPrice: 39,
+    annualPrice: 32,
+    desc: "For solo contractors exploring SEO.",
+    cta: "Start 14-Day Trial",
     ctaHref: "/login",
     highlight: false,
     features: [
-      "1 business",
-      "2 AI keyword generations / mo",
-      "5 AI review replies / mo",
-      "1 SEO audit / mo",
-      "Monthly rank snapshot",
+      { text: "1 business", included: true },
+      { text: "1 AI keyword generation / mo", included: true },
+      { text: "3 AI review replies / mo", included: true },
+      { text: "Basic schema markup", included: true },
+      { text: "SEO audits", included: false },
+      { text: "Rank snapshots", included: false },
+      { text: "Competitor tracking", included: false },
+      { text: "PDF reports", included: false },
     ],
   },
   {
     name: "Pro",
-    price: "$49",
-    period: "/mo",
-    desc: "For contractors serious about growth.",
-    cta: "Start Free Trial",
+    monthlyPrice: 69,
+    annualPrice: 55,
+    desc: "Everything you need to dominate local search.",
+    cta: "Start 14-Day Free Trial",
     ctaHref: "/login",
     highlight: true,
     features: [
-      "10 businesses",
-      "Unlimited AI keyword generations",
-      "Unlimited review replies",
-      "Unlimited SEO audits",
-      "Weekly rank snapshots",
-      "Competitor tracking (3 rivals)",
-      "Weekly PDF reports",
+      { text: "5 businesses", included: true },
+      { text: "Unlimited AI keywords", included: true },
+      { text: "Unlimited review replies", included: true },
+      { text: "Full schema markup", included: true },
+      { text: "Unlimited SEO audits", included: true },
+      { text: "Weekly rank snapshots", included: true },
+      { text: "Competitor tracking (3 rivals)", included: true },
+      { text: "Weekly PDF reports", included: true },
+      { text: "Priority support", included: true },
     ],
   },
   {
     name: "Agency",
-    price: "$149",
-    period: "/mo",
+    monthlyPrice: 199,
+    annualPrice: 159,
     desc: "For agencies managing multiple HVAC clients.",
     cta: "Contact Sales",
     ctaHref: "/login",
     highlight: false,
     features: [
-      "Unlimited businesses",
-      "Daily rank snapshots",
-      "Competitor tracking (10 rivals)",
-      "Daily PDF reports",
-      "White-label reports",
-      "Sub-account management",
-      "Priority support",
+      { text: "Unlimited businesses", included: true },
+      { text: "Unlimited AI keywords", included: true },
+      { text: "Unlimited review replies", included: true },
+      { text: "Full schema markup", included: true },
+      { text: "Unlimited SEO audits", included: true },
+      { text: "Daily rank snapshots", included: true },
+      { text: "Competitor tracking (10 rivals)", included: true },
+      { text: "Daily PDF reports", included: true },
+      { text: "White-label reports", included: true },
+      { text: "Sub-account management", included: true },
+      { text: "Priority support", included: true },
     ],
   },
 ];
@@ -185,7 +196,7 @@ export default function LandingPage() {
               href="/login"
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 shadow-sm"
             >
-              Start Free
+              Start Free Trial
             </Link>
           </nav>
         </div>
@@ -196,7 +207,7 @@ export default function LandingPage() {
         <section className="max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] text-xs text-zinc-400 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Now in beta — free plan, no card required
+            14-day free trial — no credit card required
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-zinc-100 tracking-tight leading-[1.1] mb-6 max-w-3xl mx-auto">
@@ -217,7 +228,7 @@ export default function LandingPage() {
               href="/login"
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-black/20"
             >
-              Start Free — No Card Required
+              Start Free Trial — No Card Required
               <ChevronRight className="w-4 h-4" />
             </Link>
             <Link
@@ -289,64 +300,15 @@ export default function LandingPage() {
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Simple pricing
             </p>
-            <h2 className="text-3xl font-bold text-zinc-100 tracking-tight">
-              Start free. Upgrade when you grow.
+            <h2 className="text-3xl font-bold text-zinc-100 tracking-tight mb-3">
+              14 days free. Then pick your plan.
             </h2>
+            <p className="text-sm text-zinc-500 max-w-md mx-auto">
+              No credit card required to start. Upgrade, downgrade, or cancel anytime.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-            {PLANS.map((plan) => (
-              <div
-                key={plan.name}
-                className={`rounded-2xl border p-6 flex flex-col ${
-                  plan.highlight
-                    ? "border-white/[0.18] bg-white/[0.04] ring-1 ring-white/[0.06]"
-                    : "border-white/[0.06] bg-white/[0.02]"
-                }`}
-              >
-                {plan.highlight && (
-                  <span className="inline-flex w-fit items-center px-2 py-0.5 rounded-full border border-white/[0.12] bg-white/[0.07] text-[10px] font-semibold text-zinc-300 uppercase tracking-widest mb-4">
-                    Most Popular
-                  </span>
-                )}
-                <p className="text-sm font-medium text-zinc-400 mb-1">
-                  {plan.name}
-                </p>
-                <div className="flex items-end gap-1 mb-1">
-                  <span className="text-4xl font-bold text-zinc-100">
-                    {plan.price}
-                  </span>
-                  <span className="text-sm text-zinc-500 mb-1.5">
-                    {plan.period}
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-600 mb-6">{plan.desc}</p>
-
-                <ul className="space-y-2.5 mb-8 flex-1">
-                  {plan.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-start gap-2.5 text-sm text-zinc-400"
-                    >
-                      <Check className="w-3.5 h-3.5 text-zinc-400 mt-0.5 flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href={plan.ctaHref}
-                  className={`w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                    plan.highlight
-                      ? "bg-white text-zinc-950 hover:bg-zinc-100 shadow-lg shadow-black/20"
-                      : "border border-white/[0.10] bg-white/[0.03] text-zinc-300 hover:bg-white/[0.06] hover:border-white/[0.15]"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
+          <PricingToggle plans={PLANS} />
         </section>
 
         {/* ── Testimonials ────────────────────────────────────────────────────── */}
@@ -403,14 +365,14 @@ export default function LandingPage() {
               Ready to rank higher?
             </h2>
             <p className="text-zinc-500 text-sm mb-8 max-w-md mx-auto leading-relaxed">
-              Join HVAC contractors who are winning local search with AI. Free
-              plan — no credit card required.
+              Join HVAC contractors who are winning local search with AI. Start
+              your 14-day free trial — no credit card required.
             </p>
             <Link
               href="/login"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-black/20"
             >
-              Create your free account
+              Start your 14-day free trial
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>

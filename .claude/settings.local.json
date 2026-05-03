@@ -8,7 +8,11 @@
       "Bash(node -e \"const l = require\\('c:/Users/USAME/hvac-seo-bot/node_modules/lucide-react'\\); ['BarChart3','Settings','Zap','LogOut'].forEach\\(n => console.log\\(n + ':', !!l[n]\\)\\)\")",
       "Bash(xargs grep *)",
       "Bash(npm install *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Read(//c/Users/USAME/.claude/projects/c--Users-USAME-hvac-seo-bot/memory/**)",
+      "Bash(grep -rn \"Phase 6\\\\|Phase 3\\\\.4\\\\|Phase 4\\\\\"\\\\|\\\\$49\\\\|2 AI keyword\\\\|5 AI review\\\\|FREE\\\\b\" src/app/\\\\\\(app\\\\\\)/ src/components/app/ src/app/page.tsx)",
+      "Bash(grep -n \"Phase 3\\\\.4\\\\|Phase 4\\\\|Billing is coming\\\\|Phase 6\\\\|49/mo\\\\|\\\\$49\" src/components/app/ReviewFeed.tsx src/components/app/SettingsTabs.tsx src/app/\\\\\\(app\\\\\\)/rank/page.tsx)",
+      "Bash(npm run *)"
     ]
   }
 }

@@ -95,7 +95,7 @@ export default async function RankPage() {
         {/* Header */}
         <div className="mb-8">
           <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
-            Phase 4
+            Local SEO
           </p>
           <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">
             Local Rank Tracker

@@ -541,7 +541,7 @@ export default function BusinessForm({
               placeholder={
                 keywords.length === 0 ? "Type a keyword and press Enter…" : ""
               }
-              className="flex-1 min-w-[160px] bg-transparent text-sm text-zinc-300 placeholder:text-zinc-600 outline-none"
+              className="flex-1 min-w-[100px] sm:min-w-[160px] bg-transparent text-sm text-zinc-300 placeholder:text-zinc-600 outline-none"
             />
           </div>
           <p className="text-[11px] text-zinc-600">

@@ -14,6 +14,7 @@ interface UsageItem {
 }
 
 interface Props {
+  userId: string;
   email: string;
   initialName: string;
   usageItems: UsageItem[];
@@ -80,7 +81,7 @@ function UsageBar({ item }: { item: UsageItem }) {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function SettingsTabs({ email, initialName, usageItems, initialTab }: Props) {
+export default function SettingsTabs({ userId, email, initialName, usageItems, initialTab }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
 
   // Profile state
@@ -98,10 +99,16 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
     setSaveError(null);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({
-        data: { full_name: displayName.trim() || null },
-      });
-      if (error) throw error;
+      const name = displayName.trim() || null;
+      // Write to both auth metadata (keeps session in sync) and profiles table
+      const [authResult, profileResult] = await Promise.all([
+        supabase.auth.updateUser({ data: { full_name: name } }),
+        supabase
+          .from("profiles")
+          .upsert({ user_id: userId, full_name: name }, { onConflict: "user_id" }),
+      ]);
+      if (authResult.error) throw authResult.error;
+      if (profileResult.error) throw profileResult.error;
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: unknown) {
@@ -122,7 +129,7 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
   return (
     <div className="space-y-6">
       {/* ── Tab bar ──────────────────────────────────────────────────────── */}
-      <div className="flex gap-0.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] w-fit">
+      <div className="flex gap-0.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] w-full sm:w-fit overflow-x-auto scrollbar-none">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -215,7 +222,7 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
                 <p className="text-xs text-zinc-600 mt-0.5">Resets on the 1st of each month</p>
               </div>
               <span className="px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-[10px] font-semibold text-zinc-500 uppercase tracking-widest">
-                Free
+                Starter
               </span>
             </div>
 
@@ -230,7 +237,7 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
 
           <p className="text-xs text-zinc-600 leading-relaxed">
             Upgrade to <span className="text-zinc-400 font-medium">Pro</span> for unlimited AI keyword
-            generations, review replies, and SEO audits. Billing is coming in Phase 6.
+            generations, review replies, and SEO audits.
           </p>
         </div>
       )}
@@ -243,19 +250,19 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-zinc-600 uppercase tracking-widest mb-1">Current Plan</p>
-                <p className="text-lg font-semibold text-zinc-100">Free</p>
+                <p className="text-lg font-semibold text-zinc-100">Starter</p>
               </div>
               <span className="px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-xs font-medium text-zinc-400">
-                $0 / mo
+                $39 / mo
               </span>
             </div>
 
             <div className="pt-3 border-t border-white/[0.05] space-y-2">
               {[
                 "1 business listing",
-                "2 AI keyword generations / mo",
-                "5 AI review replies / mo",
-                "1 SEO audit / mo",
+                "1 AI keyword generation / mo",
+                "3 AI review replies / mo",
+                "Schema markup (basic)",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2 text-xs text-zinc-500">
                   <div className="w-1 h-1 rounded-full bg-zinc-700 flex-shrink-0" />
@@ -268,16 +275,16 @@ export default function SettingsTabs({ email, initialName, usageItems, initialTa
           {/* Upgrade CTA */}
           <div className="rounded-2xl border border-white/[0.10] bg-white/[0.03] px-5 py-5 space-y-3">
             <div>
-              <p className="text-sm font-semibold text-zinc-100 mb-0.5">Upgrade to Pro — $49/mo</p>
+              <p className="text-sm font-semibold text-zinc-100 mb-0.5">Upgrade to Pro — $69/mo</p>
               <p className="text-xs text-zinc-500">
-                Unlimited keywords, review replies, SEO audits, and weekly rank snapshots.
+                5 businesses, unlimited keywords, review replies, SEO audits, and weekly rank snapshots.
               </p>
             </div>
             <button
               disabled
               className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
             >
-              Payments launching in Phase 6
+              Payments coming soon
             </button>
           </div>
         </div>
