@@ -16,14 +16,18 @@ CREATE TABLE integrations (
 
 ALTER TABLE integrations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "integrations_select" ON integrations;
 CREATE POLICY "integrations_select" ON integrations
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "integrations_insert" ON integrations;
 CREATE POLICY "integrations_insert" ON integrations
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "integrations_update" ON integrations;
 CREATE POLICY "integrations_update" ON integrations
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "integrations_delete" ON integrations;
 CREATE POLICY "integrations_delete" ON integrations
   FOR DELETE USING (auth.uid() = user_id);

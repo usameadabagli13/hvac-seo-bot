@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS ai_usage (
 ALTER TABLE ai_usage ENABLE ROW LEVEL SECURITY;
 
 -- Users may only read their own rows.
+DROP POLICY IF EXISTS "users_select_own_usage" ON ai_usage;
 CREATE POLICY "users_select_own_usage" ON ai_usage
   FOR SELECT USING (auth.uid() = user_id);
 

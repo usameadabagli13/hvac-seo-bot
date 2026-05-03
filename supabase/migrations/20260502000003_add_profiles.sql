@@ -14,10 +14,12 @@ CREATE TABLE IF NOT EXISTS profiles (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Users can read and update only their own profile.
+DROP POLICY IF EXISTS "profiles: own read" ON profiles;
 CREATE POLICY "profiles: own read"
   ON profiles FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "profiles: own update" ON profiles;
 CREATE POLICY "profiles: own update"
   ON profiles FOR UPDATE
   USING (auth.uid() = user_id)
@@ -27,6 +29,7 @@ CREATE POLICY "profiles: own update"
   );
 
 -- Admins can read all profiles (needed for Phase 8 user lookup).
+DROP POLICY IF EXISTS "profiles: admin read all" ON profiles;
 CREATE POLICY "profiles: admin read all"
   ON profiles FOR SELECT
   USING (

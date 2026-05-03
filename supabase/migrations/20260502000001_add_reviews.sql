@@ -22,15 +22,19 @@ CREATE TABLE reviews (
 
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "reviews_select" ON reviews;
 CREATE POLICY "reviews_select" ON reviews
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "reviews_insert" ON reviews;
 CREATE POLICY "reviews_insert" ON reviews
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "reviews_update" ON reviews;
 CREATE POLICY "reviews_update" ON reviews
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "reviews_delete" ON reviews;
 CREATE POLICY "reviews_delete" ON reviews
   FOR DELETE USING (auth.uid() = user_id);
 
