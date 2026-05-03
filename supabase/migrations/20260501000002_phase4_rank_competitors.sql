@@ -69,6 +69,7 @@ CREATE TRIGGER trg_competitors_updated_at
 ALTER TABLE public.rank_snapshots ENABLE ROW LEVEL SECURITY;
 
 -- Users can see only snapshots that belong to their own businesses
+DROP POLICY IF EXISTS "rank_snapshots: owner select" ON public.rank_snapshots;
 CREATE POLICY "rank_snapshots: owner select"
   ON public.rank_snapshots FOR SELECT
   USING (
@@ -79,6 +80,7 @@ CREATE POLICY "rank_snapshots: owner select"
     )
   );
 
+DROP POLICY IF EXISTS "rank_snapshots: owner insert" ON public.rank_snapshots;
 CREATE POLICY "rank_snapshots: owner insert"
   ON public.rank_snapshots FOR INSERT
   WITH CHECK (
@@ -90,6 +92,7 @@ CREATE POLICY "rank_snapshots: owner insert"
   );
 
 -- No UPDATE — snapshots are immutable; delete is allowed for cleanup
+DROP POLICY IF EXISTS "rank_snapshots: owner delete" ON public.rank_snapshots;
 CREATE POLICY "rank_snapshots: owner delete"
   ON public.rank_snapshots FOR DELETE
   USING (
@@ -105,6 +108,7 @@ CREATE POLICY "rank_snapshots: owner delete"
 -- ─────────────────────────────────────────────────────────────
 ALTER TABLE public.competitors ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "competitors: owner select" ON public.competitors;
 CREATE POLICY "competitors: owner select"
   ON public.competitors FOR SELECT
   USING (
@@ -115,6 +119,7 @@ CREATE POLICY "competitors: owner select"
     )
   );
 
+DROP POLICY IF EXISTS "competitors: owner insert" ON public.competitors;
 CREATE POLICY "competitors: owner insert"
   ON public.competitors FOR INSERT
   WITH CHECK (
@@ -125,6 +130,7 @@ CREATE POLICY "competitors: owner insert"
     )
   );
 
+DROP POLICY IF EXISTS "competitors: owner update" ON public.competitors;
 CREATE POLICY "competitors: owner update"
   ON public.competitors FOR UPDATE
   USING (
@@ -135,6 +141,7 @@ CREATE POLICY "competitors: owner update"
     )
   );
 
+DROP POLICY IF EXISTS "competitors: owner delete" ON public.competitors;
 CREATE POLICY "competitors: owner delete"
   ON public.competitors FOR DELETE
   USING (
@@ -165,6 +172,7 @@ CREATE TABLE IF NOT EXISTS public.ai_usage (
 
 ALTER TABLE public.ai_usage ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ai_usage: owner select" ON public.ai_usage;
 CREATE POLICY "ai_usage: owner select"
   ON public.ai_usage FOR SELECT
   USING (user_id = auth.uid());
