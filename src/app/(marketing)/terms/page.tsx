@@ -23,7 +23,7 @@ export default function TermsPage() {
       <main className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold text-zinc-100 mb-2">Terms of Service</h1>
         <p className="text-zinc-500 text-sm mb-10">
-          Last updated: April 30, 2026
+          Last updated: May 4, 2026
         </p>
 
         <section className="space-y-6 text-zinc-400 text-sm leading-relaxed">
@@ -51,10 +51,10 @@ export default function TermsPage() {
               You are responsible for all activity that occurs under your account. Notify us
               immediately at{" "}
               <a
-                href="mailto:support@hvacseobot.com"
+                href="mailto:supportheatrankai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                support@hvacseobot.com
+                supportheatrankai@gmail.com
               </a>{" "}
               if you suspect unauthorized access.
             </p>
@@ -111,10 +111,10 @@ export default function TermsPage() {
             <p>
               Questions about these Terms? Email us at{" "}
               <a
-                href="mailto:support@hvacseobot.com"
+                href="mailto:supportheatrankai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                support@hvacseobot.com
+                supportheatrankai@gmail.com
               </a>
               .
             </p>

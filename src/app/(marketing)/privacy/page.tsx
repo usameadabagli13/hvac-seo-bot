@@ -23,7 +23,7 @@ export default function PrivacyPage() {
       <main className="max-w-3xl mx-auto px-6 py-16 prose prose-invert prose-zinc max-w-none">
         <h1 className="text-3xl font-bold text-zinc-100 mb-2">Privacy Policy</h1>
         <p className="text-zinc-500 text-sm mb-10">
-          Last updated: April 30, 2026
+          Last updated: May 4, 2026
         </p>
 
         <section className="space-y-6 text-zinc-400 text-sm leading-relaxed">
@@ -72,9 +72,9 @@ export default function PrivacyPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">4. Data Storage and Security</h2>
             <p>
-              Your data is stored on Supabase (PostgreSQL) with row-level security enabled.
-              Each user account can only access its own data. Access tokens from Google OAuth are
-              encrypted at rest using Supabase Vault.
+              Your data is stored on Supabase (PostgreSQL) with row-level security enforced at the
+              database level. Each user account can only access its own data. Access tokens from
+              Google OAuth are stored securely and are never exposed to other users.
             </p>
           </div>
 
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside space-y-1.5 ml-1 mt-2">
               <li>Supabase (database and authentication)</li>
               <li>Google (Gemini AI, Business Profile API, Places API)</li>
-              <li>Stripe (payment processing)</li>
+              <li>LemonSqueezy (payment processing)</li>
               <li>Vercel (hosting and edge network)</li>
             </ul>
           </div>
@@ -98,10 +98,10 @@ export default function PrivacyPage() {
               You may request deletion of your account and all associated data at any time from
               your account settings, or by emailing us at{" "}
               <a
-                href="mailto:privacy@hvacseobot.com"
+                href="mailto:supportheatrankai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                privacy@hvacseobot.com
+                supportheatrankai@gmail.com
               </a>
               . We will process deletion requests within 30 days.
             </p>
@@ -120,10 +120,10 @@ export default function PrivacyPage() {
             <p>
               Questions about this policy? Email us at{" "}
               <a
-                href="mailto:privacy@hvacseobot.com"
+                href="mailto:supportheatrankai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                privacy@hvacseobot.com
+                supportheatrankai@gmail.com
               </a>
               .
             </p>
