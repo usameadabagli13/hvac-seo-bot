@@ -6,13 +6,22 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next");
 
+  // In production Vercel sits behind a load balancer. `origin` resolves to an
+  // internal URL, not the real domain. x-forwarded-host contains the actual
+  // public hostname the browser used — use it in production so session cookies
+  // are scoped to the right domain and the redirect lands on the right URL.
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const baseUrl =
+    process.env.NODE_ENV === "development" || !forwardedHost
+      ? origin
+      : `https://${forwardedHost}`;
+
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // If caller specified an explicit `next`, honour it (e.g. password reset).
-      if (next) return NextResponse.redirect(`${origin}${next}`);
+      if (next) return NextResponse.redirect(`${baseUrl}${next}`);
 
       // Detect new vs returning user: new users have no profiles row yet.
       const { data: { user } } = await supabase.auth.getUser();
@@ -23,9 +32,9 @@ export async function GET(request: Request) {
         .maybeSingle();
 
       const destination = profile ? "/dashboard" : "/onboarding";
-      return NextResponse.redirect(`${origin}${destination}`);
+      return NextResponse.redirect(`${baseUrl}${destination}`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth/error`);
+  return NextResponse.redirect(`${baseUrl}/auth/error`);
 }

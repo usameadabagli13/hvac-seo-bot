@@ -7,8 +7,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run on every path except Next.js internals, static assets, and the
-    // public demo-keywords API (which is intentionally unauthenticated).
-    "/((?!_next/static|_next/image|favicon\\.ico|api/demo-keywords|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Skip Next.js internals, static assets, the public demo-keywords API,
+    // and the OAuth callback route (callback handles its own session exchange
+    // and must not be intercepted by the session-refresh middleware).
+    "/((?!_next/static|_next/image|favicon\\.ico|api/demo-keywords|auth/callback|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
