@@ -80,9 +80,68 @@ function UsageBar({ item }: { item: UsageItem }) {
   );
 }
 
+// ── Billing data ──────────────────────────────────────────────────────────────
+const BILLING_PLANS = [
+  {
+    name: "Starter",
+    monthlyPrice: 39,
+    annualPrice: 32,
+    desc: "For solo contractors exploring SEO.",
+    current: true,
+    highlight: false,
+    features: [
+      "1 business",
+      "1 AI keyword generation / mo",
+      "3 AI review replies / mo",
+      "Basic schema markup",
+    ],
+  },
+  {
+    name: "Pro",
+    monthlyPrice: 69,
+    annualPrice: 55,
+    desc: "Everything you need to dominate local search.",
+    current: false,
+    highlight: true,
+    features: [
+      "5 businesses",
+      "Unlimited AI keywords",
+      "Unlimited review replies",
+      "Full schema markup",
+      "Unlimited SEO audits",
+      "Weekly rank snapshots",
+      "Competitor tracking (3 rivals)",
+      "Weekly PDF reports",
+      "Priority support",
+    ],
+  },
+  {
+    name: "Agency",
+    monthlyPrice: 199,
+    annualPrice: 159,
+    desc: "For agencies managing multiple HVAC clients.",
+    current: false,
+    highlight: false,
+    features: [
+      "Unlimited businesses",
+      "Unlimited AI keywords",
+      "Unlimited review replies",
+      "Full schema markup",
+      "Unlimited SEO audits",
+      "Daily rank snapshots",
+      "Competitor tracking (10 rivals)",
+      "Daily PDF reports",
+      "White-label reports",
+      "Sub-account management",
+      "Priority support",
+    ],
+  },
+];
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function SettingsTabs({ userId, email, initialName, usageItems, initialTab }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
+  const [isAnnual, setIsAnnual] = useState(true);
 
   // Profile state
   const [displayName, setDisplayName] = useState(initialName);
@@ -244,115 +303,106 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
 
       {/* ── Billing tab ──────────────────────────────────────────────────── */}
       {activeTab === "billing" && (
-        <div className="space-y-4 max-w-2xl">
-          <p className="text-xs text-zinc-600 uppercase tracking-widest mb-1">Plans</p>
-
-          {/* Starter — current plan */}
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-base font-semibold text-zinc-100">Starter</p>
-                  <span className="px-2 py-0.5 rounded-full bg-zinc-700/50 border border-white/[0.07] text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
-                    Current Plan
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-500">For solo contractors exploring SEO.</p>
-              </div>
-              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-sm font-semibold text-zinc-300">
-                $39<span className="text-xs font-normal text-zinc-500">/mo</span>
-              </span>
-            </div>
-            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
-              {[
-                "1 business",
-                "1 AI keyword generation / mo",
-                "3 AI review replies / mo",
-                "Basic schema markup",
-              ].map((f) => (
-                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-500">
-                  <Check className="w-3 h-3 text-zinc-600 flex-shrink-0" />
-                  {f}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pro */}
-          <div className="rounded-2xl border border-white/[0.14] bg-white/[0.03] px-5 py-5 space-y-4 ring-1 ring-white/[0.06]">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-base font-semibold text-zinc-100 mb-1">Pro</p>
-                <p className="text-xs text-zinc-500">Everything you need to dominate local search.</p>
-              </div>
-              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-200">
-                $69<span className="text-xs font-normal text-zinc-500">/mo</span>
-              </span>
-            </div>
-            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
-              {[
-                "5 businesses",
-                "Unlimited AI keywords",
-                "Unlimited review replies",
-                "Full schema markup",
-                "Unlimited SEO audits",
-                "Weekly rank snapshots",
-                "Competitor tracking (3 rivals)",
-                "Weekly PDF reports",
-                "Priority support",
-              ].map((f) => (
-                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                  <Check className="w-3 h-3 text-zinc-500 flex-shrink-0" />
-                  {f}
-                </div>
-              ))}
-            </div>
+        <div className="space-y-5 max-w-2xl">
+          {/* Toggle */}
+          <div className="flex items-center gap-3">
+            <span className={`text-sm font-medium transition-colors duration-200 ${!isAnnual ? "text-zinc-200" : "text-zinc-600"}`}>
+              Monthly
+            </span>
             <button
-              disabled
-              className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
+              type="button"
+              role="switch"
+              aria-checked={isAnnual}
+              onClick={() => setIsAnnual((v) => !v)}
+              className="relative w-12 h-6 rounded-full bg-zinc-800 border border-white/[0.10] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/10"
             >
-              Payments coming soon
+              <span
+                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                  isAnnual ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
             </button>
+            <span className={`text-sm font-medium transition-colors duration-200 ${isAnnual ? "text-zinc-200" : "text-zinc-600"}`}>
+              Yearly
+            </span>
+            {isAnnual && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
+                Save 20%
+              </span>
+            )}
           </div>
 
-          {/* Agency */}
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-base font-semibold text-zinc-100 mb-1">Agency</p>
-                <p className="text-xs text-zinc-500">For agencies managing multiple HVAC clients.</p>
-              </div>
-              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-sm font-semibold text-zinc-300">
-                $199<span className="text-xs font-normal text-zinc-500">/mo</span>
-              </span>
-            </div>
-            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
-              {[
-                "Unlimited businesses",
-                "Unlimited AI keywords",
-                "Unlimited review replies",
-                "Full schema markup",
-                "Unlimited SEO audits",
-                "Daily rank snapshots",
-                "Competitor tracking (10 rivals)",
-                "Daily PDF reports",
-                "White-label reports",
-                "Sub-account management",
-                "Priority support",
-              ].map((f) => (
-                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                  <Check className="w-3 h-3 text-zinc-500 flex-shrink-0" />
-                  {f}
+          {/* Plan cards */}
+          {BILLING_PLANS.map((plan) => {
+            const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const savings = (plan.monthlyPrice - plan.annualPrice) * 12;
+
+            return (
+              <div
+                key={plan.name}
+                className={`rounded-2xl border px-5 py-5 space-y-4 ${
+                  plan.highlight
+                    ? "border-white/[0.14] bg-white/[0.03] ring-1 ring-white/[0.06]"
+                    : "border-white/[0.08] bg-white/[0.02]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-base font-semibold text-zinc-100">{plan.name}</p>
+                      {plan.current && (
+                        <span className="px-2 py-0.5 rounded-full bg-zinc-700/50 border border-white/[0.07] text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
+                          Current Plan
+                        </span>
+                      )}
+                      {plan.highlight && (
+                        <span className="px-2 py-0.5 rounded-full bg-white/[0.07] border border-white/[0.12] text-[10px] font-semibold text-zinc-300 uppercase tracking-widest">
+                          Most Popular
+                        </span>
+                      )}
+                    </div>
+                    {isAnnual && savings > 0 ? (
+                      <p className="text-[11px] text-emerald-400 font-medium">
+                        Billed annually · Save ${savings}/year
+                      </p>
+                    ) : (
+                      <p className="text-xs text-zinc-500">{plan.desc}</p>
+                    )}
+                  </div>
+
+                  <div className="flex-shrink-0 text-right">
+                    {isAnnual && (
+                      <span className="block text-xs text-zinc-600 line-through">
+                        ${plan.monthlyPrice}
+                      </span>
+                    )}
+                    <span className="text-xl font-bold text-zinc-100">
+                      ${price}
+                      <span className="text-xs font-normal text-zinc-500">/mo</span>
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </div>
-            <button
-              disabled
-              className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
-            >
-              Payments coming soon
-            </button>
-          </div>
+
+                <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
+                  {plan.features.map((f) => (
+                    <div key={f} className={`flex items-center gap-1.5 text-xs ${plan.current ? "text-zinc-500" : "text-zinc-400"}`}>
+                      <Check className={`w-3 h-3 flex-shrink-0 ${plan.current ? "text-zinc-600" : "text-zinc-500"}`} />
+                      {f}
+                    </div>
+                  ))}
+                </div>
+
+                {!plan.current && (
+                  <button
+                    disabled
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
+                  >
+                    Payments coming soon
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 

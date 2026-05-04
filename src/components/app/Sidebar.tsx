@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect } from "react";
 
 const NAV_ITEMS = [
@@ -62,13 +61,11 @@ export default function Sidebar() {
     };
   }, [router]);
 
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    // Full navigation so the browser sends fresh cookies and middleware
-    // re-evaluates the (now empty) session — soft push would skip this.
-    window.location.replace("/");
+    // Server-side sign out: clears session cookies via Set-Cookie headers
+    // on the redirect response, guaranteeing the browser drops the session.
+    window.location.href = "/auth/signout";
   };
 
   const isActive = (href: string) =>
