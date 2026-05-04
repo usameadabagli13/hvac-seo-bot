@@ -66,7 +66,9 @@ export default function Sidebar() {
     setSigningOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
+    // Full navigation so the browser sends fresh cookies and middleware
+    // re-evaluates the (now empty) session — soft push would skip this.
+    window.location.replace("/");
   };
 
   const isActive = (href: string) =>
@@ -83,7 +85,7 @@ export default function Sidebar() {
               <Zap className="w-3.5 h-3.5 text-zinc-300" />
             </div>
             <span className="text-sm font-semibold text-zinc-100 tracking-tight">
-              HVAC SEO Bot
+              HeatRank AI
             </span>
           </Link>
         </div>
@@ -154,7 +156,7 @@ export default function Sidebar() {
             <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10]">
               <Zap className="w-3.5 h-3.5 text-zinc-300" />
             </div>
-            <span className="text-sm font-semibold text-zinc-100">HVAC SEO Bot</span>
+            <span className="text-sm font-semibold text-zinc-100">HeatRank AI</span>
           </Link>
           <button
             onClick={handleSignOut}

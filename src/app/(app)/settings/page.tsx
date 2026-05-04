@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import SettingsTabs from "@/components/app/SettingsTabs";
 
 export const metadata: Metadata = {
-  title: "Settings — HVAC SEO Bot",
+  title: "Settings — HeatRank AI",
 };
 
 // Must stay in sync with src/lib/usage.ts FREE_LIMITS (Starter plan limits)
@@ -83,7 +83,7 @@ export default async function SettingsPage({
         <div className="absolute bottom-0 left-0 w-[500px] h-[400px] bg-zinc-800/8 rounded-full blur-[120px]" />
       </div>
 
-      <main className="relative max-w-3xl mx-auto px-6 py-12">
+      <main className="relative max-w-4xl mx-auto px-6 py-12">
         <div className="mb-8">
           <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
             Account

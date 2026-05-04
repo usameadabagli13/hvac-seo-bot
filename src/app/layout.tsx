@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HVAC SEO Bot — Rank Higher, Get More HVAC Calls",
+  title: "HeatRank AI — Rank Higher, Get More HVAC Calls",
   description:
     "AI-powered local SEO tools built for HVAC contractors. Generate keywords, manage Google reviews, and track your local rankings — without an agency.",
   openGraph: {
-    title: "HVAC SEO Bot — Rank Higher, Get More HVAC Calls",
+    title: "HeatRank AI — Rank Higher, Get More HVAC Calls",
     description:
       "AI-powered local SEO tools built for HVAC contractors. Generate keywords, manage Google reviews, and track your local rankings.",
     type: "website",

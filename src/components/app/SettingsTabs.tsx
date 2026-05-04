@@ -244,41 +244,107 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
 
       {/* ── Billing tab ──────────────────────────────────────────────────── */}
       {activeTab === "billing" && (
-        <div className="max-w-md space-y-5">
-          {/* Current plan */}
+        <div className="space-y-4 max-w-2xl">
+          <p className="text-xs text-zinc-600 uppercase tracking-widest mb-1">Plans</p>
+
+          {/* Starter — current plan */}
           <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs text-zinc-600 uppercase tracking-widest mb-1">Current Plan</p>
-                <p className="text-lg font-semibold text-zinc-100">Starter</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-base font-semibold text-zinc-100">Starter</p>
+                  <span className="px-2 py-0.5 rounded-full bg-zinc-700/50 border border-white/[0.07] text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
+                    Current Plan
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500">For solo contractors exploring SEO.</p>
               </div>
-              <span className="px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-xs font-medium text-zinc-400">
-                $39 / mo
+              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-sm font-semibold text-zinc-300">
+                $39<span className="text-xs font-normal text-zinc-500">/mo</span>
               </span>
             </div>
-
-            <div className="pt-3 border-t border-white/[0.05] space-y-2">
+            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
               {[
-                "1 business listing",
+                "1 business",
                 "1 AI keyword generation / mo",
                 "3 AI review replies / mo",
-                "Schema markup (basic)",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-2 text-xs text-zinc-500">
-                  <div className="w-1 h-1 rounded-full bg-zinc-700 flex-shrink-0" />
-                  {item}
+                "Basic schema markup",
+              ].map((f) => (
+                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-500">
+                  <Check className="w-3 h-3 text-zinc-600 flex-shrink-0" />
+                  {f}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Upgrade CTA */}
-          <div className="rounded-2xl border border-white/[0.10] bg-white/[0.03] px-5 py-5 space-y-3">
-            <div>
-              <p className="text-sm font-semibold text-zinc-100 mb-0.5">Upgrade to Pro — $69/mo</p>
-              <p className="text-xs text-zinc-500">
-                5 businesses, unlimited keywords, review replies, SEO audits, and weekly rank snapshots.
-              </p>
+          {/* Pro */}
+          <div className="rounded-2xl border border-white/[0.14] bg-white/[0.03] px-5 py-5 space-y-4 ring-1 ring-white/[0.06]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-base font-semibold text-zinc-100 mb-1">Pro</p>
+                <p className="text-xs text-zinc-500">Everything you need to dominate local search.</p>
+              </div>
+              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-200">
+                $69<span className="text-xs font-normal text-zinc-500">/mo</span>
+              </span>
+            </div>
+            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {[
+                "5 businesses",
+                "Unlimited AI keywords",
+                "Unlimited review replies",
+                "Full schema markup",
+                "Unlimited SEO audits",
+                "Weekly rank snapshots",
+                "Competitor tracking (3 rivals)",
+                "Weekly PDF reports",
+                "Priority support",
+              ].map((f) => (
+                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">
+                  <Check className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                  {f}
+                </div>
+              ))}
+            </div>
+            <button
+              disabled
+              className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
+            >
+              Payments coming soon
+            </button>
+          </div>
+
+          {/* Agency */}
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-base font-semibold text-zinc-100 mb-1">Agency</p>
+                <p className="text-xs text-zinc-500">For agencies managing multiple HVAC clients.</p>
+              </div>
+              <span className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.07] text-sm font-semibold text-zinc-300">
+                $199<span className="text-xs font-normal text-zinc-500">/mo</span>
+              </span>
+            </div>
+            <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {[
+                "Unlimited businesses",
+                "Unlimited AI keywords",
+                "Unlimited review replies",
+                "Full schema markup",
+                "Unlimited SEO audits",
+                "Daily rank snapshots",
+                "Competitor tracking (10 rivals)",
+                "Daily PDF reports",
+                "White-label reports",
+                "Sub-account management",
+                "Priority support",
+              ].map((f) => (
+                <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">
+                  <Check className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                  {f}
+                </div>
+              ))}
             </div>
             <button
               disabled

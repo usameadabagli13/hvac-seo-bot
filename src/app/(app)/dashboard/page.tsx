@@ -41,7 +41,7 @@ export default async function DashboardPage() {
             Dashboard
           </p>
           <h1 className="text-3xl font-semibold text-zinc-100 tracking-tight">
-            HVAC SEO Command Center
+            HeatRank AI Command Center
           </h1>
           <p className="mt-2 text-sm text-zinc-500 max-w-lg">
             Add your HVAC businesses, generate AI‑powered local keywords, and

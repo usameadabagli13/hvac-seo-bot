@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Authentication Error — HVAC SEO Bot",
+  title: "Authentication Error — HeatRank AI",
 };
 
 export default function AuthErrorPage() {

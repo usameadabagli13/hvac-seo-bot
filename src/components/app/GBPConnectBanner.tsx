@@ -78,7 +78,7 @@ export default function GBPConnectBanner({ isConnected, locationName, apiError }
           Connect Google Business Profile
         </p>
         <p className="text-xs text-zinc-500 leading-relaxed max-w-md">
-          Authorize HVAC SEO Bot to read your Google reviews. You&apos;ll be redirected to
+          Authorize HeatRank AI to read your Google reviews. You&apos;ll be redirected to
           Google to approve access — no posting without your confirmation.
         </p>
       </div>

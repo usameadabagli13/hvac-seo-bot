@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import SchemaGenerator from "@/components/app/SchemaGenerator";
 
 export const metadata: Metadata = {
-  title: "Schema Markup — HVAC SEO Bot",
+  title: "Schema Markup — HeatRank AI",
 };
 
 export default async function SchemaPage() {

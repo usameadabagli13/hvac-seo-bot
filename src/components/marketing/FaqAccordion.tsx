@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 const FAQ_ITEMS = [
   {
     q: "Do I need any SEO or technical knowledge?",
-    a: "Not at all. HVAC SEO Bot is built for contractors, not marketers. Everything is explained in plain English, and the AI does the heavy lifting — you just review and approve.",
+    a: "Not at all. HeatRank AI is built for contractors, not marketers. Everything is explained in plain English, and the AI does the heavy lifting — you just review and approve.",
   },
   {
     q: "Will it work for my city?",

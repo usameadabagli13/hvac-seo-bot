@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import OnboardingWizard from "./OnboardingWizard";
 
 export const metadata: Metadata = {
-  title: "Get Started — HVAC SEO Bot",
+  title: "Get Started — HeatRank AI",
 };
 
 export default async function OnboardingPage() {

@@ -3,7 +3,7 @@ import { Zap } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — HVAC SEO Bot",
+  title: "Terms of Service — HeatRank AI",
 };
 
 export default function TermsPage() {
@@ -15,7 +15,7 @@ export default function TermsPage() {
             <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10]">
               <Zap className="w-3.5 h-3.5 text-zinc-300" />
             </div>
-            <span className="text-sm font-semibold text-zinc-100">HVAC SEO Bot</span>
+            <span className="text-sm font-semibold text-zinc-100">HeatRank AI</span>
           </Link>
         </div>
       </header>
@@ -30,7 +30,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">1. Acceptance of Terms</h2>
             <p>
-              By creating an account or using HVAC SEO Bot, you agree to these Terms of Service.
+              By creating an account or using HeatRank AI, you agree to these Terms of Service.
               If you do not agree, please do not use the service.
             </p>
           </div>
@@ -38,7 +38,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">2. Use of the Service</h2>
             <p>
-              You may use HVAC SEO Bot only for lawful purposes and in accordance with these Terms.
+              You may use HeatRank AI only for lawful purposes and in accordance with these Terms.
               You agree not to use the service to violate any applicable law, harm other users,
               or interfere with the operation of the platform.
             </p>
@@ -51,10 +51,10 @@ export default function TermsPage() {
               You are responsible for all activity that occurs under your account. Notify us
               immediately at{" "}
               <a
-                href="mailto:supportheatrankai@gmail.com"
+                href="mailto:supportheatrakai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                supportheatrankai@gmail.com
+                supportheatrakai@gmail.com
               </a>{" "}
               if you suspect unauthorized access.
             </p>
@@ -72,7 +72,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">5. AI-Generated Content</h2>
             <p>
-              HVAC SEO Bot uses AI (Google Gemini) to generate keyword suggestions, review replies,
+              HeatRank AI uses AI (Google Gemini) to generate keyword suggestions, review replies,
               and SEO recommendations. This content is provided as-is. You are responsible for
               reviewing AI-generated content before publishing it or relying on it for business
               decisions. We make no guarantees regarding ranking outcomes.
@@ -91,7 +91,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">7. Limitation of Liability</h2>
             <p>
-              To the maximum extent permitted by law, HVAC SEO Bot shall not be liable for any
+              To the maximum extent permitted by law, HeatRank AI shall not be liable for any
               indirect, incidental, or consequential damages arising from your use of the service,
               including but not limited to loss of revenue or search rankings.
             </p>
@@ -111,10 +111,10 @@ export default function TermsPage() {
             <p>
               Questions about these Terms? Email us at{" "}
               <a
-                href="mailto:supportheatrankai@gmail.com"
+                href="mailto:supportheatrakai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                supportheatrankai@gmail.com
+                supportheatrakai@gmail.com
               </a>
               .
             </p>
@@ -124,7 +124,7 @@ export default function TermsPage() {
 
       <footer className="border-t border-white/[0.06] mt-16">
         <div className="max-w-3xl mx-auto px-6 py-8 flex items-center justify-between text-xs text-zinc-700">
-          <p>© {new Date().getFullYear()} HVAC SEO Bot</p>
+          <p>© {new Date().getFullYear()} HeatRank AI</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy</Link>
             <Link href="/" className="hover:text-zinc-400 transition-colors">Home</Link>

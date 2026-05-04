@@ -5,7 +5,7 @@ import RankMapLoader from "@/components/app/RankMapLoader";
 import type { HeatmapPoint } from "@/components/app/RankMap";
 
 export const metadata: Metadata = {
-  title: "Rank Tracker — HVAC SEO Bot",
+  title: "Rank Tracker — HeatRank AI",
 };
 
 export default async function RankPage() {

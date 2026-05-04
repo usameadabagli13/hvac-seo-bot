@@ -181,7 +181,7 @@ export default async function LandingPage({
               <Zap className="w-3.5 h-3.5 text-zinc-300" />
             </div>
             <span className="text-sm font-semibold text-zinc-100 tracking-tight">
-              HVAC SEO Bot
+              HeatRank AI
             </span>
           </Link>
 
@@ -398,7 +398,7 @@ export default async function LandingPage({
             <div className="flex items-center justify-center w-6 h-6 rounded-md bg-white/[0.05] border border-white/[0.08]">
               <Zap className="w-3 h-3 text-zinc-600" />
             </div>
-            <span className="text-sm text-zinc-500 font-medium">HVAC SEO Bot</span>
+            <span className="text-sm text-zinc-500 font-medium">HeatRank AI</span>
           </div>
 
           <div className="flex items-center gap-6 text-xs text-zinc-600">
@@ -414,7 +414,7 @@ export default async function LandingPage({
           </div>
 
           <p className="text-xs text-zinc-700">
-            © {year} HVAC SEO Bot. All rights reserved.
+            © {year} HeatRank AI. All rights reserved.
           </p>
         </div>
       </footer>

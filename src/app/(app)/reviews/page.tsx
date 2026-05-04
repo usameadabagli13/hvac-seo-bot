@@ -8,7 +8,7 @@ import SyncReviewsButton from "@/components/app/SyncReviewsButton";
 import RatingDistributionChart from "@/components/app/RatingDistributionChart";
 
 export const metadata: Metadata = {
-  title: "Reviews — HVAC SEO Bot",
+  title: "Reviews — HeatRank AI",
 };
 
 const ERROR_MESSAGES: Record<string, string> = {

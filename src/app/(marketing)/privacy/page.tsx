@@ -3,7 +3,7 @@ import { Zap } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — HVAC SEO Bot",
+  title: "Privacy Policy — HeatRank AI",
 };
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
             <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10]">
               <Zap className="w-3.5 h-3.5 text-zinc-300" />
             </div>
-            <span className="text-sm font-semibold text-zinc-100">HVAC SEO Bot</span>
+            <span className="text-sm font-semibold text-zinc-100">HeatRank AI</span>
           </Link>
         </div>
       </header>
@@ -40,11 +40,11 @@ export default function PrivacyPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">2. Google APIs and User Data</h2>
             <p>
-              HVAC SEO Bot uses Google APIs, including the Google Business Profile API and Google
+              HeatRank AI uses Google APIs, including the Google Business Profile API and Google
               Places API, to fetch review data and local ranking information on your behalf.
             </p>
             <p className="mt-2">
-              HVAC SEO Bot&apos;s use and transfer of information received from Google APIs to any
+              HeatRank AI&apos;s use and transfer of information received from Google APIs to any
               other app adheres to the{" "}
               <a
                 href="https://developers.google.com/terms/api-services-user-data-policy"
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
           <div>
             <h2 className="text-lg font-semibold text-zinc-200 mb-2">3. How We Use Your Information</h2>
             <ul className="list-disc list-inside space-y-1.5 ml-1">
-              <li>To provide the HVAC SEO Bot service and its features</li>
+              <li>To provide the HeatRank AI service and its features</li>
               <li>To generate AI-powered keyword suggestions and SEO recommendations</li>
               <li>To send product updates and account-related emails</li>
               <li>To detect and prevent abuse of the platform</li>
@@ -98,10 +98,10 @@ export default function PrivacyPage() {
               You may request deletion of your account and all associated data at any time from
               your account settings, or by emailing us at{" "}
               <a
-                href="mailto:supportheatrankai@gmail.com"
+                href="mailto:supportheatrakai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                supportheatrankai@gmail.com
+                supportheatrakai@gmail.com
               </a>
               . We will process deletion requests within 30 days.
             </p>
@@ -120,10 +120,10 @@ export default function PrivacyPage() {
             <p>
               Questions about this policy? Email us at{" "}
               <a
-                href="mailto:supportheatrankai@gmail.com"
+                href="mailto:supportheatrakai@gmail.com"
                 className="text-zinc-300 underline underline-offset-2 hover:text-white"
               >
-                supportheatrankai@gmail.com
+                supportheatrakai@gmail.com
               </a>
               .
             </p>
@@ -133,7 +133,7 @@ export default function PrivacyPage() {
 
       <footer className="border-t border-white/[0.06] mt-16">
         <div className="max-w-3xl mx-auto px-6 py-8 flex items-center justify-between text-xs text-zinc-700">
-          <p>© {new Date().getFullYear()} HVAC SEO Bot</p>
+          <p>© {new Date().getFullYear()} HeatRank AI</p>
           <div className="flex gap-4">
             <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms</Link>
             <Link href="/" className="hover:text-zinc-400 transition-colors">Home</Link>
