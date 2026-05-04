@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -28,6 +28,12 @@ function GoogleIcon({ className }: { className?: string }) {
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Safety net: if Supabase redirects to /login instead of /auth/callback
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) window.location.replace(`/auth/callback?code=${code}`);
+  }, []);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);

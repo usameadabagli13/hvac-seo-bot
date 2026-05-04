@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   Sparkles,
@@ -150,7 +151,18 @@ const TRUST_SIGNALS = [
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  // Safety net: if Supabase's redirect URL is misconfigured it sends the
+  // OAuth code to the site root instead of /auth/callback. Forward it.
+  const params = await searchParams;
+  if (params.code) {
+    redirect(`/auth/callback?code=${params.code}`);
+  }
+
   const year = new Date().getFullYear();
 
   return (
