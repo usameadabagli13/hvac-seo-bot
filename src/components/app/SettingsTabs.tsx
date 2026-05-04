@@ -337,14 +337,69 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
             const savings = (plan.monthlyPrice - plan.annualPrice) * 12;
 
+            if (plan.highlight) {
+              return (
+                <div key={plan.name} className="relative rounded-2xl overflow-hidden">
+                  {/* Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-transparent pointer-events-none" />
+                  <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-zinc-400/40 via-zinc-600/20 to-transparent pointer-events-none" />
+
+                  <div className="relative rounded-2xl border border-white/[0.20] bg-zinc-900 px-5 py-5 space-y-4">
+                    {/* Most Popular banner */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-base font-bold text-white">{plan.name}</p>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-widest">
+                            ✦ Most Popular
+                          </span>
+                        </div>
+                        {isAnnual && savings > 0 ? (
+                          <p className="text-[11px] text-emerald-400 font-medium">
+                            Billed annually · Save ${savings}/year
+                          </p>
+                        ) : (
+                          <p className="text-xs text-zinc-400">{plan.desc}</p>
+                        )}
+                      </div>
+
+                      <div className="flex-shrink-0 text-right">
+                        {isAnnual && (
+                          <span className="block text-xs text-zinc-500 line-through">
+                            ${plan.monthlyPrice}
+                          </span>
+                        )}
+                        <span className="text-2xl font-bold text-white">
+                          ${price}
+                          <span className="text-xs font-normal text-zinc-400">/mo</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/[0.10] grid grid-cols-2 gap-x-4 gap-y-1.5">
+                      {plan.features.map((f) => (
+                        <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-300">
+                          <Check className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                          {f}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      disabled
+                      className="w-full px-4 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-bold cursor-not-allowed opacity-60"
+                    >
+                      Payments coming soon
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div
                 key={plan.name}
-                className={`rounded-2xl border px-5 py-5 space-y-4 ${
-                  plan.highlight
-                    ? "border-white/[0.14] bg-white/[0.03] ring-1 ring-white/[0.06]"
-                    : "border-white/[0.08] bg-white/[0.02]"
-                }`}
+                className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -353,11 +408,6 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
                       {plan.current && (
                         <span className="px-2 py-0.5 rounded-full bg-zinc-700/50 border border-white/[0.07] text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
                           Current Plan
-                        </span>
-                      )}
-                      {plan.highlight && (
-                        <span className="px-2 py-0.5 rounded-full bg-white/[0.07] border border-white/[0.12] text-[10px] font-semibold text-zinc-300 uppercase tracking-widest">
-                          Most Popular
                         </span>
                       )}
                     </div>
