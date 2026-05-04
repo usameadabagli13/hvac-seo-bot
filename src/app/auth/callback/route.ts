@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         // Give Supabase the incoming cookies so it can read the PKCE code_verifier
         getAll: () => request.cookies.getAll(),
         // Collect all Set-Cookie headers Supabase wants to send
-        setAll: (cookies) => pendingCookies.push(...cookies),
+        setAll: (cookies) => { pendingCookies.push(...cookies); },
       },
     }
   );
