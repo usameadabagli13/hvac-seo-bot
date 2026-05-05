@@ -54,7 +54,7 @@ LinkedIn's API does not allow automated messaging to non-connections. Any scrapi
 
 ```sql
 -- EXISTING
-businesses (id, user_id, business_name, service_location, website_url, target_keywords jsonb, created_at)
+businesses (id, user_id, business_name, service_location, website_url, target_keywords jsonb, is_service_area_business bool default false, created_at)
 
 -- PHASE 2
 profiles (id, user_id, full_name, avatar_url, onboarding_complete bool, created_at)
@@ -133,11 +133,13 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Recent activity feed (last 3 reviews with author, rating, business name)
 - [x] Quick-action buttons: Reviews / Rank Tracker / Schema Markup
 - [x] Empty state with onboarding CTA for new users
+- [ ] **Activation Checklist card** — "Add Business → Connect GBP → Run First Scan" adım sırası; yeni user'ın ilk 3 aksiyonunu gösterir, tamamlananlar ✓ ile kapanır
 
 ### 2.3 Business Detail Page (`/dashboard/businesses/[id]`)
 - [x] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
 - [ ] Edit business form (inline edit on detail page)
 - [ ] Soft delete with `deleted_at` column (RLS filters it out)
+- [ ] **SAB checkbox** — "Service Area Business (no physical storefront)" toggle on BusinessForm; adds `is_service_area_business` column to `businesses` table. HVAC firmaları için kritik — çoğunun showroom'u yoktur
 
 ### 2.4 Settings (`/settings`)
 - [x] Profile tab: display name (saved to auth metadata), email (read-only)
@@ -152,6 +154,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Active route highlight
 - [x] Plan badge in sidebar (Free / Pro / Agency)
 - [x] Keyboard shortcuts: `G+D` = Dashboard, `G+R` = Reviews, `G+K` = Rank Tracker, `G+S` = Settings
+- [ ] **Sidebar usage widget** — plan badge'in altına "Replies: 2/3 · Keywords: 0/1" mini göstergesi; upgrade itkisini Settings'ten sidebar'a taşır
 
 ---
 
@@ -215,6 +218,8 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ### 4.1 Grid-Based Local Rank Heatmap
 - [ ] Business + keyword dropdown selectors (currently hardcoded to first business)
+- [ ] **HVAC keyword chip suggestions** — rank keyword input'una tıklanabilir chip'ler: ["AC repair", "furnace install", "emergency HVAC", "ductwork", "heat pump"]; niş avantajının somut kanıtı, 15 dk iş
+- [ ] **Test Mode toggle / "Try free, no credits used" badge** — mock data görünürken rozet göster; psikolojik bariyeri kırar, kayıt öncesi gösterim sağlar
 - [ ] User sets a target keyword per business (UI + DB column)
 - [ ] Generate 5×5 grid of lat/lng points around business (1-mile spacing)
 - [ ] Call Google Places Text Search API for each grid point (25 calls per snapshot)
@@ -225,6 +230,9 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Historical trend arrows (prev snapshot comparison)
 - [ ] "Run Snapshot" button → live Google Places API calls
 - **⚠️ Cost trap:** 25 API calls × price per call × users × keywords. Cache aggressively. Free = monthly snapshots only.
+
+### 4.3 Deferred / Rejected Features
+- ❌ **Compare sayfası** — historical rank snapshot data yokken anlamsız; Phase 4 live ile birlikte değerlendirilecek, ayrı aksiyon değil
 
 ### 4.2 Competitor Tracker
 - [ ] User adds up to 3 competitor Place IDs
@@ -269,11 +277,12 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Webhook URL registered: `https://www.heatrankai.com/api/dodo/webhook`
 
 ### 6.2 14-Day Free Trial
-- [ ] Add `trial_ends_at timestamptz` to `subscriptions` table (or as a separate column on `profiles`)
+- [ ] Add `trial_ends_at timestamptz` column to `profiles` table
 - [ ] On first signup: set `trial_ends_at = now() + interval '14 days'`
+- [ ] **Trial countdown banner** — sticky top bar; "X days left in your free trial · Upgrade" gösterir; 14. günde hesap frozen
 - [ ] Day 12: email via Resend — "2 days left in your trial"
-- [ ] Day 14: account frozen (read-only) — middleware checks `trial_ends_at < now()` and `status != 'active'`
-- [ ] Frozen state: banner + upgrade CTA on every app page
+- [ ] Day 14: middleware checks `trial_ends_at < now()` and `plan = 'starter'` → read-only freeze
+- [ ] Frozen state: full-screen upgrade CTA overlay
 
 ### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
 - [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1` via `increment_ai_usage` RPC
@@ -400,6 +409,7 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 
 ### 9.5 White-Label Mode (Agency Tier Revenue Multiplier)
 **Why:** One marketing agency managing 20 HVAC clients = 20× MRR from a single customer. This is the highest-leverage feature for revenue.
+> ⚠️ **Strateji notu:** Agency-first pivot reddedildi. Agency tier landing page'de görünsün (decoy etkisi), ama outbound efor owner'a gitsin. İlk 20 ödeyen owner'dan sonra agency channel test edilebilir.
 - [ ] `white_label_settings`: agency logo URL, brand color (hex), custom domain, from-email name
 - [ ] PDF reports render with agency branding, zero mention of HVAC SEO Bot
 - [ ] Custom subdomain support via Vercel Domains API: `seo.agencyname.com`
@@ -532,9 +542,13 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] **UI label cleanup:** "Phase 4" removed from `/rank`; "Phase 3.4" removed from `/reviews`
 - [x] **Landing page:** header CTA "Start Free" → "Start Free Trial"
 - [ ] Add Privacy Policy + Terms of Service pages (footer links go to `/privacy` and `/terms` — currently 404)
-- [ ] **Mobile responsive pass** — test all pages at 390px (Chrome DevTools): overflow, touch targets ≥44px, font sizes
+- [ ] **SAB checkbox** — BusinessForm.tsx'e "Service Area Business" toggle + `businesses.is_service_area_business` migration (20 dk)
+- [ ] **HVAC keyword chips** — rank sayfası keyword input'una tıklanabilir chip önerileri (15 dk)
+- [ ] **Test Mode badge** — rank mock data görünürken "Try free, no credits used" rozeti (30 dk)
+- [ ] **14-day trial + countdown banner** — `profiles.trial_ends_at` column + sticky top banner + middleware freeze (Phase 6.2) ← EN ACİL
+- [ ] **Activation Checklist kartı** — dashboard'a "Add Business → Connect GBP → Run First Scan" adım kartı (kısa vade)
+- [ ] **Sidebar usage widget** — "Replies: 2/3" göstergesi sidebar'a taşı (kısa vade)
 - [ ] **GBP production approval başvurusu** — Google 4-8 hafta sürüyor, şimdi başla
-- [ ] **14-day trial** — `trial_ends_at` column on profiles + middleware freeze (Phase 6.2) ← EN ACİL
 - [ ] Multi-business selector: rank + schema sayfalarında dropdown
 - [x] Add `loading.tsx` skeleton to `/reviews`, `/rank`, `/schema`, `/settings`
 - [x] Add `error.tsx` to `/rank` (others already existed)
