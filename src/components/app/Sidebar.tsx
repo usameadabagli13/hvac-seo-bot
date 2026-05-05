@@ -103,15 +103,19 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
       <aside className="hidden lg:flex flex-col w-56 border-r border-white/[0.06] bg-zinc-950 fixed inset-y-0 left-0 z-30">
         {/* Logo */}
         <div className="px-4 h-14 flex items-center border-b border-white/[0.06] flex-shrink-0">
-          <Link href="/dashboard">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image
               src="/heatrank-logo.png"
               alt="HeatRank AI"
-              width={140}
-              height={36}
-              style={{ height: "36px", width: "auto" }}
+              width={28}
+              height={28}
+              className="rounded-md"
               priority
             />
+            <span className="text-sm font-semibold tracking-tight">
+              <span className="text-zinc-100">HeatRank</span>
+              <span className="text-zinc-400"> AI</span>
+            </span>
           </Link>
         </div>
 
@@ -179,15 +183,19 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
       {/* ── Mobile top bar ───────────────────────────────────────────────── */}
       <header className="lg:hidden sticky top-0 z-20 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm">
         <div className="px-4 h-14 flex items-center justify-between">
-          <Link href="/dashboard">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image
               src="/heatrank-logo.png"
               alt="HeatRank AI"
-              width={140}
-              height={32}
-              style={{ height: "32px", width: "auto" }}
+              width={26}
+              height={26}
+              className="rounded-md"
               priority
             />
+            <span className="text-sm font-semibold tracking-tight">
+              <span className="text-zinc-100">HeatRank</span>
+              <span className="text-zinc-400"> AI</span>
+            </span>
           </Link>
           <button
             onClick={handleSignOut}

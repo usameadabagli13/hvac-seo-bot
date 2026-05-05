@@ -177,15 +177,19 @@ export default async function LandingPage({
       {/* ── Nav ─────────────────────────────────────────────────────────────── */}
       <header className="relative border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <Image
               src="/heatrank-logo.png"
               alt="HeatRank AI"
-              width={140}
-              height={36}
-              style={{ height: "36px", width: "auto" }}
+              width={28}
+              height={28}
+              className="rounded-md"
               priority
             />
+            <span className="text-sm font-semibold tracking-tight">
+              <span className="text-zinc-100">HeatRank</span>
+              <span className="text-zinc-400"> AI</span>
+            </span>
           </Link>
 
           <nav className="flex items-center gap-5">
