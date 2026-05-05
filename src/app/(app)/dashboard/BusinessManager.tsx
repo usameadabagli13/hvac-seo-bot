@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, Pencil, X } from "lucide-react";
+import Link from "next/link";
+import { BarChart3, Pencil, X, ExternalLink } from "lucide-react";
 import BusinessForm from "./BusinessForm";
 
 export interface Business {
@@ -84,21 +85,30 @@ export default function BusinessManager({
                         </a>
                       )}
                     </div>
-                    <button
-                      onClick={() => setEditingBusiness(isEditing ? null : biz)}
-                      className={`flex-shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all duration-150 ${
-                        isEditing
-                          ? "bg-white/[0.06] border-white/[0.12] text-zinc-300 hover:text-zinc-100"
-                          : "bg-white/[0.03] border-white/[0.07] text-zinc-600 hover:text-zinc-300 hover:border-white/[0.12]"
-                      }`}
-                      aria-label={isEditing ? "Cancel editing" : `Edit ${biz.business_name}`}
-                    >
-                      {isEditing ? (
-                        <><X className="w-3 h-3" /> Cancel</>
-                      ) : (
-                        <><Pencil className="w-3 h-3" /> Edit</>
-                      )}
-                    </button>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <Link
+                        href={`/dashboard/businesses/${biz.id}`}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border bg-white/[0.03] border-white/[0.07] text-zinc-600 hover:text-zinc-300 hover:border-white/[0.12] transition-all duration-150"
+                        aria-label={`View details for ${biz.business_name}`}
+                      >
+                        <ExternalLink className="w-3 h-3" /> View
+                      </Link>
+                      <button
+                        onClick={() => setEditingBusiness(isEditing ? null : biz)}
+                        className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all duration-150 ${
+                          isEditing
+                            ? "bg-white/[0.06] border-white/[0.12] text-zinc-300 hover:text-zinc-100"
+                            : "bg-white/[0.03] border-white/[0.07] text-zinc-600 hover:text-zinc-300 hover:border-white/[0.12]"
+                        }`}
+                        aria-label={isEditing ? "Cancel editing" : `Edit ${biz.business_name}`}
+                      >
+                        {isEditing ? (
+                          <><X className="w-3 h-3" /> Cancel</>
+                        ) : (
+                          <><Pencil className="w-3 h-3" /> Edit</>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {Array.isArray(biz.target_keywords) && biz.target_keywords.length > 0 && (
