@@ -18,6 +18,8 @@ import DemoWidget from "@/components/marketing/DemoWidget";
 import FaqAccordion from "@/components/marketing/FaqAccordion";
 import PricingToggle from "@/components/marketing/PricingToggle";
 
+export const revalidate = 3600;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Static data — defined outside the component so the module is tree-shaken
 // ─────────────────────────────────────────────────────────────────────────────

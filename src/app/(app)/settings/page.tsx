@@ -41,23 +41,22 @@ export default async function SettingsPage({
   periodStart.setDate(1);
   const periodStartStr = periodStart.toISOString().split("T")[0]; // YYYY-MM-DD
 
-  const { data: usageRows } = await supabase
-    .from("ai_usage")
-    .select("feature, count")
-    .eq("user_id", user.id)
-    .eq("period_start", periodStartStr);
+  const [{ data: usageRows }, { data: profile }] = await Promise.all([
+    supabase
+      .from("ai_usage")
+      .select("feature, count")
+      .eq("user_id", user.id)
+      .eq("period_start", periodStartStr),
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+  ]);
 
   const usageMap = Object.fromEntries(
     (usageRows ?? []).map((r) => [r.feature, r.count as number])
   );
-
-  // profiles.full_name is the source of truth; fall back to auth metadata for
-  // legacy accounts that may not have a profiles row yet.
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("user_id", user.id)
-    .maybeSingle();
 
   const devMode = process.env.NODE_ENV === "development";
   const displayName: string =

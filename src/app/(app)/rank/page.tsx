@@ -60,24 +60,23 @@ export default async function RankPage() {
       keyword      = latest.keyword;
       snapshotDate = latest.snapshot_date;
 
-      // Fetch all grid points for the latest snapshot
-      const { data: currentRows } = await supabase
-        .from("rank_snapshots")
-        .select("lat, lng, rank_position")
-        .eq("business_id", biz.id)
-        .eq("keyword", keyword)
-        .eq("snapshot_date", snapshotDate);
-
-      // Fetch the previous snapshot date for trend arrows
-      const { data: prevLatest } = await supabase
-        .from("rank_snapshots")
-        .select("snapshot_date")
-        .eq("business_id", biz.id)
-        .eq("keyword", keyword)
-        .lt("snapshot_date", snapshotDate)
-        .order("snapshot_date", { ascending: false })
-        .limit(1)
-        .single();
+      const [{ data: currentRows }, { data: prevLatest }] = await Promise.all([
+        supabase
+          .from("rank_snapshots")
+          .select("lat, lng, rank_position")
+          .eq("business_id", biz.id)
+          .eq("keyword", keyword)
+          .eq("snapshot_date", snapshotDate),
+        supabase
+          .from("rank_snapshots")
+          .select("snapshot_date")
+          .eq("business_id", biz.id)
+          .eq("keyword", keyword)
+          .lt("snapshot_date", snapshotDate)
+          .order("snapshot_date", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
 
       // Build a lookup of previous ranks by "lat,lng"
       const prevMap = new Map<string, number | null>();

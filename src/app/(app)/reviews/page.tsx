@@ -30,18 +30,27 @@ export default async function ReviewsPage({
   const user = session?.user;
   if (!user) redirect("/login");
 
-  const { error: oauthError } = await searchParams;
-  const gbpStatus = await getGBPStatus(user.id);
+  const [{ error: oauthError }, gbpStatus, { data: dbRows }, { data: firstBiz }] = await Promise.all([
+    searchParams,
+    getGBPStatus(user.id),
+    supabase
+      .from("reviews")
+      .select("review_id, author, platform, rating, body, sentiment, ai_reply, replied_at, review_date, fetched_at, business_id, businesses(business_name)")
+      .eq("user_id", user.id)
+      .order("review_date", { ascending: false })
+      .limit(50),
+    supabase
+      .from("businesses")
+      .select("id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   // ── Load reviews from DB ─────────────────────────────────────────────────────
   // Phase 3.2: reviews are persisted in the `reviews` table and shown from there.
   // The "Sync Reviews" button calls /api/reviews/fetch to pull fresh data from GBP.
-  const { data: dbRows } = await supabase
-    .from("reviews")
-    .select("review_id, author, platform, rating, body, sentiment, ai_reply, replied_at, review_date, fetched_at, business_id, businesses(business_name)")
-    .eq("user_id", user.id)
-    .order("review_date", { ascending: false })
-    .limit(50);
 
   // Map DB rows → Review type used by ReviewFeed
   let reviews: Review[] = MOCK_REVIEWS;
@@ -74,15 +83,6 @@ export default async function ReviewsPage({
   for (const r of reviews) {
     distribution[r.rating] = (distribution[r.rating] ?? 0) + 1;
   }
-
-  // Get first business id for the sync button target
-  const { data: firstBiz } = await supabase
-    .from("businesses")
-    .select("id")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
 
   return (
     <>

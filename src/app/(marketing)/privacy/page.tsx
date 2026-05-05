@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Zap } from "lucide-react";
 import type { Metadata } from "next";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Privacy Policy — HeatRank AI",
 };
