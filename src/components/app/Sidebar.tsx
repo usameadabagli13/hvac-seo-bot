@@ -6,12 +6,21 @@ import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin, CreditC
 import { useState, useEffect } from "react";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",          icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
-  { href: "/reviews",            icon: MessageSquare, label: "Reviews",       shortcut: "G R" },
-  { href: "/rank",               icon: MapPin,        label: "Rank Tracker",  shortcut: "G K" },
-  { href: "/schema",             icon: Code2,         label: "Schema Markup", shortcut: null  },
-  { href: "/settings",           icon: Settings,      label: "Settings",      shortcut: "G S" },
-  { href: "/settings?tab=billing", icon: CreditCard,  label: "Billing",       shortcut: null  },
+  { href: "/dashboard",            icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
+  { href: "/reviews",              icon: MessageSquare, label: "Reviews",       shortcut: "G R" },
+  { href: "/rank",                 icon: MapPin,        label: "Rank Tracker",  shortcut: "G K" },
+  { href: "/schema",               icon: Code2,         label: "Schema Markup", shortcut: null  },
+  { href: "/settings",             icon: Settings,      label: "Settings",      shortcut: "G S" },
+  { href: "/settings?tab=billing", icon: CreditCard,    label: "Billing",       shortcut: null  },
+];
+
+// Mobile bottom nav — 5 items max. Schema is desktop-only; Billing replaces it.
+const MOBILE_NAV_ITEMS = [
+  { href: "/dashboard",            icon: BarChart3,     label: "Dashboard" },
+  { href: "/reviews",              icon: MessageSquare, label: "Reviews"   },
+  { href: "/rank",                 icon: MapPin,        label: "Rank"      },
+  { href: "/settings?tab=billing", icon: CreditCard,    label: "Billing"   },
+  { href: "/settings",             icon: Settings,      label: "Settings"  },
 ];
 
 export default function Sidebar() {
@@ -170,18 +179,18 @@ export default function Sidebar() {
       {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t border-white/[0.06] bg-zinc-950/90 backdrop-blur-sm">
         <div className="flex items-center justify-around h-16">
-          {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
+          {MOBILE_NAV_ITEMS.map(({ href, icon: Icon, label }) => {
             const active = isActive(href);
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors duration-150 ${
+                className={`flex flex-col items-center gap-1 px-3 py-2 transition-colors duration-150 ${
                   active ? "text-zinc-100" : "text-zinc-600 hover:text-zinc-300"
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{label.split(" ")[0]}</span>
+                <span className="text-xs font-medium">{label}</span>
               </Link>
             );
           })}
