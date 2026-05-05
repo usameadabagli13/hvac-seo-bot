@@ -402,9 +402,13 @@ export default async function LandingPage({
       <footer className="border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-md bg-white/[0.05] border border-white/[0.08]">
-              <Zap className="w-3 h-3 text-zinc-600" />
-            </div>
+            <Image
+              src="/heatrank-logo.png"
+              alt="HeatRank AI"
+              width={20}
+              height={20}
+              className="rounded w-5 h-5 opacity-60"
+            />
             <span className="text-sm text-zinc-500 font-medium">HeatRank AI</span>
           </div>
 
