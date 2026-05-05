@@ -109,7 +109,7 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
               alt="HeatRank AI"
               width={28}
               height={28}
-              className="rounded-md"
+              className="rounded-xl"
               priority
             />
             <span className="text-sm font-semibold tracking-tight">
@@ -189,7 +189,7 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
               alt="HeatRank AI"
               width={26}
               height={26}
-              className="rounded-md"
+              className="rounded-xl"
               priority
             />
             <span className="text-sm font-semibold tracking-tight">

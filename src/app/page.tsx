@@ -183,7 +183,7 @@ export default async function LandingPage({
               alt="HeatRank AI"
               width={36}
               height={36}
-              className="rounded-lg w-9 h-9"
+              className="rounded-xl w-9 h-9"
               priority
             />
             <span className="text-base font-semibold tracking-tight leading-none">
@@ -407,7 +407,7 @@ export default async function LandingPage({
               alt="HeatRank AI"
               width={20}
               height={20}
-              className="rounded w-5 h-5 opacity-60"
+              className="rounded-xl w-5 h-5 opacity-60"
             />
             <span className="text-sm text-zinc-500 font-medium">HeatRank AI</span>
           </div>
