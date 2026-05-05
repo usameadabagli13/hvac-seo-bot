@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import ReviewFeed, { MOCK_REVIEWS, type Review } from "@/components/app/ReviewFeed";
+import ReviewFeed, { type Review } from "@/components/app/ReviewFeed";
 import { getGBPStatus } from "@/lib/gbp";
 import GBPConnectBanner from "@/components/app/GBPConnectBanner";
 import SyncReviewsButton from "@/components/app/SyncReviewsButton";
@@ -53,7 +53,7 @@ export default async function ReviewsPage({
   // The "Sync Reviews" button calls /api/reviews/fetch to pull fresh data from GBP.
 
   // Map DB rows → Review type used by ReviewFeed
-  let reviews: Review[] = MOCK_REVIEWS;
+  let reviews: Review[] = [];
   let fromDB = false;
   let lastFetchedAt: string | null = null;
 

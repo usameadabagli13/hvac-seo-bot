@@ -27,7 +27,13 @@ const MOBILE_MORE = [
   { href: "/settings", icon: Settings,  label: "Settings"      },
 ];
 
-export default function Sidebar() {
+const PLAN_LABELS: Record<"starter" | "pro" | "agency", string> = {
+  starter: "Starter",
+  pro:     "Pro",
+  agency:  "Agency",
+};
+
+export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro" | "agency" }) {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
@@ -152,7 +158,9 @@ export default function Sidebar() {
             <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-0.5">
               Plan
             </p>
-            <p className="text-xs font-semibold text-zinc-400">Free</p>
+            <p className={`text-xs font-semibold ${plan === "pro" ? "text-emerald-400" : plan === "agency" ? "text-amber-400" : "text-zinc-400"}`}>
+              {PLAN_LABELS[plan]}
+            </p>
           </Link>
           <button
             onClick={handleSignOut}
