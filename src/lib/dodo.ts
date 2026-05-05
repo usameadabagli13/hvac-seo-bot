@@ -1,38 +1,47 @@
 import DodoPayments from "dodopayments";
 
-const dodo = new DodoPayments({
-  bearerToken: process.env.DODO_PAYMENTS_API_KEY!,
-  environment: "live_mode",
-});
-
-export default dodo;
-
 export type Plan = "starter" | "pro" | "agency";
 export type BillingInterval = "monthly" | "yearly";
 
-// ── Product ID map: fill from your Dodo Payments dashboard ───────────────────
-// Each plan × interval pair = one Dodo product.
-export const PLAN_PRODUCTS: Record<Plan, Record<BillingInterval, string>> = {
-  starter: {
-    monthly: process.env.DODO_PRODUCT_STARTER_MONTHLY ?? "",
-    yearly:  process.env.DODO_PRODUCT_STARTER_YEARLY  ?? "",
-  },
-  pro: {
-    monthly: process.env.DODO_PRODUCT_PRO_MONTHLY ?? "",
-    yearly:  process.env.DODO_PRODUCT_PRO_YEARLY  ?? "",
-  },
-  agency: {
-    monthly: process.env.DODO_PRODUCT_AGENCY_MONTHLY ?? "",
-    yearly:  process.env.DODO_PRODUCT_AGENCY_YEARLY  ?? "",
-  },
-};
+// Lazy singleton — instantiated on first call, not at module load time.
+// This prevents build-time crashes when env vars are only available at runtime.
+let _client: DodoPayments | null = null;
+export function getDodoClient(): DodoPayments {
+  if (!_client) {
+    _client = new DodoPayments({
+      bearerToken: process.env.DODO_PAYMENTS_API_KEY!,
+      environment: "live_mode",
+    });
+  }
+  return _client;
+}
 
-// Reverse lookup used by the webhook handler
-export const PRODUCT_TO_PLAN: Record<string, Plan> = Object.fromEntries(
-  (Object.entries(PLAN_PRODUCTS) as [Plan, Record<BillingInterval, string>][]).flatMap(
-    ([plan, intervals]) =>
-      Object.values(intervals)
-        .filter(Boolean)
-        .map((productId) => [productId, plan])
-  )
-);
+// ── Product ID map: fill from your Dodo Payments dashboard ───────────────────
+export function getPlanProducts(): Record<Plan, Record<BillingInterval, string>> {
+  return {
+    starter: {
+      monthly: process.env.DODO_PRODUCT_STARTER_MONTHLY ?? "",
+      yearly:  process.env.DODO_PRODUCT_STARTER_YEARLY  ?? "",
+    },
+    pro: {
+      monthly: process.env.DODO_PRODUCT_PRO_MONTHLY ?? "",
+      yearly:  process.env.DODO_PRODUCT_PRO_YEARLY  ?? "",
+    },
+    agency: {
+      monthly: process.env.DODO_PRODUCT_AGENCY_MONTHLY ?? "",
+      yearly:  process.env.DODO_PRODUCT_AGENCY_YEARLY  ?? "",
+    },
+  };
+}
+
+// Reverse lookup: product_id → plan (used by webhook handler)
+export function getProductToPlan(): Record<string, Plan> {
+  return Object.fromEntries(
+    (Object.entries(getPlanProducts()) as [Plan, Record<BillingInterval, string>][]).flatMap(
+      ([plan, intervals]) =>
+        Object.values(intervals)
+          .filter(Boolean)
+          .map((productId) => [productId, plan])
+    )
+  );
+}

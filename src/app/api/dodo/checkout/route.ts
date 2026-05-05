@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import dodo, { PLAN_PRODUCTS, type Plan, type BillingInterval } from "@/lib/dodo";
+import { getDodoClient, getPlanProducts, type Plan, type BillingInterval } from "@/lib/dodo";
 
 export async function POST(request: NextRequest) {
   // Verify session
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const productId = PLAN_PRODUCTS[plan]?.[interval];
+  const productId = getPlanProducts()[plan]?.[interval];
   if (!productId) {
     return NextResponse.json({ error: "Unknown plan or interval" }, { status: 400 });
   }
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
 
   try {
+    const dodo = getDodoClient();
     const session = await dodo.checkoutSessions.create({
       product_cart: [{ product_id: productId, quantity: 1 }],
       customer: {

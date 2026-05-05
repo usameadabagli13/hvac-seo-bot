@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "standardwebhooks";
-import { PRODUCT_TO_PLAN, type Plan } from "@/lib/dodo";
+import { getProductToPlan, type Plan } from "@/lib/dodo";
 
 // Service-role client bypasses RLS — never expose to client
 function getServiceClient() {
@@ -103,7 +103,8 @@ export async function POST(request: NextRequest) {
 
   // ── Map product → plan ────────────────────────────────────────────────────
   const productId = extractProductId(data);
-  const newPlan: Plan = (productId && PRODUCT_TO_PLAN[productId]) ? PRODUCT_TO_PLAN[productId] : "starter";
+  const productToPlan = getProductToPlan();
+  const newPlan: Plan = (productId && productToPlan[productId]) ? productToPlan[productId] : "starter";
 
   // ── Update profiles.plan ──────────────────────────────────────────────────
   switch (eventType) {
