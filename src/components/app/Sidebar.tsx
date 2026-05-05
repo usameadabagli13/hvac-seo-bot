@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin, CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin, CreditCard, MoreHorizontal, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 const NAV_ITEMS = [
   { href: "/dashboard",            icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
@@ -14,19 +14,25 @@ const NAV_ITEMS = [
   { href: "/settings?tab=billing", icon: CreditCard,    label: "Billing",       shortcut: null  },
 ];
 
-// Mobile bottom nav — 5 items max. Schema is desktop-only; Billing replaces it.
-const MOBILE_NAV_ITEMS = [
+// Mobile bottom nav — 4 primary + "More" drawer for the rest
+const MOBILE_PRIMARY = [
   { href: "/dashboard",            icon: BarChart3,     label: "Dashboard" },
   { href: "/reviews",              icon: MessageSquare, label: "Reviews"   },
   { href: "/rank",                 icon: MapPin,        label: "Rank"      },
   { href: "/settings?tab=billing", icon: CreditCard,    label: "Billing"   },
-  { href: "/settings",             icon: Settings,      label: "Settings"  },
+];
+
+const MOBILE_MORE = [
+  { href: "/schema",   icon: Code2,     label: "Schema Markup" },
+  { href: "/settings", icon: Settings,  label: "Settings"      },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   // Chord shortcuts: G → D = /dashboard, G → S = /settings
   useEffect(() => {
@@ -70,6 +76,9 @@ export default function Sidebar() {
       clearTimeout(armTimer);
     };
   }, [router]);
+
+  // Close "More" sheet on navigation
+  useEffect(() => { setMoreOpen(false); }, [pathname]);
 
   const handleSignOut = () => {
     setSigningOut(true);
@@ -176,10 +185,57 @@ export default function Sidebar() {
         </div>
       </header>
 
+      {/* ── Mobile "More" sheet ──────────────────────────────────────────── */}
+      {moreOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 flex flex-col justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMoreOpen(false)}
+          />
+          {/* Sheet */}
+          <div
+            ref={sheetRef}
+            className="relative z-10 rounded-t-2xl border-t border-white/[0.08] bg-zinc-950 px-4 pb-8 pt-4"
+          >
+            {/* Handle */}
+            <div className="mx-auto mb-4 w-10 h-1 rounded-full bg-white/[0.10]" />
+            <p className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest mb-3 px-1">
+              More
+            </p>
+            <div className="space-y-1">
+              {MOBILE_MORE.map(({ href, icon: Icon, label }) => {
+                const active = isActive(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors duration-150 ${
+                      active
+                        ? "bg-white/[0.07] text-zinc-100"
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200"
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-zinc-300" : "text-zinc-600"}`} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setMoreOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.04] transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t border-white/[0.06] bg-zinc-950/90 backdrop-blur-sm">
         <div className="flex items-center justify-around h-16">
-          {MOBILE_NAV_ITEMS.map(({ href, icon: Icon, label }) => {
+          {MOBILE_PRIMARY.map(({ href, icon: Icon, label }) => {
             const active = isActive(href);
             return (
               <Link
@@ -194,6 +250,17 @@ export default function Sidebar() {
               </Link>
             );
           })}
+
+          {/* More button */}
+          <button
+            onClick={() => setMoreOpen((v) => !v)}
+            className={`flex flex-col items-center gap-1 px-3 py-2 transition-colors duration-150 ${
+              moreOpen ? "text-zinc-100" : "text-zinc-600 hover:text-zinc-300"
+            }`}
+          >
+            <MoreHorizontal className="w-5 h-5" />
+            <span className="text-xs font-medium">More</span>
+          </button>
         </div>
       </nav>
     </>
