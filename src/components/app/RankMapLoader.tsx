@@ -18,6 +18,8 @@ interface Props {
   snapshotDate: string;
   points:       HeatmapPoint[];
   businessId:   string;
+  centerLat:    number;
+  centerLng:    number;
 }
 
 export default function RankMapLoader(props: Props) {

@@ -20,6 +20,8 @@ interface Props {
   snapshotDate: string;
   points:       HeatmapPoint[];
   businessId:   string;
+  centerLat:    number;
+  centerLng:    number;
 }
 
 interface PopupInfo {
@@ -98,7 +100,7 @@ const labelLayer: LayerProps = {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function RankMap({ keyword, snapshotDate, points, businessId }: Props) {
+export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng }: Props) {
   const router  = useRouter();
   const mapRef  = useRef<MapRef>(null);
   const [popup,   setPopup]   = useState<PopupInfo | null>(null);
@@ -140,11 +142,13 @@ export default function RankMap({ keyword, snapshotDate, points, businessId }: P
   // ── Initial viewport ─────────────────────────────────────────────────────────
 
   const initialView = useMemo(() => {
-    if (!points.length) return { latitude: 32.7767, longitude: -96.797, zoom: 11 };
-    const lat = points.reduce((s, p) => s + p.lat, 0) / points.length;
-    const lng = points.reduce((s, p) => s + p.lng, 0) / points.length;
-    return { latitude: lat, longitude: lng, zoom: 11 };
-  }, [points]);
+    if (points.length) {
+      const lat = points.reduce((s, p) => s + p.lat, 0) / points.length;
+      const lng = points.reduce((s, p) => s + p.lng, 0) / points.length;
+      return { latitude: lat, longitude: lng, zoom: 11 };
+    }
+    return { latitude: centerLat, longitude: centerLng, zoom: 11 };
+  }, [points, centerLat, centerLng]);
 
   // ── Map interactions ─────────────────────────────────────────────────────────
 
@@ -186,32 +190,7 @@ export default function RankMap({ keyword, snapshotDate, points, businessId }: P
     }
   };
 
-  // ── Empty state ──────────────────────────────────────────────────────────────
-
-  if (points.length === 0) {
-    return (
-      <div className="rounded-2xl border border-dashed border-white/[0.07] bg-white/[0.01] px-6 py-14 flex flex-col items-center text-center gap-4">
-        <p className="text-sm text-zinc-500">No rank data yet for this business.</p>
-        <p className="text-xs text-zinc-700 max-w-xs leading-relaxed">
-          In production, &ldquo;Run Snapshot&rdquo; calls the Google Places API across 25 grid
-          points. In development, seed mock data to preview the heatmap.
-        </p>
-        {process.env.NODE_ENV === "development" && (
-          <button
-            onClick={handleSeedMock}
-            disabled={seeding}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-50"
-          >
-            {seeding
-              ? <Loader2 className="w-4 h-4 animate-spin" />
-              : <RefreshCw className="w-4 h-4" />}
-            {seeding ? "Seeding…" : "Seed Mock Data"}
-          </button>
-        )}
-        {seedMsg && <p className="text-xs text-zinc-500">{seedMsg}</p>}
-      </div>
-    );
-  }
+  // ── (no early return — map renders even with empty points, overlay shows instead) ──
 
   // ── Popup helpers ────────────────────────────────────────────────────────────
 
@@ -259,8 +238,31 @@ export default function RankMap({ keyword, snapshotDate, points, businessId }: P
         <p className="text-xs text-zinc-600">{snapshotDate}</p>
       </div>
 
+      {/* Seed button (dev only, shown below map when empty) */}
+      {points.length === 0 && process.env.NODE_ENV === "development" && (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSeedMock}
+            disabled={seeding}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-50"
+          >
+            {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            {seeding ? "Seeding…" : "Seed Mock Data"}
+          </button>
+          {seedMsg && <p className="text-xs text-zinc-500">{seedMsg}</p>}
+        </div>
+      )}
+
       {/* Map */}
-      <div className="rounded-2xl overflow-hidden border border-white/[0.08]" style={{ height: 500 }}>
+      <div className="relative rounded-2xl overflow-hidden border border-white/[0.08]" style={{ height: 500 }}>
+        {points.length === 0 && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-black/50 pointer-events-none">
+            <p className="text-sm font-medium text-zinc-300">No rank data yet</p>
+            <p className="text-xs text-zinc-500 max-w-[220px] text-center leading-relaxed">
+              Run a snapshot to see rankings across your service area.
+            </p>
+          </div>
+        )}
         {!process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? (
           <div className="h-full flex items-center justify-center bg-zinc-900">
             <p className="text-xs text-zinc-500 text-center max-w-xs">

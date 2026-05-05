@@ -38,7 +38,7 @@ export default async function ReviewsPage({
   // The "Sync Reviews" button calls /api/reviews/fetch to pull fresh data from GBP.
   const { data: dbRows } = await supabase
     .from("reviews")
-    .select("review_id, author, platform, rating, body, sentiment, ai_reply, is_replied, review_date, fetched_at, business_id, businesses(business_name)")
+    .select("review_id, author, platform, rating, body, sentiment, ai_reply, replied_at, review_date, fetched_at, business_id, businesses(business_name)")
     .eq("user_id", user.id)
     .order("review_date", { ascending: false })
     .limit(50);
@@ -62,7 +62,7 @@ export default async function ReviewsPage({
         body:         row.body,
         date:         row.review_date,
         sentiment:    row.sentiment as Review["sentiment"],
-        replied:      row.is_replied ?? false,
+        replied:      row.replied_at !== null,
         aiReply:      row.ai_reply ?? null,
         businessName: biz?.business_name ?? "Your Business",
       };

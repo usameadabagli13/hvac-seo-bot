@@ -24,6 +24,23 @@ export default async function RankPage() {
 
   const biz = businesses?.[0] ?? null;
 
+  // ── Geocode service_location for map center ───────────────────────────────
+  let centerLat = 39.5;
+  let centerLng = -98.35;
+  if (biz?.service_location && process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
+    try {
+      const geoRes = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(biz.service_location)}.json?limit=1&types=place,district,region&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`,
+        { next: { revalidate: 86400 } }
+      );
+      if (geoRes.ok) {
+        const geoData = await geoRes.json() as { features?: { center: [number, number] }[] };
+        const center = geoData.features?.[0]?.center;
+        if (center) { centerLng = center[0]; centerLat = center[1]; }
+      }
+    } catch {}
+  }
+
   // ── Load latest snapshot date for this business ───────────────────────────
   let keyword      = "";
   let snapshotDate = "";
@@ -133,6 +150,8 @@ export default async function RankPage() {
               snapshotDate={snapshotDate}
               points={heatmapPoints}
               businessId={biz.id}
+              centerLat={centerLat}
+              centerLng={centerLng}
             />
 
           </div>

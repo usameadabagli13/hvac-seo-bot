@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin } from "lucide-react";
+import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
-  { href: "/reviews",   icon: MessageSquare, label: "Reviews",       shortcut: "G R" },
-  { href: "/rank",      icon: MapPin,        label: "Rank Tracker",  shortcut: "G K" },
-  { href: "/schema",    icon: Code2,         label: "Schema Markup", shortcut: null  },
-  { href: "/settings",  icon: Settings,      label: "Settings",      shortcut: "G S" },
+  { href: "/dashboard",          icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
+  { href: "/reviews",            icon: MessageSquare, label: "Reviews",       shortcut: "G R" },
+  { href: "/rank",               icon: MapPin,        label: "Rank Tracker",  shortcut: "G K" },
+  { href: "/schema",             icon: Code2,         label: "Schema Markup", shortcut: null  },
+  { href: "/settings",           icon: Settings,      label: "Settings",      shortcut: "G S" },
+  { href: "/settings?tab=billing", icon: CreditCard,  label: "Billing",       shortcut: null  },
 ];
 
 export default function Sidebar() {
