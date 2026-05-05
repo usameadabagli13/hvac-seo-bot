@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { deleteAccount } from "@/app/(app)/settings/actions";
 import { Loader2, Check, AlertTriangle, User, BarChart2, CreditCard, Trash2 } from "lucide-react";
+import type { Plan, BillingInterval } from "@/lib/dodo";
 
 interface UsageItem {
   feature: string;
@@ -19,6 +20,7 @@ interface Props {
   initialName: string;
   usageItems: UsageItem[];
   initialTab: "profile" | "usage" | "billing" | "danger";
+  currentPlan: Plan;
 }
 
 const TABS = [
@@ -80,14 +82,22 @@ function UsageBar({ item }: { item: UsageItem }) {
   );
 }
 
-// ── Billing data ──────────────────────────────────────────────────────────────
-const BILLING_PLANS = [
+// ── Billing plan definitions ──────────────────────────────────────────────────
+const BILLING_PLANS: {
+  id: Plan;
+  name: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  desc: string;
+  highlight: boolean;
+  features: string[];
+}[] = [
   {
+    id: "starter",
     name: "Starter",
     monthlyPrice: 39,
     annualPrice: 32,
     desc: "For solo contractors exploring SEO.",
-    current: true,
     highlight: false,
     features: [
       "1 business",
@@ -97,11 +107,11 @@ const BILLING_PLANS = [
     ],
   },
   {
+    id: "pro",
     name: "Pro",
     monthlyPrice: 69,
     annualPrice: 55,
     desc: "Everything you need to dominate local search.",
-    current: false,
     highlight: true,
     features: [
       "5 businesses",
@@ -116,11 +126,11 @@ const BILLING_PLANS = [
     ],
   },
   {
+    id: "agency",
     name: "Agency",
     monthlyPrice: 199,
     annualPrice: 159,
     desc: "For agencies managing multiple HVAC clients.",
-    current: false,
     highlight: false,
     features: [
       "Unlimited businesses",
@@ -139,7 +149,7 @@ const BILLING_PLANS = [
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function SettingsTabs({ userId, email, initialName, usageItems, initialTab }: Props) {
+export default function SettingsTabs({ userId, email, initialName, usageItems, initialTab, currentPlan }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isAnnual, setIsAnnual] = useState(true);
 
@@ -148,6 +158,10 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Billing state
+  const [upgradingPlan, setUpgradingPlan] = useState<Plan | null>(null);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
 
   // Danger zone state
   const [confirmInput, setConfirmInput] = useState("");
@@ -174,6 +188,27 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
       setSaveError(err instanceof Error ? err.message : "Failed to save. Please try again.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpgrade = async (plan: Plan) => {
+    setUpgradingPlan(plan);
+    setUpgradeError(null);
+    try {
+      const interval: BillingInterval = isAnnual ? "yearly" : "monthly";
+      const res = await fetch("/api/dodo/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, interval }),
+      });
+      const json = await res.json() as { url?: string; error?: string };
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? "Could not start checkout. Please try again.");
+      }
+      window.location.href = json.url;
+    } catch (err) {
+      setUpgradeError(err instanceof Error ? err.message : "Unexpected error.");
+      setUpgradingPlan(null);
     }
   };
 
@@ -332,20 +367,28 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
             )}
           </div>
 
+          {/* Upgrade error */}
+          {upgradeError && (
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-2.5">
+              {upgradeError}
+            </p>
+          )}
+
           {/* Plan cards */}
           {BILLING_PLANS.map((plan) => {
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
             const savings = (plan.monthlyPrice - plan.annualPrice) * 12;
+            const isCurrent = plan.id === currentPlan;
+            const isLoading = upgradingPlan === plan.id;
 
             if (plan.highlight) {
               return (
-                <div key={plan.name} className="relative rounded-2xl overflow-hidden">
+                <div key={plan.id} className="relative rounded-2xl overflow-hidden">
                   {/* Glow */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-transparent pointer-events-none" />
                   <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-zinc-400/40 via-zinc-600/20 to-transparent pointer-events-none" />
 
                   <div className="relative rounded-2xl border border-white/[0.20] bg-zinc-900 px-5 py-5 space-y-4">
-                    {/* Most Popular banner */}
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -353,6 +396,11 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-widest">
                             ✦ Most Popular
                           </span>
+                          {isCurrent && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
+                              Current
+                            </span>
+                          )}
                         </div>
                         {isAnnual && savings > 0 ? (
                           <p className="text-[11px] text-emerald-400 font-medium">
@@ -385,12 +433,23 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
                       ))}
                     </div>
 
-                    <button
-                      disabled
-                      className="w-full px-4 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-bold cursor-not-allowed opacity-60"
-                    >
-                      Payments coming soon
-                    </button>
+                    {isCurrent ? (
+                      <div className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 text-center">
+                        Current Plan
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleUpgrade(plan.id)}
+                        disabled={isLoading || upgradingPlan !== null}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-bold hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:pointer-events-none shadow-lg shadow-black/20"
+                      >
+                        {isLoading ? (
+                          <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
+                        ) : (
+                          `Upgrade to ${plan.name}`
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -398,14 +457,14 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
 
             return (
               <div
-                key={plan.name}
+                key={plan.id}
                 className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 space-y-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <p className="text-base font-semibold text-zinc-100">{plan.name}</p>
-                      {plan.current && (
+                      {isCurrent && (
                         <span className="px-2 py-0.5 rounded-full bg-zinc-700/50 border border-white/[0.07] text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
                           Current Plan
                         </span>
@@ -435,19 +494,24 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
 
                 <div className="pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-x-4 gap-y-1.5">
                   {plan.features.map((f) => (
-                    <div key={f} className={`flex items-center gap-1.5 text-xs ${plan.current ? "text-zinc-500" : "text-zinc-400"}`}>
-                      <Check className={`w-3 h-3 flex-shrink-0 ${plan.current ? "text-zinc-600" : "text-zinc-500"}`} />
+                    <div key={f} className={`flex items-center gap-1.5 text-xs ${isCurrent ? "text-zinc-500" : "text-zinc-400"}`}>
+                      <Check className={`w-3 h-3 flex-shrink-0 ${isCurrent ? "text-zinc-600" : "text-zinc-500"}`} />
                       {f}
                     </div>
                   ))}
                 </div>
 
-                {!plan.current && (
+                {!isCurrent && (
                   <button
-                    disabled
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-400 cursor-not-allowed"
+                    onClick={() => handleUpgrade(plan.id)}
+                    disabled={isLoading || upgradingPlan !== null}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.10] text-sm font-semibold text-zinc-300 hover:bg-white/[0.10] hover:text-zinc-100 active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:pointer-events-none"
                   >
-                    Payments coming soon
+                    {isLoading ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</>
+                    ) : (
+                      `Upgrade to ${plan.name}`
+                    )}
                   </button>
                 )}
               </div>

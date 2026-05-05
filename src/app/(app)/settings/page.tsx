@@ -49,7 +49,7 @@ export default async function SettingsPage({
       .eq("period_start", periodStartStr),
     supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, plan")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
@@ -63,6 +63,7 @@ export default async function SettingsPage({
     profile?.full_name ??
     (user.user_metadata?.full_name as string | undefined) ??
     "";
+  const currentPlan = (profile?.plan as "starter" | "pro" | "agency") ?? "starter";
 
   // Build usage items — in dev mode limits are null so the bar shows "Dev Mode"
   const usageItems = Object.entries(FREE_LIMITS).map(([feature, limit]) => ({
@@ -97,6 +98,7 @@ export default async function SettingsPage({
           initialName={displayName}
           usageItems={usageItems}
           initialTab={initialTab}
+          currentPlan={currentPlan}
         />
       </main>
     </>
