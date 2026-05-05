@@ -111,11 +111,12 @@ export async function POST(request: NextRequest) {
     case "subscription.active":
     case "subscription.renewed":
     case "subscription.updated":
+      // Paid → end the trial window so resolveTrialState() stops counting down.
       await supabase
         .from("profiles")
-        .update({ plan: newPlan })
+        .update({ plan: newPlan, trial_ends_at: null })
         .eq("user_id", userId);
-      console.log(`[dodo/webhook] ${eventType}: user=${userId} plan=${newPlan}`);
+      console.log(`[dodo/webhook] ${eventType}: user=${userId} plan=${newPlan} (trial cleared)`);
       break;
 
     case "subscription.cancelled":

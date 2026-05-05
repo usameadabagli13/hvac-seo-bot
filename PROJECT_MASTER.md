@@ -70,7 +70,8 @@ competitors (id, business_id, name, place_id, avg_rating, review_count, tracked_
 seo_audits (id, business_id, crawled_url, page_title, h1, meta_description, issues jsonb, score int, audited_at)
 
 -- PHASE 6
-profiles.plan (column added to profiles: 'starter' | 'pro' | 'agency', default 'starter')
+profiles.plan (column added: 'starter' | 'pro' | 'agency', default 'starter')
+profiles.trial_ends_at (column added: timestamptz nullable; future=active trial, past=expired, NULL=subscribed)
 ai_usage (id, user_id, feature text, count int, period_start date, UNIQUE(user_id, feature, period_start))
 dodo_events (id uuid, event_id text UNIQUE, event_type text, processed_at timestamptz)  -- idempotency
 
@@ -277,12 +278,13 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Webhook URL registered: `https://www.heatrankai.com/api/dodo/webhook`
 
 ### 6.2 14-Day Free Trial
-- [ ] Add `trial_ends_at timestamptz` column to `profiles` table
-- [ ] On first signup: set `trial_ends_at = now() + interval '14 days'`
-- [ ] **Trial countdown banner** — sticky top bar; "X days left in your free trial · Upgrade" gösterir; 14. günde hesap frozen
+- [x] `trial_ends_at timestamptz` column added to `profiles` (migration `20260505000005`)
+- [x] Signup trigger sets `plan = 'pro'` + `trial_ends_at = now() + 14 days`
+- [x] `src/lib/trial.ts` — `resolveTrialState()` auto-downgrades to 'starter' when expired
+- [x] **Trial countdown banner** — sticky top bar; X days left + Upgrade CTA; red urgency when expired
+- [x] Webhook clears `trial_ends_at = NULL` on paid subscription (no more countdown after payment)
 - [ ] Day 12: email via Resend — "2 days left in your trial"
-- [ ] Day 14: middleware checks `trial_ends_at < now()` and `plan = 'starter'` → read-only freeze
-- [ ] Frozen state: full-screen upgrade CTA overlay
+- [ ] Frozen state: full-screen upgrade CTA overlay (currently degrades silently to Starter limits)
 
 ### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
 - [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1` via `increment_ai_usage` RPC
@@ -545,7 +547,7 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [ ] **SAB checkbox** — BusinessForm.tsx'e "Service Area Business" toggle + `businesses.is_service_area_business` migration (20 dk)
 - [ ] **HVAC keyword chips** — rank sayfası keyword input'una tıklanabilir chip önerileri (15 dk)
 - [ ] **Test Mode badge** — rank mock data görünürken "Try free, no credits used" rozeti (30 dk)
-- [ ] **14-day trial + countdown banner** — `profiles.trial_ends_at` column + sticky top banner + middleware freeze (Phase 6.2) ← EN ACİL
+- [x] **14-day trial + countdown banner** — `profiles.trial_ends_at` + auto-downgrade + sticky banner + Dodo webhook clears trial on payment (Phase 6.2)
 - [ ] **Activation Checklist kartı** — dashboard'a "Add Business → Connect GBP → Run First Scan" adım kartı (kısa vade)
 - [ ] **Sidebar usage widget** — "Replies: 2/3" göstergesi sidebar'a taşı (kısa vade)
 - [ ] **GBP production approval başvurusu** — Google 4-8 hafta sürüyor, şimdi başla
