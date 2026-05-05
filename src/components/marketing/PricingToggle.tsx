@@ -74,12 +74,12 @@ export default function PricingToggle({ plans }: { plans: Plan[] }) {
 
           return plan.highlight ? (
               /* ── Pro card — prominently highlighted ── */
-              <div key={plan.name} className="relative rounded-2xl overflow-hidden flex flex-col">
+              <div key={plan.name} className="relative rounded-2xl overflow-hidden flex flex-col md:scale-[1.06] md:z-10 shadow-[0_0_60px_-10px_rgba(255,255,255,0.10)]">
                 {/* Gradient glow layers */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.09] via-white/[0.04] to-transparent pointer-events-none" />
-                <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-zinc-300/50 via-zinc-500/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.11] via-white/[0.05] to-transparent pointer-events-none" />
+                <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-white/70 via-white/15 to-transparent pointer-events-none" />
 
-                <div className="relative rounded-2xl border border-white/[0.22] bg-zinc-900 p-6 flex flex-col flex-1">
+                <div className="relative rounded-2xl border border-white/[0.30] bg-zinc-900 p-6 flex flex-col flex-1">
                   <span className="inline-flex w-fit items-center gap-1 px-3 py-1 rounded-full bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-widest mb-4 shadow-lg">
                     ✦ Most Popular
                   </span>
