@@ -53,7 +53,16 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url });
   } catch (err) {
-    console.error("[dodo] checkout session error:", err);
-    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+    const status = (err as { status?: number }).status;
+    const body   = (err as { error?: unknown }).error;
+    const msg    = err instanceof Error ? err.message : String(err);
+    console.error("[dodo] checkout session error:", { status, body, msg });
+    const detail = body
+      ? JSON.stringify(body)
+      : msg;
+    return NextResponse.json(
+      { error: `Dodo error (${status ?? "?"}): ${detail}` },
+      { status: 500 },
+    );
   }
 }

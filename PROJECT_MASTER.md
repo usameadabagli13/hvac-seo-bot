@@ -33,8 +33,8 @@ The form accepts any string as `website_url`. A bad URL will silently break the 
 ### 4. RLS Policy Gap — Service-Role Key Exposure Risk
 Never expose `SUPABASE_SERVICE_ROLE_KEY` to Client Components. All admin writes (Phase 8) must go through Server Actions or API routes only.
 
-### 5. Stripe Webhook Idempotency Trap
-Stripe can fire the same webhook event twice. Every webhook handler **must** use `stripe_event_id` as a unique key with an `ON CONFLICT DO NOTHING` upsert — or users get double-upgraded.
+### 5. Dodo Webhook Idempotency Trap
+Dodo Payments can fire the same webhook event twice. Every webhook handler **must** use `event_id` (from `webhook-id` header) as a unique key in `dodo_events` table — implemented and live.
 
 ### 6. GBP OAuth ≠ Places API
 Google Business Profile API requires OAuth 2.0 with `https://www.googleapis.com/auth/business.manage` — it is **NOT** the same credential as Google Maps/Places. Plan a separate OAuth flow stored in an `integrations` table.
@@ -70,9 +70,9 @@ competitors (id, business_id, name, place_id, avg_rating, review_count, tracked_
 seo_audits (id, business_id, crawled_url, page_title, h1, meta_description, issues jsonb, score int, audited_at)
 
 -- PHASE 6
-subscriptions (id, user_id, stripe_customer_id, stripe_subscription_id, plan text, status text, current_period_end timestamptz)
+profiles.plan (column added to profiles: 'starter' | 'pro' | 'agency', default 'starter')
 ai_usage (id, user_id, feature text, count int, period_start date, UNIQUE(user_id, feature, period_start))
-stripe_events (id, stripe_event_id text UNIQUE, processed_at timestamptz)  -- idempotency
+dodo_events (id uuid, event_id text UNIQUE, event_type text, processed_at timestamptz)  -- idempotency
 
 -- PHASE 7
 report_jobs (id, user_id, business_id, report_type text, status text, file_url text, scheduled_at timestamptz, sent_at timestamptz)
@@ -129,15 +129,15 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 ### 2.2 Dashboard Home (`/dashboard`)
 - [x] Fix `indigo-*` color leaks (see Critique #2 above)
 - [x] Migrated into `(app)` route group — Sidebar layout now wraps dashboard
-- [ ] Global stats: Reviews Fetched, Avg Rating (Businesses + Keywords already live)
-- [ ] Recent activity feed (last 5 actions across all businesses)
-- [ ] Quick-action buttons: Add Business, Generate Report, View Reviews
-- [ ] Empty state with onboarding CTA for new users
+- [x] Global stats: Reviews count, Businesses count, Keywords count
+- [x] Recent activity feed (last 3 reviews with author, rating, business name)
+- [x] Quick-action buttons: Reviews / Rank Tracker / Schema Markup
+- [x] Empty state with onboarding CTA for new users
 
 ### 2.3 Business Detail Page (`/dashboard/businesses/[id]`)
-- [ ] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
-- [ ] Edit business form
-- [ ] Soft delete wit`deleted_at` column (RLS filters it out)
+- [x] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
+- [ ] Edit business form (inline edit on detail page)
+- [ ] Soft delete with `deleted_at` column (RLS filters it out)
 
 ### 2.4 Settings (`/settings`)
 - [x] Profile tab: display name (saved to auth metadata), email (read-only)
@@ -273,9 +273,10 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [ ] Frozen state: banner + upgrade CTA on every app page
 
 ### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
-- [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1`
-- [x] `checkUsageAllowed(userId, feature)` — compare count vs. plan limit
+- [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1` via `increment_ai_usage` RPC
+- [x] `checkUsageAllowed(userId, feature)` — compare count vs. Starter plan limit
 - [x] Wire into every AI route before calling Gemini
+- [x] Limits match Phase 6.4 table: keyword_generation=1/mo, review_reply=3/mo
 
 ### 6.4 Pricing & Plan Limits
 
@@ -354,7 +355,7 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 ### 8.3 System Health Panel
 - [ ] Gemini API quota status
 - [ ] Supabase DB size + row counts per table
-- [ ] Failed Stripe webhook events list
+- [ ] Failed Dodo webhook events list
 
 ---
 
@@ -435,8 +436,8 @@ src/
       layout.tsx
     admin/                # SuperAdmin, separate layout + role check
     api/
-      stripe/webhook/route.ts
-      stripe/create-checkout/route.ts
+      dodo/webhook/route.ts
+      dodo/checkout/route.ts
       reviews/fetch/route.ts
       reviews/generate-reply/route.ts
       crawl/route.ts
@@ -466,10 +467,15 @@ SUPABASE_SERVICE_ROLE_KEY=          # Server-side ONLY
 # Gemini
 GEMINI_API_KEY=
 
-# Stripe
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+# Dodo Payments
+DODO_PAYMENTS_API_KEY=
+DODO_PAYMENTS_WEBHOOK_SECRET=
+DODO_PRODUCT_STARTER_MONTHLY=
+DODO_PRODUCT_STARTER_YEARLY=
+DODO_PRODUCT_PRO_MONTHLY=
+DODO_PRODUCT_PRO_YEARLY=
+DODO_PRODUCT_AGENCY_MONTHLY=
+DODO_PRODUCT_AGENCY_YEARLY=
 
 # Google (Phase 3+)
 GOOGLE_CLIENT_ID=
@@ -527,3 +533,6 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] Wire `profiles.full_name` to Settings: reads from `profiles` (falls back to auth metadata), saves to both
 - [x] Apply pending Supabase migrations (run `supabase db push`)
 - [x] **Dodo Payments live** — checkout + webhook + billing UI wired (Phase 6.1 ✅)
+- [x] **usage.ts limits fixed** — keyword_generation: 1/mo, review_reply: 3/mo (matches Phase 6.4 pricing table)
+- [x] **Business detail page live** — 5-tab layout (Overview / Keywords / Reviews / SEO Audit / Competitors)
+- [x] **Dashboard stats + activity feed** — real review count, recent 3 reviews, quick-action cards

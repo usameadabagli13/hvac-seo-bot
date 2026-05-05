@@ -1,11 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 
-// Monthly limits per feature for the Free tier.
+// Monthly limits per feature for the Starter tier.
 // Phase 6 extension point: swap this lookup for a plan query against
-// the `subscriptions` table once Stripe is wired up.
+// the profiles table (profiles.plan) once paid plans are gated.
 const FREE_LIMITS: Record<string, number> = {
-  keyword_generation: 2,
-  review_reply: 5,
+  keyword_generation: 1,
+  review_reply: 3,
 };
 
 function getPeriodStart(): string {
