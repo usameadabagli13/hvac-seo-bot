@@ -142,10 +142,10 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 ### 2.4 Settings (`/settings`)
 - [x] Profile tab: display name (saved to auth metadata), email (read-only)
 - [x] API Usage tab: visual usage bars per feature with monthly reset date
-- [x] Billing tab: current plan badge + upgrade CTA (Stripe portal in Phase 6)
+- [x] Billing tab: current plan badge + Dodo Payments checkout buttons (live)
 - [x] Danger zone: Delete account with "type DELETE" confirmation + cascade
 - [ ] Avatar upload to Supabase Storage (deferred — needs Storage bucket setup)
-- [ ] Stripe Customer Portal self-serve link (Phase 6)
+- [ ] Dodo Customer Portal self-serve link for cancellation/billing management
 
 ### 2.5 Navigation Shell
 - [x] Sidebar (desktop) + bottom nav (mobile)
@@ -166,6 +166,8 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Review cards: author avatar, star rating, sentiment badge, platform, body with expand
 - [x] "Generate AI Reply" placeholder button (disabled until Phase 3.1 GBP connected)
 - [x] Reviews added to Sidebar nav (`G R` shortcut)
+- [ ] "SAMPLE DATA" badge on mock data cards — show when GBP not connected
+- [ ] "This uses 1 credit" tooltip/warning before generating a reply (freemium UX)
 
 ### 3.1 GBP OAuth Integration
 - [x] `integrations` table with RLS (migration `20260501000001_add_integrations.sql`)
@@ -212,6 +214,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 **Goal:** The visual "wow" feature that justifies a Pro subscription renewal every month.
 
 ### 4.1 Grid-Based Local Rank Heatmap
+- [ ] Business + keyword dropdown selectors (currently hardcoded to first business)
 - [ ] User sets a target keyword per business (UI + DB column)
 - [ ] Generate 5×5 grid of lat/lng points around business (1-mile spacing)
 - [ ] Call Google Places Text Search API for each grid point (25 calls per snapshot)
@@ -297,8 +300,6 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 
-> ⚠️ Settings page currently shows "$49" and "Phase 6 coming" — fix before any public launch.
-
 ### 6.5 Paywall UI Components
 - [ ] `<UpgradeGate feature="..." />` — blurred overlay with "Upgrade to Pro" CTA
 - [ ] `<UsageBar feature="..." />` — bar for settings page
@@ -378,6 +379,9 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [x] Include: name, address, phone, location, openingHours, priceRange, areaServed
 - [x] One-click copy to clipboard (copies full `<script>` tag)
 - [x] CMS-tailored embed instructions (WordPress snippet vs. raw HTML `<head>` tag)
+- [ ] Business selector dropdown (multi-business support — currently hardcoded to first)
+- [ ] "Test with Google Rich Results" external link → validates the generated schema
+- [ ] Weekend hours support (Sat/Sun checkbox + time inputs)
 - [ ] Store in `schema_markup` table with version history (Phase 9.2 full)
 
 ### 9.3 Google Business Profile Post Scheduler
@@ -527,7 +531,11 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] **Settings quick-fixes:** billing "$49" → "$69"; remove "Phase 6 coming"; usage limits 2 kw→1, 5 reply→3; "FREE" badge → "STARTER"
 - [x] **UI label cleanup:** "Phase 4" removed from `/rank`; "Phase 3.4" removed from `/reviews`
 - [x] **Landing page:** header CTA "Start Free" → "Start Free Trial"
-- [ ] Add Privacy Policy + Terms of Service pages (footer links go to existing `/privacy` and `/terms` — check content)
+- [ ] Add Privacy Policy + Terms of Service pages (footer links go to `/privacy` and `/terms` — currently 404)
+- [ ] **Mobile responsive pass** — test all pages at 390px (Chrome DevTools): overflow, touch targets ≥44px, font sizes
+- [ ] **GBP production approval başvurusu** — Google 4-8 hafta sürüyor, şimdi başla
+- [ ] **14-day trial** — `trial_ends_at` column on profiles + middleware freeze (Phase 6.2) ← EN ACİL
+- [ ] Multi-business selector: rank + schema sayfalarında dropdown
 - [x] Add `loading.tsx` skeleton to `/reviews`, `/rank`, `/schema`, `/settings`
 - [x] Add `error.tsx` to `/rank` (others already existed)
 - [x] Wire `profiles.full_name` to Settings: reads from `profiles` (falls back to auth metadata), saves to both
