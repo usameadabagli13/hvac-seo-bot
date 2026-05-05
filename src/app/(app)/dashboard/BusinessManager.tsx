@@ -11,6 +11,7 @@ export interface Business {
   service_location: string;
   website_url: string | null;
   target_keywords: string[] | null;
+  is_service_area_business: boolean | null;
   created_at: string;
 }
 

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import {
   Building2,
   MapPin,
@@ -15,6 +14,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Pencil,
+  Truck,
 } from "lucide-react";
 import type { Business } from "./BusinessManager";
 
@@ -51,6 +51,7 @@ interface FormState {
   business_name: string;
   service_location: string;
   website_url: string;
+  is_service_area_business: boolean;
 }
 
 // ── LocationInput ─────────────────────────────────────────────────────────────
@@ -175,6 +176,7 @@ export default function BusinessForm({
     business_name: "",
     service_location: "",
     website_url: "",
+    is_service_area_business: false,
   });
 
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -193,6 +195,7 @@ export default function BusinessForm({
         business_name: editingBusiness.business_name,
         service_location: editingBusiness.service_location,
         website_url: editingBusiness.website_url ?? "",
+        is_service_area_business: editingBusiness.is_service_area_business ?? false,
       });
       setKeywords(
         Array.isArray(editingBusiness.target_keywords)
@@ -200,7 +203,7 @@ export default function BusinessForm({
           : []
       );
     } else {
-      setForm({ business_name: "", service_location: "", website_url: "" });
+      setForm({ business_name: "", service_location: "", website_url: "", is_service_area_business: false });
       setKeywords([]);
     }
     setError(null);
@@ -269,7 +272,7 @@ export default function BusinessForm({
     setKeywords((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ── Save to Supabase ───────────────────────────────────────────────────────
+  // ── Save via API route (server validates website_url) ─────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -283,41 +286,27 @@ export default function BusinessForm({
       return;
     }
 
-    if (form.website_url.trim()) {
-      try {
-        const raw = form.website_url.trim();
-        new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
-      } catch {
-        setError("Please enter a valid website URL (e.g. https://yoursite.com).");
-        return;
-      }
-    }
-
     setIsSaving(true);
     try {
-      const supabase = createClient();
-
-      const fields = {
-        business_name: form.business_name.trim(),
-        service_location: form.service_location.trim(),
-        website_url: form.website_url.trim() || null,
-        target_keywords: keywords,
+      const payload = {
+        ...(editingBusiness ? { id: editingBusiness.id } : {}),
+        business_name:            form.business_name.trim(),
+        service_location:         form.service_location.trim(),
+        website_url:              form.website_url.trim() || null,
+        target_keywords:          keywords,
+        is_service_area_business: form.is_service_area_business,
       };
 
-      if (editingBusiness) {
-        console.log("[BusinessForm] Updating business:", editingBusiness.id, fields);
-        const { error: dbError } = await supabase
-          .from("businesses")
-          .update(fields)
-          .eq("id", editingBusiness.id)
-          .eq("user_id", userId);
-        if (dbError) throw dbError;
-      } else {
-        console.log("[BusinessForm] Inserting new business:", fields);
-        const { error: dbError } = await supabase
-          .from("businesses")
-          .insert({ ...fields, user_id: userId });
-        if (dbError) throw dbError;
+      const res = await fetch("/api/businesses", {
+        method:  editingBusiness ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json() as { error?: string };
+        setError(data.error ?? "Failed to save. Please try again.");
+        return;
       }
 
       setSaveSuccess(true);
@@ -326,18 +315,13 @@ export default function BusinessForm({
         setSaveSuccess(false);
         onSaved?.();
         if (!editingBusiness) {
-          setForm({ business_name: "", service_location: "", website_url: "" });
+          setForm({ business_name: "", service_location: "", website_url: "", is_service_area_business: false });
           setKeywords([]);
         }
       }, 1500);
     } catch (err: unknown) {
-      const e = err as Record<string, unknown>;
-      console.error("[BusinessForm] DB error:", e?.["message"] ?? err);
-      const msg =
-        err instanceof Error
-          ? err.message
-          : (e?.["message"] as string) || "Failed to save. Please try again.";
-      setError(msg);
+      console.error("[BusinessForm] fetch error:", err);
+      setError("Failed to save. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -424,6 +408,32 @@ export default function BusinessForm({
             }
           />
         </div>
+
+        {/* ── SAB Toggle ───────────────────────────────────────────── */}
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <div className="relative mt-0.5 flex-shrink-0">
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={form.is_service_area_business}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, is_service_area_business: e.target.checked }))
+              }
+            />
+            <div className="w-10 h-5 rounded-full border border-white/[0.10] bg-white/[0.04] peer-checked:bg-emerald-500/80 peer-checked:border-emerald-400/60 transition-colors duration-200" />
+            <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-zinc-400 peer-checked:bg-white peer-checked:translate-x-5 transition-all duration-200 shadow-sm" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-sm font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+              <Truck className="w-3.5 h-3.5 text-zinc-500" />
+              Service Area Business
+            </div>
+            <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">
+              No physical storefront — technicians travel to customers (common for HVAC).
+              Hides your address on Google Business Profile.
+            </p>
+          </div>
+        </label>
 
         {/* ── Website URL ───────────────────────────────────────────── */}
         <div className="space-y-1.5">

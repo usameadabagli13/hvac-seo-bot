@@ -20,6 +20,7 @@ interface Props {
   businessId:   string;
   centerLat:    number;
   centerLng:    number;
+  isMock:       boolean;
 }
 
 export default function RankMapLoader(props: Props) {

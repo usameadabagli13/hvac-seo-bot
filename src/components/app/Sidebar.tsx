@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Settings, Zap, LogOut, Code2, MessageSquare, MapPin, CreditCard, MoreHorizontal, X } from "lucide-react";
+import { BarChart3, Settings, LogOut, Code2, MessageSquare, MapPin, CreditCard, MoreHorizontal, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const NAV_ITEMS = [
@@ -102,13 +103,15 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
       <aside className="hidden lg:flex flex-col w-56 border-r border-white/[0.06] bg-zinc-950 fixed inset-y-0 left-0 z-30">
         {/* Logo */}
         <div className="px-4 h-14 flex items-center border-b border-white/[0.06] flex-shrink-0">
-          <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10] group-hover:border-white/[0.18] transition-colors duration-150">
-              <Zap className="w-3.5 h-3.5 text-zinc-300" />
-            </div>
-            <span className="text-sm font-semibold text-zinc-100 tracking-tight">
-              HeatRank AI
-            </span>
+          <Link href="/dashboard">
+            <Image
+              src="/heatrank-logo.png"
+              alt="HeatRank AI"
+              width={140}
+              height={36}
+              style={{ height: "36px", width: "auto" }}
+              priority
+            />
           </Link>
         </div>
 
@@ -176,11 +179,15 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
       {/* ── Mobile top bar ───────────────────────────────────────────────── */}
       <header className="lg:hidden sticky top-0 z-20 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm">
         <div className="px-4 h-14 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10]">
-              <Zap className="w-3.5 h-3.5 text-zinc-300" />
-            </div>
-            <span className="text-sm font-semibold text-zinc-100">HeatRank AI</span>
+          <Link href="/dashboard">
+            <Image
+              src="/heatrank-logo.png"
+              alt="HeatRank AI"
+              width={140}
+              height={32}
+              style={{ height: "32px", width: "auto" }}
+              priority
+            />
           </Link>
           <button
             onClick={handleSignOut}

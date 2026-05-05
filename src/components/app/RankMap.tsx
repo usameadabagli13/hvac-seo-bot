@@ -6,7 +6,7 @@ import type { LayerProps, MapRef } from "react-map-gl/mapbox";
 import type { MapMouseEvent } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/navigation";
-import { Loader2, RefreshCw, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, TrendingDown, Minus, FlaskConical } from "lucide-react";
 
 export interface HeatmapPoint {
   lat:           number;
@@ -22,6 +22,7 @@ interface Props {
   businessId:   string;
   centerLat:    number;
   centerLng:    number;
+  isMock:       boolean;
 }
 
 interface PopupInfo {
@@ -100,13 +101,16 @@ const labelLayer: LayerProps = {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng }: Props) {
+const KEYWORD_CHIPS = ["AC repair", "furnace install", "emergency HVAC", "ductwork", "heat pump"];
+
+export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng, isMock }: Props) {
   const router  = useRouter();
   const mapRef  = useRef<MapRef>(null);
-  const [popup,   setPopup]   = useState<PopupInfo | null>(null);
-  const [cursor,  setCursor]  = useState("grab");
-  const [seeding, setSeeding] = useState(false);
-  const [seedMsg, setSeedMsg] = useState<string | null>(null);
+  const [popup,      setPopup]      = useState<PopupInfo | null>(null);
+  const [cursor,     setCursor]     = useState("grab");
+  const [seeding,    setSeeding]    = useState(false);
+  const [seedMsg,    setSeedMsg]    = useState<string | null>(null);
+  const [keywordVal, setKeywordVal] = useState(keyword);
 
   // ── Stats ────────────────────────────────────────────────────────────────────
 
@@ -211,6 +215,22 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
   return (
     <div className="space-y-6">
 
+      {/* Test Mode badge — only when viewing mock/demo data */}
+      {isMock && (
+        <div className="flex items-center gap-2.5 rounded-xl border border-violet-500/25 bg-violet-500/[0.07] px-4 py-2.5">
+          <FlaskConical className="h-4 w-4 flex-shrink-0 text-violet-400" />
+          <div className="flex-1 min-w-0">
+            <span className="text-sm font-medium text-violet-200">Test Mode</span>
+            <span className="hidden sm:inline text-sm text-violet-300/70">
+              {" "}· Try free — this is demo data, no credits are used.
+            </span>
+          </div>
+          <span className="flex-shrink-0 rounded-full bg-violet-500/20 border border-violet-400/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-300">
+            Demo
+          </span>
+        </div>
+      )}
+
       {/* Stats strip */}
       <div className="grid grid-cols-4 gap-3">
         {[
@@ -230,12 +250,34 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
       </div>
 
       {/* Keyword + date */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs text-zinc-600 uppercase tracking-widest mb-0.5">Keyword</p>
-          <p className="text-sm font-semibold text-zinc-200">{keyword}</p>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-600 uppercase tracking-widest">Keyword</p>
+          <p className="text-xs text-zinc-600">{snapshotDate}</p>
         </div>
-        <p className="text-xs text-zinc-600">{snapshotDate}</p>
+        <input
+          type="text"
+          value={keywordVal}
+          onChange={(e) => setKeywordVal(e.target.value)}
+          placeholder="e.g. AC repair"
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+        />
+        <div className="flex flex-wrap gap-2">
+          {KEYWORD_CHIPS.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => setKeywordVal(chip)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-100 ${
+                keywordVal === chip
+                  ? "border-white/30 bg-white/10 text-zinc-100"
+                  : "border-white/[0.08] bg-white/[0.02] text-zinc-500 hover:border-white/20 hover:text-zinc-300"
+              }`}
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Seed button (dev only, shown below map when empty) */}

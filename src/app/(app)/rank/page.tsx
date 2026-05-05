@@ -45,12 +45,13 @@ export default async function RankPage() {
   let keyword      = "";
   let snapshotDate = "";
   let heatmapPoints: HeatmapPoint[] = [];
+  let isMock = false;
 
   if (biz) {
     // Find the most recent snapshot date
     const { data: latest } = await supabase
       .from("rank_snapshots")
-      .select("keyword, snapshot_date")
+      .select("keyword, snapshot_date, is_mock")
       .eq("business_id", biz.id)
       .order("snapshot_date", { ascending: false })
       .limit(1)
@@ -59,6 +60,7 @@ export default async function RankPage() {
     if (latest) {
       keyword      = latest.keyword;
       snapshotDate = latest.snapshot_date;
+      isMock       = latest.is_mock ?? false;
 
       const [{ data: currentRows }, { data: prevLatest }] = await Promise.all([
         supabase
@@ -151,6 +153,7 @@ export default async function RankPage() {
               businessId={biz.id}
               centerLat={centerLat}
               centerLng={centerLng}
+              isMock={isMock}
             />
 
           </div>

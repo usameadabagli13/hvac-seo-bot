@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "HeatRank AI — Rank Higher, Get More HVAC Calls",
   description:
     "AI-powered local SEO tools built for HVAC contractors. Generate keywords, manage Google reviews, and track your local rankings — without an agency.",
+  icons: {
+    icon: "/heatrank-logo.png",
+    apple: "/heatrank-logo.png",
+  },
   openGraph: {
     title: "HeatRank AI — Rank Higher, Get More HVAC Calls",
     description:

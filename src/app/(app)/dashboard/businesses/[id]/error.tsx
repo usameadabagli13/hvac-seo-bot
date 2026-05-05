@@ -2,7 +2,7 @@
 
 import ErrorView from "@/components/app/ErrorView";
 
-export default function SchemaError({
+export default function BusinessDetailError({
   error,
   reset,
 }: {
@@ -13,8 +13,8 @@ export default function SchemaError({
     <ErrorView
       error={error}
       reset={reset}
-      title="Schema Generator failed to load"
-      description="We couldn't load the schema builder. Your existing schema is untouched — try again."
+      title="Business details failed to load"
+      description="We couldn't load this business's data. Your reviews and settings are safe — try again."
     />
   );
 }

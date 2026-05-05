@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sparkles,
   MessageSquare,
@@ -7,8 +8,6 @@ import {
   FileSearch,
   Users,
   FileText,
-  Check,
-  Minus,
   ChevronRight,
   Zap,
   Shield,
@@ -178,13 +177,15 @@ export default async function LandingPage({
       {/* ── Nav ─────────────────────────────────────────────────────────────── */}
       <header className="relative border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/[0.05] border border-white/[0.10]">
-              <Zap className="w-3.5 h-3.5 text-zinc-300" />
-            </div>
-            <span className="text-sm font-semibold text-zinc-100 tracking-tight">
-              HeatRank AI
-            </span>
+          <Link href="/">
+            <Image
+              src="/heatrank-logo.png"
+              alt="HeatRank AI"
+              width={140}
+              height={36}
+              style={{ height: "36px", width: "auto" }}
+              priority
+            />
           </Link>
 
           <nav className="flex items-center gap-5">

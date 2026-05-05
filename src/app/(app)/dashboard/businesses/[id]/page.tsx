@@ -160,6 +160,7 @@ export default async function BusinessDetailPage({
             service_location: business.service_location,
             website_url: business.website_url ?? null,
             target_keywords: keywords,
+            is_service_area_business: business.is_service_area_business ?? null,
             created_at: business.created_at,
           }}
           userId={session.user.id}

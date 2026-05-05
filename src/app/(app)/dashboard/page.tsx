@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   const [{ data: businesses }, { count: reviewCount }, { data: recentReviews }] = await Promise.all([
     supabase
       .from("businesses")
-      .select("id, business_name, service_location, website_url, target_keywords, created_at")
+      .select("id, business_name, service_location, website_url, target_keywords, is_service_area_business, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
     supabase

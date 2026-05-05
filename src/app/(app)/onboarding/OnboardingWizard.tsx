@@ -76,34 +76,27 @@ export default function OnboardingWizard({ userId, initialName }: Props) {
     clearError();
     if (!businessName.trim()) { setError("Business name is required."); return; }
     if (!serviceLocation.trim()) { setError("Service location is required."); return; }
-    if (websiteUrl.trim()) {
-      try {
-        const raw = websiteUrl.trim();
-        new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
-      } catch {
-        setError("Please enter a valid website URL (e.g. https://yoursite.com).");
-        return;
-      }
-    }
     setIsLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: err } = await supabase
-        .from("businesses")
-        .insert({
-          user_id: userId,
-          business_name: businessName.trim(),
+      const res = await fetch("/api/businesses", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          business_name:    businessName.trim(),
           service_location: serviceLocation.trim(),
-          website_url: websiteUrl.trim() || null,
-          target_keywords: [],
-        })
-        .select("id")
-        .single();
-      if (err) throw err;
-      setBusinessId(data.id);
+          website_url:      websiteUrl.trim() || null,
+          target_keywords:  [],
+        }),
+      });
+      const data = await res.json() as { id?: string; error?: string };
+      if (!res.ok) {
+        setError(data.error ?? "Failed to create business.");
+        return;
+      }
+      setBusinessId(data.id!);
       setStep(2);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to create business.");
+    } catch {
+      setError("Failed to create business. Please try again.");
     } finally {
       setIsLoading(false);
     }

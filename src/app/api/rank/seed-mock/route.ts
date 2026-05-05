@@ -33,6 +33,7 @@ export async function POST() {
   const rows = MOCK_SNAPSHOTS_ALL.map((s) => ({
     ...s,
     business_id: business.id,
+    is_mock: true,
   }));
 
   const { error: upsertError, count } = await supabase
