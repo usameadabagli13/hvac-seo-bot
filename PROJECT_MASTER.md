@@ -11,7 +11,7 @@
 | Auth + DB | Supabase (PostgreSQL + RLS) | `@supabase/ssr` v0.10 |
 | AI | Gemini 2.5 Flash | JSON mode enforced |
 | Styling | Tailwind CSS v4 | Monochromatic zinc palette — **NO purple/indigo** |
-| Payments | LemonSqueezy → Stripe | LemonSqueezy first (Merchant of Record, no LLC needed); migrate to Stripe at $5K MRR |
+| Payments | Dodo Payments | Merchant of Record — no LLC needed; webhook at `/api/dodo/webhook` |
 | Hosting | Vercel (recommended) | Edge middleware for auth |
 
 ---
@@ -257,19 +257,13 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 **Goal:** Every feature in Phases 1–5 needs a paywall retrofit. Schema is already planned above — implement it now.
 
-### 6.1 Payment Integration
-**Option A — LemonSqueezy (recommended for launch):**
-- [ ] Create LemonSqueezy account; create products: Starter ($39/mo), Pro ($69/mo), Agency ($199/mo)
-- [ ] `npm install @lemonsqueezy/lemonsqueezy-js`
-- [ ] `/api/lemonsqueezy/webhook` — handles `subscription_created`, `subscription_updated`, `subscription_cancelled`
-- [ ] Update `subscriptions` table on every webhook event
-- [ ] Idempotency: upsert `stripe_events` table (reuse schema) with LemonSqueezy event ID
-
-**Option B — Stripe (migrate at $5K MRR):**
-- [ ] `npm install stripe`
-- [ ] Create products: Starter ($39/mo), Pro ($69/mo), Agency ($199/mo)
-- [ ] `/api/stripe/create-checkout` + `/api/stripe/webhook`
-- [ ] Idempotency: upsert `stripe_events(stripe_event_id UNIQUE)` on every webhook (Critique #5)
+### 6.1 Payment Integration — ✅ Dodo Payments (LIVE)
+- [x] `npm install dodopayments standardwebhooks`
+- [x] `src/lib/dodo.ts` — lazy singleton client + `PLAN_PRODUCTS` + `PRODUCT_TO_PLAN`
+- [x] `/api/dodo/checkout` — creates checkout session, returns redirect URL
+- [x] `/api/dodo/webhook` — Standard Webhooks signature verification, idempotency via `dodo_events` table, updates `profiles.plan`
+- [x] Products created in Dodo dashboard: Starter/Pro/Agency × monthly/yearly (6 products)
+- [x] Webhook URL registered: `https://www.heatrankai.com/api/dodo/webhook`
 
 ### 6.2 14-Day Free Trial
 - [ ] Add `trial_ends_at timestamptz` to `subscriptions` table (or as a separate column on `profiles`)
@@ -309,7 +303,7 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [ ] `<UsageBar feature="..." />` — bar for settings page
 - [ ] `<PlanBadge />` — sidebar plan indicator
 - [ ] `/pricing` page with annual toggle (2 months free)
-- [ ] Payment portal link for self-serve cancellation (LemonSqueezy customer portal)
+- [ ] Payment portal link for self-serve cancellation (Dodo Payments customer portal)
 
 ---
 
@@ -497,7 +491,7 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 | Month | Focus | Phases |
 |---|---|---|
 | 1 | Ship publicly, acquire first beta users | Phase 1 polish (Trial CTA, Privacy/ToS), Phase 2 (Onboarding ✅), pre-launch settings fixes |
-| 2 | First payment — this is the #1 milestone | Phase 6 (LemonSqueezy + 14-day trial + paywalls), Phase 3 review engine polish |
+| 2 | First payment — this is the #1 milestone | Phase 6 ✅ Dodo Payments live + 14-day trial + paywalls, Phase 3 review engine polish |
 | 3 | Expand SEO toolset | Phase 5 (Crawler), Phase 9.1 (Citations MVP) |
 | 4 | Rank tracking live + competitors | Phase 4 (live Google Places snapshots, competitor spy) |
 | 5 | Retention + agency push | Phase 7 (PDF reports), Phase 9.5 (White-label MVP) |
@@ -531,5 +525,5 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] Add `loading.tsx` skeleton to `/reviews`, `/rank`, `/schema`, `/settings`
 - [x] Add `error.tsx` to `/rank` (others already existed)
 - [x] Wire `profiles.full_name` to Settings: reads from `profiles` (falls back to auth metadata), saves to both
-- [ ] Apply pending Supabase migrations: `20260502000003_add_profiles.sql` (run `supabase db push`)
-- [ ] **Start LemonSqueezy account setup** — required for any paid launch (Phase 6.1)
+- [x] Apply pending Supabase migrations (run `supabase db push`)
+- [x] **Dodo Payments live** — checkout + webhook + billing UI wired (Phase 6.1 ✅)
