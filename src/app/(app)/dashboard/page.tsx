@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import BusinessManager from "./BusinessManager";
-import { BarChart3, Tag, FileText, Zap, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { BarChart3, Tag, MessageSquare, Zap, ChevronRight, MapPin, Code2, Star } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -10,11 +11,23 @@ export default async function DashboardPage() {
   const user = session?.user;
   if (!user) redirect("/login");
 
-  const { data: businesses } = await supabase
-    .from("businesses")
-    .select("id, business_name, service_location, website_url, target_keywords, created_at")
-    .eq("user_id", user!.id)
-    .order("created_at", { ascending: false });
+  const [{ data: businesses }, { count: reviewCount }, { data: recentReviews }] = await Promise.all([
+    supabase
+      .from("businesses")
+      .select("id, business_name, service_location, website_url, target_keywords, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("reviews")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("reviews")
+      .select("author, rating, body, review_date, businesses(business_name)")
+      .eq("user_id", user.id)
+      .order("review_date", { ascending: false })
+      .limit(3),
+  ]);
 
   const totalKeywords = (businesses ?? []).reduce(
     (sum, b) => sum + (Array.isArray(b.target_keywords) ? b.target_keywords.length : 0),
@@ -74,40 +87,70 @@ export default async function DashboardPage() {
         {/* Stats row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {[
-            {
-              label: "Businesses Added",
-              value: businesses?.length ?? 0,
-              icon: <BarChart3 className="w-4 h-4 text-zinc-400" />,
-            },
-            {
-              label: "Keywords Tracked",
-              value: totalKeywords,
-              icon: <Tag className="w-4 h-4 text-zinc-400" />,
-            },
-            {
-              label: "Reports Generated",
-              value: "—",
-              icon: <FileText className="w-4 h-4 text-zinc-500" />,
-            },
+            { label: "Businesses", value: businesses?.length ?? 0,  icon: <BarChart3   className="w-4 h-4 text-zinc-400" /> },
+            { label: "Keywords",   value: totalKeywords,              icon: <Tag         className="w-4 h-4 text-zinc-400" /> },
+            { label: "Reviews",    value: reviewCount ?? 0,           icon: <MessageSquare className="w-4 h-4 text-zinc-400" /> },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4 flex items-center gap-4"
-            >
+            <div key={stat.label} className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4 flex items-center gap-4">
               <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
                 {stat.icon}
               </div>
               <div>
                 <p className="text-xs text-zinc-600 mb-0.5">{stat.label}</p>
-                <p className="text-2xl font-semibold text-zinc-300">
-                  {stat.value}
-                </p>
+                <p className="text-2xl font-semibold text-zinc-300">{stat.value}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <BusinessManager userId={user!.id} businesses={businesses ?? []} />
+        {/* ── Recent reviews (if any) ──────────────────────────────────── */}
+        {recentReviews && recentReviews.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Recent Reviews</p>
+              <Link href="/reviews" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
+                View all →
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {recentReviews.map((r, i) => {
+                const bizRaw = r.businesses as unknown as { business_name: string } | { business_name: string }[] | null;
+                const biz = Array.isArray(bizRaw) ? bizRaw[0] : bizRaw;
+                return (
+                  <Link key={i} href="/reviews" className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 hover:border-white/[0.10] hover:bg-white/[0.03] transition-colors group">
+                    <div className="flex-shrink-0 flex items-center gap-0.5 mt-0.5">
+                      {Array.from({ length: 5 }).map((_, si) => (
+                        <Star key={si} className={`w-3 h-3 ${si < r.rating ? "fill-zinc-300 text-zinc-300" : "text-zinc-700"}`} />
+                      ))}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-zinc-300 mb-0.5">{r.author} · <span className="font-normal text-zinc-500">{biz?.business_name ?? "Your Business"}</span></p>
+                      <p className="text-xs text-zinc-600 truncate">{r.body}</p>
+                    </div>
+                    <span className="text-xs text-zinc-700 flex-shrink-0">{r.review_date}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Quick links ──────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-10">
+          {[
+            { href: "/reviews", icon: MessageSquare, label: "Reviews", desc: "Manage & reply to customer reviews" },
+            { href: "/rank",    icon: MapPin,        label: "Rank Tracker", desc: "See where you rank locally" },
+            { href: "/schema",  icon: Code2,         label: "Schema Markup", desc: "Generate structured data for Google" },
+          ].map(({ href, icon: Icon, label, desc }) => (
+            <Link key={href} href={href} className="group rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-4 hover:border-white/[0.11] hover:bg-white/[0.04] transition-all duration-150">
+              <Icon className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 mb-2 transition-colors" />
+              <p className="text-sm font-semibold text-zinc-300 mb-0.5">{label}</p>
+              <p className="text-xs text-zinc-600">{desc}</p>
+            </Link>
+          ))}
+        </div>
+
+        <BusinessManager userId={user.id} businesses={businesses ?? []} />
       </main>
     </>
   );
