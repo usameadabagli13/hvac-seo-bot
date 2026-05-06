@@ -126,6 +126,16 @@ export async function PATCH(request: NextRequest) {
     }
   }
 
+  if ("phone" in body) {
+    const v = typeof body.phone === "string" ? body.phone.trim() : "";
+    updates.phone = v || null;
+  }
+
+  if ("street_address" in body) {
+    const v = typeof body.street_address === "string" ? body.street_address.trim() : "";
+    updates.street_address = v || null;
+  }
+
   if ("target_keywords" in body && Array.isArray(body.target_keywords)) {
     updates.target_keywords = body.target_keywords as string[];
   }

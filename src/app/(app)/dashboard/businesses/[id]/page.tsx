@@ -102,6 +102,8 @@ export default async function BusinessDetailPage({
             business_name:            business.business_name,
             service_location:         business.service_location,
             website_url:              business.website_url ?? null,
+            phone:                    business.phone ?? null,
+            street_address:           business.street_address ?? null,
             is_service_area_business: business.is_service_area_business ?? null,
             created_at:               business.created_at,
           }}

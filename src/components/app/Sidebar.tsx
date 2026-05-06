@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Settings, LogOut, Code2, MessageSquare, MapPin, CreditCard, MoreHorizontal, X } from "lucide-react";
+import { BarChart3, Settings, LogOut, Code2, MessageSquare, MapPin, CreditCard, MoreHorizontal, X, ListChecks } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const NAV_ITEMS = [
   { href: "/dashboard",            icon: BarChart3,     label: "Dashboard",    shortcut: "G D" },
   { href: "/reviews",              icon: MessageSquare, label: "Reviews",       shortcut: "G R" },
   { href: "/rank",                 icon: MapPin,        label: "Rank Tracker",  shortcut: "G K" },
+  { href: "/citations",            icon: ListChecks,    label: "Citations",     shortcut: null  },
   { href: "/schema",               icon: Code2,         label: "Schema Markup", shortcut: null  },
   { href: "/settings",             icon: Settings,      label: "Settings",      shortcut: "G S" },
   { href: "/settings?tab=billing", icon: CreditCard,    label: "Billing",       shortcut: null  },

@@ -21,6 +21,8 @@ interface BusinessHeaderProps {
     business_name:               string;
     service_location:            string;
     website_url:                 string | null;
+    phone:                       string | null;
+    street_address:              string | null;
     is_service_area_business:    boolean | null;
     created_at:                  string;
   };
@@ -35,12 +37,16 @@ export default function EditableBusinessHeader({ business }: BusinessHeaderProps
   const [name,    setName]    = useState(business.business_name);
   const [loc,     setLoc]     = useState(business.service_location);
   const [url,     setUrl]     = useState(business.website_url ?? "");
+  const [phone,   setPhone]   = useState(business.phone ?? "");
+  const [address, setAddress] = useState(business.street_address ?? "");
   const [sab,     setSab]     = useState(!!business.is_service_area_business);
 
   const handleCancel = () => {
     setName(business.business_name);
     setLoc(business.service_location);
     setUrl(business.website_url ?? "");
+    setPhone(business.phone ?? "");
+    setAddress(business.street_address ?? "");
     setSab(!!business.is_service_area_business);
     setError(null);
     setEditing(false);
@@ -88,6 +94,8 @@ export default function EditableBusinessHeader({ business }: BusinessHeaderProps
           business_name:               name.trim(),
           service_location:            loc.trim(),
           website_url:                 url.trim() || null,
+          phone:                       phone.trim() || null,
+          street_address:              address.trim() || null,
           is_service_area_business:    sab,
         }),
       });
@@ -217,6 +225,26 @@ export default function EditableBusinessHeader({ business }: BusinessHeaderProps
             onChange={(e) => setUrl(e.target.value)}
             className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-white/20"
             placeholder="https://yoursite.com"
+          />
+        </label>
+        <label className="block">
+          <span className="block text-[11px] uppercase tracking-wider text-zinc-600 mb-1.5">Phone <span className="text-zinc-700 normal-case tracking-normal">(canonical NAP)</span></span>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-white/20"
+            placeholder="+1-555-123-4567"
+          />
+        </label>
+        <label className="block">
+          <span className="block text-[11px] uppercase tracking-wider text-zinc-600 mb-1.5">Street address</span>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-white/20"
+            placeholder="123 Main St"
           />
         </label>
       </div>
