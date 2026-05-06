@@ -9,7 +9,7 @@
  * here without updating the Dodo coupon configuration.
  */
 // Real backend cap: this many actual signups receive the founder flag.
-export const FOUNDING_TOTAL_SPOTS = 9;
+export const FOUNDING_TOTAL_SPOTS = 12;
 
 // Social-proof offset shown to visitors. The displayed counter starts as
 // if this many people had already claimed a spot, so a fresh visitor
@@ -17,7 +17,7 @@ export const FOUNDING_TOTAL_SPOTS = 9;
 // worth it"). Doesn't affect who actually gets the founder flag — that's
 // still gated by FOUNDING_TOTAL_SPOTS in the DB.
 export const FOUNDING_DISPLAY_OFFSET = 21;
-export const FOUNDING_DISPLAY_TOTAL  = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 10 + 21 = 31
+export const FOUNDING_DISPLAY_TOTAL  = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 12 + 21 = 33
 export const FOUNDING_DISCOUNT = "30%";
 export const FOUNDING_DURATION_MONTHS = 12;
 
