@@ -14,9 +14,12 @@ export async function GET() {
   // Generate a random state value for CSRF protection
   const state = crypto.randomUUID();
 
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/gbp/callback`;
+  console.log("[gbp/start] sending redirect_uri =", redirectUri);
+
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID!,
-    redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/gbp/callback`,
+    redirect_uri: redirectUri,
     response_type: "code",
     scope: "https://www.googleapis.com/auth/business.manage",
     access_type: "offline",
