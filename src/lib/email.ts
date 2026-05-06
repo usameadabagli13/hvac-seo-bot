@@ -7,21 +7,45 @@ import {
   FOUNDING_DURATION_MONTHS,
 } from "@/lib/founding";
 
-let _resend: Resend | null = null;
+/**
+ * Email purpose drives which Resend credentials we use, so different flows
+ * (transactional trial emails vs. marketing waitlist welcomes) can have
+ * separate API keys + from addresses for audit/sender-reputation reasons.
+ *
+ * Each purpose checks its dedicated envs first, then falls back to the
+ * generic RESEND_API_KEY / RESEND_FROM_EMAIL pair so a minimal single-key
+ * setup still works for everything.
+ */
+export type EmailPurpose = "trial" | "waitlist";
 
-function getClient(): Resend | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return null;
-  if (!_resend) _resend = new Resend(key);
-  return _resend;
+const PURPOSE_ENV: Record<EmailPurpose, { key: string; from: string }> = {
+  trial:    { key: "RESEND_API_KEY",          from: "RESEND_FROM_EMAIL"          },
+  waitlist: { key: "RESEND_WAITLIST_API_KEY", from: "RESEND_WAITLIST_FROM_EMAIL" },
+};
+
+const _clients = new Map<string, Resend>();
+
+function resolveCreds(purpose: EmailPurpose): { client: Resend | null; from: string } {
+  const cfg = PURPOSE_ENV[purpose];
+  // Prefer the purpose-specific key; fall back to the shared one
+  const apiKey = process.env[cfg.key] ?? process.env.RESEND_API_KEY ?? "";
+  const from   = process.env[cfg.from] ?? process.env.RESEND_FROM_EMAIL
+                  ?? "HeatRank AI <support@heatrankai.com>";
+
+  if (!apiKey) return { client: null, from };
+  let client = _clients.get(apiKey);
+  if (!client) {
+    client = new Resend(apiKey);
+    _clients.set(apiKey, client);
+  }
+  return { client, from };
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_EMAIL ?? "HeatRank AI <support@heatrankai.com>";
-
 interface SendArgs {
-  to:      string;
-  subject: string;
-  html:    string;
+  to:       string;
+  subject:  string;
+  html:     string;
+  purpose?: EmailPurpose;
 }
 
 /**
@@ -29,30 +53,26 @@ interface SendArgs {
  * In dev (no RESEND_API_KEY) it logs to console and returns true so the
  * surrounding flow doesn't crash.
  */
-export async function sendEmail({ to, subject, html }: SendArgs): Promise<boolean> {
-  const client = getClient();
+export async function sendEmail({ to, subject, html, purpose = "trial" }: SendArgs): Promise<boolean> {
+  const { client, from } = resolveCreds(purpose);
   if (!client) {
+    const cfg = PURPOSE_ENV[purpose];
     console.warn(
-      `[email] RESEND_API_KEY is NOT SET on this environment. Skipping send (would have gone to=${to} subject="${subject}"). Add it in Vercel → Settings → Environment Variables.`,
+      `[email] No API key for purpose="${purpose}". Set ${cfg.key} (or fall back to RESEND_API_KEY). Skipping send to=${to} subject="${subject}".`,
     );
     return true;
   }
 
   try {
-    const { data, error } = await client.emails.send({
-      from:    FROM_ADDRESS,
-      to,
-      subject,
-      html,
-    });
+    const { data, error } = await client.emails.send({ from, to, subject, html });
     if (error) {
-      console.error("[email] Resend error:", error);
+      console.error(`[email:${purpose}] Resend error:`, error);
       return false;
     }
-    console.log(`[email] sent id=${data?.id} to=${to} subject="${subject}"`);
+    console.log(`[email:${purpose}] sent id=${data?.id} to=${to} subject="${subject}"`);
     return true;
   } catch (err) {
-    console.error("[email] unexpected error:", err);
+    console.error(`[email:${purpose}] unexpected error:`, err);
     return false;
   }
 }

@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
       ? `You're a HeatRank AI founding member — ${FOUNDING_COUPON_CODE} locked in`
       : "You're on the HeatRank AI list",
     html:    waitlistWelcomeHtml(name || null, isFounding),
+    purpose: "waitlist",
   }).catch((err) => console.error("[waitlist] welcome email failed:", err));
 
   console.log(`[waitlist] new join: ${email} founding=${isFounding}`);
