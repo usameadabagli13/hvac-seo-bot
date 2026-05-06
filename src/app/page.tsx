@@ -283,10 +283,10 @@ export default async function LandingPage({
                 Become a founding member — 30% off your first year
               </h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
-                The first 20 HVAC contractors to claim a spot get <strong className="text-amber-300">30% off
-                the Pro plan for 12 months</strong>, plus a permanent <strong className="text-amber-300">★ Founder
-                badge</strong> on their account — priority support and early access to every new feature,
-                forever. Once the spots are gone, founder status closes for good.
+                Founding members lock in <strong className="text-amber-300">30% off the Pro plan for 12 months</strong>,
+                plus a permanent <strong className="text-amber-300">★ Founder badge</strong> on their account —
+                priority support and early access to every new feature, forever. Once the counter hits zero,
+                founder status closes for good.
               </p>
             </div>
             <WaitlistForm />

@@ -82,13 +82,16 @@ export default function WaitlistForm() {
     <div className="space-y-3">
       {/* Spots counter */}
       {foundingActive && (
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest">
+        <div className="flex items-center gap-2 flex-wrap text-[11px] font-semibold uppercase tracking-widest">
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400">
             <Sparkles className="w-3 h-3" />
             Founding Member
           </span>
-          <span className="text-zinc-500">
-            {spots.remaining} of {spots.total} spots left · 30% off for 12 months + lifetime badge
+          <span className="text-amber-300 tabular-nums">
+            {spots.remaining} spots left
+          </span>
+          <span className="text-zinc-600 tabular-nums">
+            · {spots.claimed}/{spots.total} already claimed
           </span>
         </div>
       )}

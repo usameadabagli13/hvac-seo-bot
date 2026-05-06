@@ -7,6 +7,7 @@ const DISMISS_KEY = "founding_banner_dismissed_v1";
 
 export default function FoundingBanner() {
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [claimed,   setClaimed]   = useState<number>(0);
   const [total,     setTotal]     = useState<number>(20);
   const [dismissed, setDismissed] = useState(true); // start hidden, reveal after fetch + storage check
 
@@ -19,9 +20,10 @@ export default function FoundingBanner() {
     let cancelled = false;
     fetch("/api/waitlist")
       .then((r) => r.json())
-      .then((d: { total?: number; remaining?: number }) => {
+      .then((d: { total?: number; claimed?: number; remaining?: number }) => {
         if (cancelled) return;
-        if (typeof d.total === "number") setTotal(d.total);
+        if (typeof d.total     === "number") setTotal(d.total);
+        if (typeof d.claimed   === "number") setClaimed(d.claimed);
         if (typeof d.remaining === "number") setRemaining(d.remaining);
         // Reveal only when there are spots left
         if ((d.remaining ?? 0) > 0) setDismissed(false);
@@ -45,18 +47,19 @@ export default function FoundingBanner() {
 
         {/* Desktop / tablet copy */}
         <p className="hidden sm:block flex-1 text-xs sm:text-sm text-zinc-200 truncate">
-          <span className="font-semibold text-amber-300">Founding member offer</span>
+          <span className="font-semibold tabular-nums text-amber-300">{remaining}</span>
+          <span className="text-zinc-300"> founding spots left</span>
           <span className="text-zinc-400"> · </span>
-          <span className="font-semibold tabular-nums">{remaining} of {total}</span>
-          <span className="text-zinc-400"> spots left · </span>
-          <span className="text-zinc-300">30% off your first year + permanent ★ Founder badge</span>
+          <span className="text-zinc-500 tabular-nums">{claimed}/{total} already claimed</span>
+          <span className="text-zinc-400"> · </span>
+          <span className="text-zinc-300">30% off + lifetime ★ Founder badge</span>
         </p>
 
         {/* Mobile copy (compact) */}
         <p className="sm:hidden flex-1 text-xs text-zinc-200 truncate">
-          <span className="font-semibold tabular-nums text-amber-300">{remaining}/{total}</span>
-          <span className="text-zinc-400"> founding spots left · </span>
-          <span className="font-semibold">30% off</span>
+          <span className="font-semibold tabular-nums text-amber-300">{remaining} left</span>
+          <span className="text-zinc-400"> · </span>
+          <span className="text-zinc-500 tabular-nums">{claimed}/{total} taken</span>
         </p>
 
         <a

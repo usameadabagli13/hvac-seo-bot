@@ -1,22 +1,34 @@
 import type { NextRequest } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { sendEmail, waitlistWelcomeHtml } from "@/lib/email";
-import { FOUNDING_TOTAL_SPOTS, FOUNDING_COUPON_CODE } from "@/lib/founding";
+import {
+  FOUNDING_TOTAL_SPOTS,
+  FOUNDING_DISPLAY_OFFSET,
+  FOUNDING_DISPLAY_TOTAL,
+  FOUNDING_COUPON_CODE,
+} from "@/lib/founding";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-// GET — current founding-spot status, used by the landing page form
+// GET — current founding-spot status, used by the landing page form.
+// Returns *display* numbers (with the social-proof offset baked in), not the
+// raw DB count. The remaining-spot logic still maps 1:1 to actual founding
+// signups.
 export async function GET() {
   const supabase = createAdminClient();
   const { count } = await supabase
     .from("waitlist")
     .select("id", { count: "exact", head: true })
     .eq("is_founding", true);
-  const claimed = count ?? 0;
+
+  const realClaimed    = count ?? 0;
+  const displayClaimed = realClaimed + FOUNDING_DISPLAY_OFFSET;
+  const remaining      = Math.max(0, FOUNDING_TOTAL_SPOTS - realClaimed);
+
   return Response.json({
-    total:     FOUNDING_TOTAL_SPOTS,
-    claimed,
-    remaining: Math.max(0, FOUNDING_TOTAL_SPOTS - claimed),
+    total:     FOUNDING_DISPLAY_TOTAL,
+    claimed:   displayClaimed,
+    remaining,
   });
 }
 
