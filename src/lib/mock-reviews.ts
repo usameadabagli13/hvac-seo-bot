@@ -26,7 +26,7 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "r3",
     author: "Robert K.",
-    platform: "Yelp",
+    platform: "Google",
     rating: 4,
     body: "Good service overall. The technician was knowledgeable and explained what was wrong with my heat pump clearly. Took a little longer than quoted to get the part, but they kept me updated throughout. Would use again.",
     date: "2026-04-18",
@@ -81,7 +81,7 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "r8",
     author: "Patricia W.",
-    platform: "Yelp",
+    platform: "Google",
     rating: 2,
     body: "Scheduling was a nightmare. Had to reschedule twice because the technician didn't show up during the promised window. The actual repair once someone did come was OK, but the experience getting there was frustrating enough that I won't be using them again.",
     date: "2026-03-22",
@@ -103,7 +103,7 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: "r10",
     author: "Theresa N.",
-    platform: "Facebook",
+    platform: "Google",
     rating: 5,
     body: "Called Arctic Air on a Friday evening when our furnace stopped working. They sent someone out Saturday morning and had it running by noon. In January. I cannot overstate how grateful we were. The technician even walked me through what caused the failure so I know what to watch for. 10/10.",
     date: "2026-03-08",

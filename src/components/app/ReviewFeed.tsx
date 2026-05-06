@@ -8,7 +8,7 @@ import { Star, Sparkles, CheckCircle2, MessageSquare, Loader2, Copy, Check, Refr
 export interface Review {
   id: string;
   author: string;
-  platform: "Google" | "Yelp" | "Facebook";
+  platform: "Google";
   rating: 1 | 2 | 3 | 4 | 5;
   body: string;
   date: string; // ISO date string
@@ -54,8 +54,6 @@ const SENTIMENT_STYLES = {
 
 const PLATFORM_STYLES: Record<Review["platform"], string> = {
   Google: "bg-white/[0.04] text-zinc-500 border-white/[0.07]",
-  Yelp: "bg-white/[0.04] text-zinc-500 border-white/[0.07]",
-  Facebook: "bg-white/[0.04] text-zinc-500 border-white/[0.07]",
 };
 
 // ── Review card ───────────────────────────────────────────────────────────────

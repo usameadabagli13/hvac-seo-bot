@@ -109,8 +109,9 @@ export default async function ReviewsPage({
               Reviews
             </h1>
             <p className="mt-1.5 text-sm text-zinc-500 max-w-xl leading-relaxed">
-              Monitor customer feedback, track sentiment, and respond to reviews across
-              Google, Yelp, and Facebook — all from one place.
+              Monitor customer feedback, track sentiment, and respond to your
+              Google reviews — all from one place.{" "}
+              <span className="text-zinc-600">Facebook reviews coming soon.</span>
             </p>
           </div>
 
