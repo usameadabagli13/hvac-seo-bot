@@ -9,16 +9,27 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/login");
 
-  const { plan, isOnTrial, trialDaysLeft, trialExpired } = await resolveTrialState(
-    supabase,
-    session.user.id,
-  );
+  const periodStart = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`;
+
+  const [{ plan, isOnTrial, trialDaysLeft, trialExpired }, { data: usageRows }] = await Promise.all([
+    resolveTrialState(supabase, session.user.id),
+    supabase
+      .from("ai_usage")
+      .select("feature, count")
+      .eq("user_id", session.user.id)
+      .eq("period_start", periodStart),
+  ]);
+
+  const usage: Record<string, number> = {};
+  for (const row of usageRows ?? []) {
+    usage[row.feature] = row.count;
+  }
 
   const showBanner = isOnTrial || trialExpired;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      <Sidebar plan={plan} />
+      <Sidebar plan={plan} usage={usage} />
       <div className="lg:pl-56 pb-16 lg:pb-0">
         {showBanner && (
           <TrialBanner trialDaysLeft={trialDaysLeft} trialExpired={trialExpired} />

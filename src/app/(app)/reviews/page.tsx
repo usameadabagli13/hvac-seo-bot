@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import ReviewFeed, { type Review } from "@/components/app/ReviewFeed";
+import ReviewFeed, { type Review, MOCK_REVIEWS } from "@/components/app/ReviewFeed";
 import { getGBPStatus } from "@/lib/gbp";
 import GBPConnectBanner from "@/components/app/GBPConnectBanner";
 import SyncReviewsButton from "@/components/app/SyncReviewsButton";
@@ -55,6 +55,7 @@ export default async function ReviewsPage({
   // Map DB rows → Review type used by ReviewFeed
   let reviews: Review[] = [];
   let fromDB = false;
+  let isSampleData = false;
   let lastFetchedAt: string | null = null;
 
   if (dbRows && dbRows.length > 0) {
@@ -76,6 +77,12 @@ export default async function ReviewsPage({
         businessName: biz?.business_name ?? "Your Business",
       };
     });
+  }
+
+  // Fall back to mock reviews when GBP not connected and DB is empty
+  if (!gbpStatus.connected && reviews.length === 0) {
+    reviews = MOCK_REVIEWS;
+    isSampleData = true;
   }
 
   // Rating distribution for the chart (computed from whichever data source is active)
@@ -130,6 +137,18 @@ export default async function ReviewsPage({
           locationName={gbpStatus.locationName}
           apiError={false}
         />
+
+        {/* Sample Data banner */}
+        {isSampleData && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/[0.05] px-4 py-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0 mt-1.5" />
+            <p className="text-xs text-amber-400/80 leading-relaxed">
+              <span className="font-semibold text-amber-400">Sample data.</span>{" "}
+              These are example reviews so you can explore the AI reply feature.
+              Connect your Google Business Profile above to import your real reviews.
+            </p>
+          </div>
+        )}
 
         {/* DB source notice */}
         {fromDB && (

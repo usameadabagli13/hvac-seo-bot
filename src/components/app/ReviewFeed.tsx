@@ -72,7 +72,9 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(review.replied);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [postClicked, setPostClicked] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const [posted, setPosted] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
 
   const isLong = review.body.length > 220;
   const displayBody =
@@ -133,6 +135,28 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
       setSaveError(err instanceof Error ? err.message : "Failed to save reply.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePostToGoogle = async () => {
+    if (!editedReply.trim() || posting || posted) return;
+    setPosting(true);
+    setPostError(null);
+    try {
+      const res = await fetch("/api/reviews/post-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ review_id: review.id, reply_text: editedReply }),
+      });
+      const data = await res.json() as { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Failed to post reply.");
+      setPosted(true);
+      setSaved(true);
+      router.refresh();
+    } catch (err: unknown) {
+      setPostError(err instanceof Error ? err.message : "Failed to post to Google.");
+    } finally {
+      setPosting(false);
     }
   };
 
@@ -303,24 +327,32 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
                   {saving ? "Saving…" : saved ? "Saved!" : "Save Reply"}
                 </button>
 
-                {/* Post to Google — requires GBP production OAuth approval */}
                 <button
-                  disabled={!saved && !review.replied}
-                  onClick={() => setPostClicked(true)}
+                  disabled={!isConnected || (!saved && !review.replied) || posting || posted}
+                  onClick={handlePostToGoogle}
                   title={
                     !isConnected
                       ? "Connect Google Business Profile to post replies"
                       : !saved && !review.replied
                       ? "Save the reply first"
-                      : "Copy the reply and paste it into Google Business Profile"
+                      : posted
+                      ? "Reply posted to Google"
+                      : "Publish this reply directly to Google"
                   }
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-150 ${
-                    saved || review.replied
-                      ? "bg-white/[0.04] border-white/[0.10] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.18] active:scale-[0.97] cursor-pointer"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-150 disabled:pointer-events-none ${
+                    posted
+                      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                      : saved || review.replied
+                      ? "bg-white/[0.04] border-white/[0.10] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.18] active:scale-[0.97]"
                       : "bg-white/[0.02] border-white/[0.05] text-zinc-700 cursor-not-allowed"
                   }`}
                 >
-                  Post to Google
+                  {posting ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : posted ? (
+                    <CheckCircle2 className="w-3 h-3" />
+                  ) : null}
+                  {posting ? "Posting…" : posted ? "Posted!" : "Post to Google"}
                 </button>
               </div>
             </div>
@@ -328,10 +360,8 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
             {saveError && (
               <p className="text-[11px] text-rose-400">{saveError}</p>
             )}
-            {postClicked && (
-              <p className="text-[11px] text-zinc-500">
-                Copy the reply above and paste it directly into Google Business Profile to publish it.
-              </p>
+            {postError && (
+              <p className="text-[11px] text-rose-400">{postError}</p>
             )}
           </div>
         </div>

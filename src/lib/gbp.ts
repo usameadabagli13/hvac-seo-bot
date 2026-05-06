@@ -158,6 +158,61 @@ function convertReview(raw: GBPReview, businessName: string): Review {
   };
 }
 
+// ── Reply posting ─────────────────────────────────────────────────────────────
+
+export interface PostReplyResult {
+  ok: boolean;
+  error?: string;
+}
+
+/**
+ * Posts a reply to a GBP review via the My Business API v4.
+ * Returns { ok: true } on success or { ok: false, error } on failure.
+ */
+export async function postGBPReviewReply(
+  userId: string,
+  reviewId: string,
+  replyText: string,
+): Promise<PostReplyResult> {
+  const supabase = await createClient();
+
+  const accessToken = await getValidToken(userId);
+  if (!accessToken) {
+    return { ok: false, error: "Google Business Profile not connected or token expired." };
+  }
+
+  const { data: integration } = await supabase
+    .from("integrations")
+    .select("location_name")
+    .eq("user_id", userId)
+    .eq("provider", "google_business_profile")
+    .single();
+
+  if (!integration?.location_name) {
+    return { ok: false, error: "GBP location not found. Reconnect Google Business Profile." };
+  }
+
+  const url = `https://mybusiness.googleapis.com/v4/${integration.location_name}/reviews/${reviewId}/reply`;
+
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ comment: replyText }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+    const msg = err.error?.message ?? `GBP API error (${res.status})`;
+    console.error("[gbp] postReply failed:", msg);
+    return { ok: false, error: msg };
+  }
+
+  return { ok: true };
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export interface GBPStatus {

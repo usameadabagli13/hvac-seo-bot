@@ -6,7 +6,7 @@ import type { LayerProps, MapRef } from "react-map-gl/mapbox";
 import type { MapMouseEvent } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/navigation";
-import { Loader2, RefreshCw, TrendingUp, TrendingDown, Minus, FlaskConical } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, TrendingDown, Minus, FlaskConical, Play } from "lucide-react";
 
 export interface HeatmapPoint {
   lat:           number;
@@ -111,6 +111,9 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
   const [seeding,    setSeeding]    = useState(false);
   const [seedMsg,    setSeedMsg]    = useState<string | null>(null);
   const [keywordVal, setKeywordVal] = useState(keyword);
+  const [running,    setRunning]    = useState(false);
+  const [runMsg,     setRunMsg]     = useState<string | null>(null);
+  const [runError,   setRunError]   = useState<string | null>(null);
 
   // ── Stats ────────────────────────────────────────────────────────────────────
 
@@ -191,6 +194,33 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
       setSeedMsg("Network error.");
     } finally {
       setSeeding(false);
+    }
+  };
+
+  // ── Run real snapshot ────────────────────────────────────────────────────────
+
+  const handleRunSnapshot = async () => {
+    if (!keywordVal.trim() || running) return;
+    setRunning(true);
+    setRunMsg(null);
+    setRunError(null);
+    try {
+      const res  = await fetch("/api/rank/run-snapshot", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ business_id: businessId, keyword: keywordVal.trim() }),
+      });
+      const data = await res.json() as { ok?: boolean; points?: number; keyword?: string; error?: string };
+      if (!res.ok) {
+        setRunError(data.error ?? "Snapshot failed.");
+        return;
+      }
+      setRunMsg(`Done — ${data.points} grid points scanned for "${data.keyword}".`);
+      router.refresh();
+    } catch {
+      setRunError("Network error. Please try again.");
+    } finally {
+      setRunning(false);
     }
   };
 
@@ -277,6 +307,30 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
               {chip}
             </button>
           ))}
+        </div>
+
+        {/* Run Snapshot */}
+        <div className="flex flex-col gap-2 pt-1">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRunSnapshot}
+              disabled={running || !keywordVal.trim()}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
+            >
+              {running
+                ? <Loader2 className="w-4 h-4 animate-spin" />
+                : <Play className="w-4 h-4" />}
+              {running ? "Scanning 25 grid points…" : "Run Snapshot"}
+            </button>
+            {runMsg && !running && (
+              <p className="text-xs text-emerald-400">{runMsg}</p>
+            )}
+          </div>
+          {runError && (
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+              {runError}
+            </p>
+          )}
         </div>
       </div>
 

@@ -34,7 +34,25 @@ const PLAN_LABELS: Record<"starter" | "pro" | "agency", string> = {
   agency:  "Agency",
 };
 
-export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro" | "agency" }) {
+const STARTER_LIMITS: Record<string, number> = {
+  review_reply:       3,
+  rank_snapshot:      1,
+  keyword_generation: 1,
+};
+
+const USAGE_LABELS: Record<string, string> = {
+  review_reply:       "Replies",
+  rank_snapshot:      "Snapshots",
+  keyword_generation: "Keywords",
+};
+
+export default function Sidebar({
+  plan = "starter",
+  usage = {},
+}: {
+  plan?:  "starter" | "pro" | "agency";
+  usage?: Record<string, number>;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
@@ -169,6 +187,31 @@ export default function Sidebar({ plan = "starter" }: { plan?: "starter" | "pro"
               {PLAN_LABELS[plan]}
             </p>
           </Link>
+          {/* Usage mini-widget — only for starter (has hard limits) */}
+          {plan === "starter" && (
+            <div className="px-1 space-y-1.5">
+              {(["review_reply", "rank_snapshot"] as const).map((feat) => {
+                const used  = usage[feat] ?? 0;
+                const limit = STARTER_LIMITS[feat];
+                const pct   = Math.min((used / limit) * 100, 100);
+                return (
+                  <div key={feat}>
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-[10px] text-zinc-600">{USAGE_LABELS[feat]}</span>
+                      <span className="text-[10px] text-zinc-600 tabular-nums">{used}/{limit}</span>
+                    </div>
+                    <div className="h-1 rounded-full bg-white/[0.05]">
+                      <div
+                        className={`h-1 rounded-full transition-all duration-500 ${pct >= 100 ? "bg-rose-500" : pct >= 66 ? "bg-amber-500" : "bg-emerald-500"}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           <button
             onClick={handleSignOut}
             disabled={signingOut}
