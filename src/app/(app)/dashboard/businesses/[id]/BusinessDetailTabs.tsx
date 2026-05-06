@@ -121,6 +121,44 @@ export default function BusinessDetailTabs({
   const [auditing,    setAuditing]    = useState(false);
   const [auditError,  setAuditError]  = useState<string | null>(null);
 
+  // Competitor add state
+  const [compQuery,    setCompQuery]    = useState("");
+  const [compAdding,   setCompAdding]   = useState(false);
+  const [compError,    setCompError]    = useState<string | null>(null);
+
+  const handleAddCompetitor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!compQuery.trim() || compAdding) return;
+    setCompAdding(true);
+    setCompError(null);
+    try {
+      const res = await fetch("/api/competitors", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ business_id: business.id, query: compQuery.trim() }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setCompError(data.error ?? "Couldn't add competitor.");
+        return;
+      }
+      setCompQuery("");
+      router.refresh();
+    } catch {
+      setCompError("Network error.");
+    } finally {
+      setCompAdding(false);
+    }
+  };
+
+  const handleRemoveCompetitor = async (id: string) => {
+    if (!confirm("Stop tracking this competitor?")) return;
+    try {
+      const res = await fetch(`/api/competitors?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (res.ok) router.refresh();
+    } catch {}
+  };
+
   const handleRunAudit = async () => {
     setAuditing(true);
     setAuditError(null);
@@ -578,39 +616,78 @@ export default function BusinessDetailTabs({
           requiredPlan="pro"
           feature="Competitor Tracking"
         >
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {/* Add competitor */}
+            <form onSubmit={handleAddCompetitor} className="space-y-2">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
+                Add a competitor
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={compQuery}
+                  onChange={(e) => setCompQuery(e.target.value)}
+                  placeholder='e.g. "Acme HVAC Dallas TX"'
+                  disabled={compAdding}
+                  className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/10 disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={compAdding || !compQuery.trim()}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all disabled:opacity-40"
+                >
+                  {compAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
+                  {compAdding ? "Finding…" : "Track"}
+                </button>
+              </div>
+              {compError && <p className="text-xs text-rose-400">{compError}</p>}
+              <p className="text-[11px] text-zinc-700">
+                We&apos;ll find them on Google Maps and pull rating + review count.
+                Pro = 3 competitors, Agency = 10.
+              </p>
+            </form>
+
+            {/* List */}
             {competitors.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/[0.07] bg-white/[0.01] px-5 py-12 flex flex-col items-center text-center gap-3">
                 <Users className="w-5 h-5 text-zinc-700" />
                 <div>
-                  <p className="text-xs font-medium text-zinc-500 mb-1">
-                    No competitors tracked yet
-                  </p>
-                  <p className="text-[11px] text-zinc-700">
-                    Competitor tracking will be available in an upcoming update.
-                  </p>
+                  <p className="text-xs font-medium text-zinc-500 mb-1">No competitors tracked yet</p>
+                  <p className="text-[11px] text-zinc-700">Add your top 3 rivals to compare reviews and ratings.</p>
                 </div>
               </div>
             ) : (
-              competitors.map((comp) => (
-                <div
-                  key={comp.id}
-                  className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3"
-                >
-                  <p className="text-sm text-zinc-300">{comp.name}</p>
-                  <div className="flex items-center gap-4 text-xs text-zinc-500">
-                    {comp.avg_rating != null && (
-                      <span className="flex items-center gap-1">
-                        <Star className="w-3 h-3" />
-                        {comp.avg_rating.toFixed(1)}
-                      </span>
-                    )}
-                    {comp.review_count != null && (
-                      <span>{comp.review_count} reviews</span>
-                    )}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pt-2">
+                  Tracked rivals · {competitors.length}
+                </p>
+                {competitors.map((comp) => (
+                  <div
+                    key={comp.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 hover:border-white/[0.10] transition-colors"
+                  >
+                    <p className="text-sm text-zinc-200 font-medium truncate">{comp.name}</p>
+                    <div className="flex items-center gap-4 text-xs text-zinc-500 flex-shrink-0">
+                      {comp.avg_rating != null && (
+                        <span className="flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                          {comp.avg_rating.toFixed(1)}
+                        </span>
+                      )}
+                      {comp.review_count != null && (
+                        <span>{comp.review_count} reviews</span>
+                      )}
+                      <button
+                        onClick={() => handleRemoveCompetitor(comp.id)}
+                        title="Remove"
+                        className="text-zinc-700 hover:text-rose-400 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </UpgradeGate>
