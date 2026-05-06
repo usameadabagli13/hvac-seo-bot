@@ -38,6 +38,7 @@ export default async function AdminHealthPage() {
     { name: "RESEND_WAITLIST_API_KEY",   ok: !!process.env.RESEND_WAITLIST_API_KEY },
     { name: "RESEND_WAITLIST_FROM_EMAIL", ok: !!process.env.RESEND_WAITLIST_FROM_EMAIL },
     { name: "CRON_SECRET",               ok: !!process.env.CRON_SECRET },
+    { name: "ADMIN_USER_ID",             ok: !!process.env.ADMIN_USER_ID },
     { name: "SUPABASE_SERVICE_ROLE_KEY", ok: !!process.env.SUPABASE_SERVICE_ROLE_KEY },
     { name: "NEXT_PUBLIC_MAPBOX_TOKEN",  ok: !!process.env.NEXT_PUBLIC_MAPBOX_TOKEN },
   ];
