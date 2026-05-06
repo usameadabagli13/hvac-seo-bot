@@ -64,6 +64,8 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
   // Seed from DB on mount so saved drafts survive page refresh
   const [reply, setReply] = useState<string | null>(review.aiReply ?? null);
   const [editedReply, setEditedReply] = useState(review.aiReply ?? "");
+  const [variants, setVariants] = useState<{ formal: string; friendly: string; apologetic: string } | null>(null);
+  const [activeTone, setActiveTone] = useState<"formal" | "friendly" | "apologetic">("friendly");
   const [genError, setGenError] = useState<string | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -94,14 +96,31 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
           sentiment: review.sentiment,
         }),
       });
-      const data = await res.json() as { reply?: string; error?: string };
+      const data = await res.json() as {
+        reply?: string;
+        replies?: { formal: string; friendly: string; apologetic: string };
+        error?: string;
+      };
       if (res.status === 429) {
         setLimitReached(true);
         return;
       }
       if (!res.ok) throw new Error(data.error ?? "Generation failed.");
-      setReply(data.reply!);
-      setEditedReply(data.reply!);
+      if (data.replies) {
+        setVariants(data.replies);
+        // Pick the first non-empty variant as default; prefer 'friendly'
+        const initial = data.replies.friendly || data.replies.formal || data.replies.apologetic || "";
+        const initialTone: "formal" | "friendly" | "apologetic" =
+          data.replies.friendly ? "friendly"
+          : data.replies.formal ? "formal"
+          : "apologetic";
+        setActiveTone(initialTone);
+        setReply(initial);
+        setEditedReply(initial);
+      } else if (data.reply) {
+        setReply(data.reply);
+        setEditedReply(data.reply);
+      }
     } catch (err: unknown) {
       setGenError(err instanceof Error ? err.message : "Failed to generate reply.");
     } finally {
@@ -265,7 +284,7 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
       {reply && (
         <div className="rounded-xl border border-white/[0.08] bg-zinc-900/50 overflow-hidden">
           {/* Panel header */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06]">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-white/[0.06]">
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-zinc-500" />
               <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
@@ -294,6 +313,34 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
               </button>
             </div>
           </div>
+
+          {/* Tone switcher (only when we have variants) */}
+          {variants && (variants.formal || variants.friendly || variants.apologetic) && (
+            <div className="flex items-center gap-0.5 px-3 pt-2.5 border-b border-white/[0.04]">
+              {(["formal", "friendly", "apologetic"] as const).map((tone) => {
+                const text = variants[tone];
+                if (!text) return null;
+                const active = activeTone === tone;
+                return (
+                  <button
+                    key={tone}
+                    onClick={() => {
+                      setActiveTone(tone);
+                      setEditedReply(text);
+                      setReply(text);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[11px] font-medium capitalize transition-colors ${
+                      active
+                        ? "bg-white/[0.07] text-zinc-100"
+                        : "text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.04]"
+                    }`}
+                  >
+                    {tone}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Editable reply */}
           <textarea

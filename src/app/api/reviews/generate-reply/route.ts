@@ -61,24 +61,36 @@ Review text: "${reviewBody}"
 
 ${toneGuide}
 
-Craft ONE reply that embodies two qualities equally:
-  1. "Expert Technician" — knowledgeable, confident, references the specific HVAC situation mentioned
-  2. "Customer First" — warm, human, makes ${firstName} feel genuinely heard
+Generate THREE distinct reply variants so the owner can pick the one that sounds most like them. Return JSON with this EXACT shape:
+{
+  "formal":     "<polished, professional reply>",
+  "friendly":   "<warm, conversational reply>",
+  "apologetic": "<accountability-forward reply that leads with ownership>"
+}
 
-Strict rules:
+Each variant must:
 - Address ${firstName} by first name in the opening line
-- 60–90 words only
+- Be 60–90 words
 - No emojis, no hashtags, no "Best regards" or formal sign-offs
-- Do NOT use generic phrases like "we value your feedback" or "we strive to"
-- Sound like a real person wrote this, not a template
-- If the review mentions a specific service (AC, furnace, heat pump, ducts, etc.), reference it directly
+- Avoid generic phrases like "we value your feedback" or "we strive to"
+- Sound like a real person wrote it
+- Reference specific HVAC services (AC, furnace, heat pump, ducts, etc.) if the review mentions them
 
-Return ONLY the reply text. No preamble, no quotes, no labels.`;
+Variant tone differences:
+- formal:     polished, businesslike, third-person company voice acceptable
+- friendly:   warm, casual, first-person, owner's personal voice
+- apologetic: lead with accountability and a concrete commitment, even on positive reviews
+              (e.g. "we owe it to you to keep delivering that level of service")
+
+Return ONLY the JSON object. No markdown, no code fences, no preamble.`;
 
     console.log("[generate-reply] calling Gemini for reviewer:", firstName, "| rating:", rating);
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.1-flash-lite-preview",
+      generationConfig: { responseMimeType: "application/json" },
+    });
 
     let result;
     try {
@@ -95,16 +107,38 @@ Return ONLY the reply text. No preamble, no quotes, no labels.`;
       return Response.json({ error: msg }, { status: 500 });
     }
 
-    const reply = result.response.text().trim();
+    const rawText = result.response.text().trim();
+    const cleaned = rawText
+      .replace(/^```(?:json)?[\r\n]*/i, "")
+      .replace(/[\r\n]*```$/i, "")
+      .trim();
 
-    if (!reply) {
-      throw new Error("Gemini returned an empty reply.");
+    let variants: { formal?: string; friendly?: string; apologetic?: string };
+    try {
+      variants = JSON.parse(cleaned) as typeof variants;
+    } catch {
+      console.error("[generate-reply] failed to parse Gemini JSON:", cleaned);
+      // Fall back: treat the whole text as the friendly variant so the user gets something
+      variants = { friendly: rawText };
+    }
+
+    const replies = {
+      formal:     (variants.formal     ?? "").trim(),
+      friendly:   (variants.friendly   ?? "").trim(),
+      apologetic: (variants.apologetic ?? "").trim(),
+    };
+
+    if (!replies.formal && !replies.friendly && !replies.apologetic) {
+      throw new Error("Gemini returned no usable reply variants.");
     }
 
     await incrementUsage(user.id, "review_reply");
 
-    console.log("[generate-reply] success, reply length:", reply.length);
-    return Response.json({ reply });
+    // Backwards compatibility: single `reply` field too (the old caller still
+    // exists in case anything else hits this endpoint)
+    const primary = replies.friendly || replies.formal || replies.apologetic;
+    console.log("[generate-reply] success, primary length:", primary.length);
+    return Response.json({ reply: primary, replies });
   } catch (error: unknown) {
     const e = error as Record<string, unknown>;
     console.error("[generate-reply] unhandled error:", e?.message ?? error);
