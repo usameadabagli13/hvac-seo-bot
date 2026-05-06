@@ -343,12 +343,13 @@ export default async function LandingPage({
                 Limited offer
               </p>
               <h3 className="text-xl font-semibold text-zinc-100 tracking-tight mb-1.5">
-                Become a founding member — 30% off forever
+                Become a founding member — 30% off your first year
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                The first 20 HVAC contractors to claim a spot lock in 30% off the Pro plan
-                for the lifetime of their account. Once the spots are gone, the price goes
-                back to the full $69 / mo.
+                The first 20 HVAC contractors to claim a spot get <strong className="text-zinc-300">30% off
+                the Pro plan for 12 months</strong>, plus a permanent <strong className="text-zinc-300">★ Founder
+                badge</strong> on their account — priority support and early access to every new feature,
+                forever. Once the spots are gone, founder status closes for good.
               </p>
             </div>
             <WaitlistForm />

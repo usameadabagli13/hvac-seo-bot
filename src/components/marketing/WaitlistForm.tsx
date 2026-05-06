@@ -67,7 +67,7 @@ export default function WaitlistForm() {
           </p>
           <p className={`text-xs mt-0.5 ${done.founding ? "text-amber-400/80" : "text-emerald-400/70"}`}>
             {done.founding
-              ? "Check your inbox — your founder discount code is locked in for life."
+              ? "Check your inbox — your 30%-off code is on its way, and the ★ Founder badge stays on your account for life."
               : "Watch your inbox for product updates and HVAC SEO playbooks."}
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function WaitlistForm() {
             Founding Member
           </span>
           <span className="text-zinc-500">
-            {spots.remaining} of {spots.total} spots left · 30% off forever
+            {spots.remaining} of {spots.total} spots left · 30% off for 12 months + lifetime badge
           </span>
         </div>
       )}

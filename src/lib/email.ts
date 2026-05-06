@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { FOUNDING_COUPON_CODE, FOUNDING_DISCOUNT } from "@/lib/founding";
+import { FOUNDING_COUPON_CODE, FOUNDING_DISCOUNT, FOUNDING_DURATION_MONTHS } from "@/lib/founding";
 
 let _resend: Resend | null = null;
 
@@ -61,17 +61,17 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
           <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #b45309; margin: 0 0 6px;">★ Founding Member</p>
           <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">Welcome aboard, ${greeting.replace(",", "")}.</h1>
           <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
-            You snagged one of the first 20 founding-member spots. Thanks for backing us this early — here's what that gets you:
+            You snagged one of the first 20 founding-member spots. Here's what that gets you:
           </p>
           <ul style="font-size: 15px; color: #3f3f46; padding-left: 20px; margin: 0 0 22px;">
-            <li><strong>${FOUNDING_DISCOUNT} off forever</strong> — locked in for the lifetime of your account, even after public pricing goes up.</li>
+            <li><strong>${FOUNDING_DISCOUNT} off your first ${FOUNDING_DURATION_MONTHS} months</strong> — applied automatically every renewal during the period.</li>
+            <li><strong>Permanent ★ Founder badge</strong> on your account, even after the discount window. Means priority support and early access to every new feature we ship.</li>
             <li>Direct line to the team — reply to this email and the founder reads it.</li>
-            <li>You'll vote on the next features we ship.</li>
           </ul>
           <div style="background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 16px 20px; margin: 0 0 22px;">
             <p style="font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: #b45309; margin: 0 0 4px;">Your founding code</p>
             <p style="font-size: 22px; font-weight: 700; color: #18181b; margin: 0; font-family: ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.05em;">${FOUNDING_COUPON_CODE}</p>
-            <p style="font-size: 12px; color: #78716c; margin: 6px 0 0;">Apply at checkout. ${FOUNDING_DISCOUNT} off your monthly or yearly Pro plan, every renewal.</p>
+            <p style="font-size: 12px; color: #78716c; margin: 6px 0 0;">Apply at checkout. ${FOUNDING_DISCOUNT} off Pro plan for ${FOUNDING_DURATION_MONTHS} months — your founder badge is permanent.</p>
           </div>
           <a href="https://www.heatrankai.com/login"
              style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">

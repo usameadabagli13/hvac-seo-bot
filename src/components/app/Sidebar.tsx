@@ -50,9 +50,11 @@ const USAGE_LABELS: Record<string, string> = {
 export default function Sidebar({
   plan = "starter",
   usage = {},
+  isFounder = false,
 }: {
-  plan?:  "starter" | "pro" | "agency";
-  usage?: Record<string, number>;
+  plan?:      "starter" | "pro" | "agency";
+  usage?:     Record<string, number>;
+  isFounder?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -184,9 +186,19 @@ export default function Sidebar({
             <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-0.5">
               Plan
             </p>
-            <p className={`text-xs font-semibold ${plan === "pro" ? "text-emerald-400" : plan === "agency" ? "text-amber-400" : "text-zinc-400"}`}>
-              {PLAN_LABELS[plan]}
-            </p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <p className={`text-xs font-semibold ${plan === "pro" ? "text-emerald-400" : plan === "agency" ? "text-amber-400" : "text-zinc-400"}`}>
+                {PLAN_LABELS[plan]}
+              </p>
+              {isFounder && (
+                <span
+                  title="Founding member — priority support + early feature access"
+                  className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/25 text-amber-400 text-[9px] font-bold uppercase tracking-wider"
+                >
+                  ★ Founder
+                </span>
+              )}
+            </div>
           </Link>
           {/* Usage mini-widget — only for starter (has hard limits) */}
           {plan === "starter" && (

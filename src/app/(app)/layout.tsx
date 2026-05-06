@@ -13,7 +13,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const periodStart = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`;
 
-  const [{ plan, isOnTrial, trialDaysLeft, trialExpired }, { data: usageRows }, onboarding] = await Promise.all([
+  const [{ plan, isOnTrial, trialDaysLeft, trialExpired }, { data: usageRows }, onboarding, { data: profileRow }] = await Promise.all([
     resolveTrialState(supabase, session.user.id),
     supabase
       .from("ai_usage")
@@ -21,7 +21,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .eq("user_id", session.user.id)
       .eq("period_start", periodStart),
     getOnboardingState(supabase, session.user.id),
+    supabase
+      .from("profiles")
+      .select("is_founder")
+      .eq("user_id", session.user.id)
+      .maybeSingle(),
   ]);
+
+  const isFounder = !!profileRow?.is_founder;
 
   const usage: Record<string, number> = {};
   for (const row of usageRows ?? []) {
@@ -32,7 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      <Sidebar plan={plan} usage={usage} />
+      <Sidebar plan={plan} usage={usage} isFounder={isFounder} />
       <div className="lg:pl-56 pb-16 lg:pb-0">
         {showBanner && (
           <TrialBanner trialDaysLeft={trialDaysLeft} trialExpired={trialExpired} />
