@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { FOUNDING_COUPON_CODE, FOUNDING_DISCOUNT } from "@/lib/founding";
 
 let _resend: Resend | null = null;
 
@@ -50,23 +51,55 @@ export async function sendEmail({ to, subject, html }: SendArgs): Promise<boolea
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 
-export function waitlistWelcomeHtml(name: string | null): string {
+export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): string {
   const greeting = name?.trim() ? `Hey ${name.trim().split(/\s+/)[0]},` : "Hey there,";
+
+  if (isFounding) {
+    return /* html */ `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #18181b; line-height: 1.55;">
+        <div style="padding: 32px 24px; background: #fafafa; border-radius: 16px;">
+          <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #b45309; margin: 0 0 6px;">★ Founding Member</p>
+          <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">Welcome aboard, ${greeting.replace(",", "")}.</h1>
+          <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
+            You snagged one of the first 20 founding-member spots. Thanks for backing us this early — here's what that gets you:
+          </p>
+          <ul style="font-size: 15px; color: #3f3f46; padding-left: 20px; margin: 0 0 22px;">
+            <li><strong>${FOUNDING_DISCOUNT} off forever</strong> — locked in for the lifetime of your account, even after public pricing goes up.</li>
+            <li>Direct line to the team — reply to this email and the founder reads it.</li>
+            <li>You'll vote on the next features we ship.</li>
+          </ul>
+          <div style="background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 16px 20px; margin: 0 0 22px;">
+            <p style="font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: #b45309; margin: 0 0 4px;">Your founding code</p>
+            <p style="font-size: 22px; font-weight: 700; color: #18181b; margin: 0; font-family: ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.05em;">${FOUNDING_COUPON_CODE}</p>
+            <p style="font-size: 12px; color: #78716c; margin: 6px 0 0;">Apply at checkout. ${FOUNDING_DISCOUNT} off your monthly or yearly Pro plan, every renewal.</p>
+          </div>
+          <a href="https://www.heatrankai.com/login"
+             style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
+            Start your free trial
+          </a>
+        </div>
+        <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 14px 0 0;">
+          HeatRank AI · Local SEO for HVAC contractors
+        </p>
+      </div>
+    `;
+  }
+
   return /* html */ `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #18181b; line-height: 1.55;">
       <div style="padding: 32px 24px; background: #fafafa; border-radius: 16px;">
         <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #71717a; margin: 0 0 6px;">HeatRank AI</p>
-        <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">You're on the list 🚀</h1>
+        <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">You're on the list</h1>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">${greeting}</p>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
-          Thanks for joining the HeatRank AI waitlist. You'll be one of the first to know when we open new seats — and you'll get an extended trial when you do sign up.
+          The 20 founding-member spots are gone, but you're now on the HeatRank AI inside list. We'll send product updates, HVAC SEO playbooks, and the occasional case study — nothing else.
         </p>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 22px;">
-          In the meantime, if you can't wait, the product is already live and you can start a free 14-day Pro trial today.
+          You don't need to wait — the product is live and you can start a 14-day free Pro trial today.
         </p>
         <a href="https://www.heatrankai.com/login"
            style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
-          Skip the wait — start free
+          Start free trial
         </a>
       </div>
       <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 14px 0 0;">

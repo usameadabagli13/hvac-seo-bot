@@ -335,19 +335,20 @@ export default async function LandingPage({
           </div>
         </section>
 
-        {/* ── Waitlist ──────────────────────────────────────────────────────── */}
+        {/* ── Founding Member offer ────────────────────────────────────────── */}
         <section className="max-w-3xl mx-auto px-6 pt-4 pb-20">
-          <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] px-6 py-8 sm:px-10 sm:py-10">
+          <div className="rounded-3xl border border-amber-500/15 bg-gradient-to-br from-amber-500/[0.06] via-white/[0.02] to-white/[0.02] px-6 py-8 sm:px-10 sm:py-10">
             <div className="mb-5">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
-                Not ready yet?
+              <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">
+                Limited offer
               </p>
               <h3 className="text-xl font-semibold text-zinc-100 tracking-tight mb-1.5">
-                Join the waitlist for early-bird pricing
+                Become a founding member — 30% off forever
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                We email you when we open new seats. Waitlist members get an extended trial
-                and lock in launch pricing for life.
+                The first 20 HVAC contractors to claim a spot lock in 30% off the Pro plan
+                for the lifetime of their account. Once the spots are gone, the price goes
+                back to the full $69 / mo.
               </p>
             </div>
             <WaitlistForm />
