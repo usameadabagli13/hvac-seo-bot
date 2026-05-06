@@ -36,7 +36,7 @@ export default async function ReviewsPage({
     getGBPStatus(user.id),
     supabase
       .from("reviews")
-      .select("review_id, author, platform, rating, body, sentiment, ai_reply, replied_at, review_date, fetched_at, business_id, businesses(business_name)")
+      .select("review_id, author, platform, rating, body, sentiment, sentiment_summary, ai_reply, replied_at, review_date, fetched_at, business_id, businesses(business_name)")
       .eq("user_id", user.id)
       .order("review_date", { ascending: false })
       .limit(50),
@@ -75,6 +75,7 @@ export default async function ReviewsPage({
         sentiment:    row.sentiment as Review["sentiment"],
         replied:      row.replied_at !== null,
         aiReply:      row.ai_reply ?? null,
+        summary:      row.sentiment_summary ?? null,
         businessName: biz?.business_name ?? "Your Business",
       };
     });

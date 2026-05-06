@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { getGBPReviews } from "@/lib/gbp";
 import { MOCK_REVIEWS } from "@/lib/mock-reviews";
-import { analyzeSentiments } from "@/lib/sentiment";
+import { analyzeReviews } from "@/lib/sentiment";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -76,25 +76,30 @@ export async function POST(request: NextRequest) {
     return Response.json({ upserted: 0, total: 0 });
   }
 
-  // Run Gemini sentiment analysis on the full batch before writing to DB.
-  // Falls back silently to the rating-based heuristic per review on API failure.
-  const sentimentMap = await analyzeSentiments(
-    reviews.map((r) => ({ review_id: r.id, body: r.body }))
+  // Run Gemini sentiment + summary analysis on the full batch before writing
+  // to DB. Falls back silently to the rating-based heuristic per review on
+  // API failure (and a null summary).
+  const analysisMap = await analyzeReviews(
+    reviews.map((r) => ({ review_id: r.id, body: r.body })),
   );
 
-  // Map Review → DB row, embedding AI sentiment where available
-  const rows = reviews.map((r) => ({
-    user_id:     user.id,
-    business_id: businessId as string,
-    platform:    r.platform,
-    review_id:   r.id,
-    author:      r.author,
-    rating:      r.rating,
-    body:        r.body,
-    sentiment:   sentimentMap.get(r.id) ?? r.sentiment,
-    review_date: r.date,
-    fetched_at:  new Date().toISOString(),
-  }));
+  // Map Review → DB row, embedding AI sentiment + summary where available
+  const rows = reviews.map((r) => {
+    const analysis = analysisMap.get(r.id);
+    return {
+      user_id:           user.id,
+      business_id:       businessId as string,
+      platform:          r.platform,
+      review_id:         r.id,
+      author:            r.author,
+      rating:            r.rating,
+      body:              r.body,
+      sentiment:         analysis?.sentiment ?? r.sentiment,
+      sentiment_summary: analysis?.summary ?? null,
+      review_date:       r.date,
+      fetched_at:        new Date().toISOString(),
+    };
+  });
 
   // Upsert: insert new rows, update fetched_at + sentiment on conflict
   const { error: upsertError, count } = await supabase

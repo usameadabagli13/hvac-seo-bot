@@ -16,6 +16,7 @@ export interface Review {
   replied: boolean;
   businessName: string;
   aiReply?: string | null;
+  summary?: string | null;
 }
 
 export { MOCK_REVIEWS } from "@/lib/mock-reviews";
@@ -208,6 +209,12 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
 
       {/* Row 2: body */}
       <div>
+        {review.summary && (
+          <p className="text-xs italic text-zinc-500 mb-2 flex items-start gap-1.5">
+            <Sparkles className="w-3 h-3 text-zinc-600 mt-0.5 flex-shrink-0" />
+            {review.summary}
+          </p>
+        )}
         <p className="text-sm text-zinc-400 leading-relaxed">{displayBody}</p>
         {isLong && (
           <button
