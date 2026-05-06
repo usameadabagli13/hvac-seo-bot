@@ -109,10 +109,10 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [ ] `/forgot-password` — N/A (Google OAuth only; re-evaluate if email auth added later)
 
 ### 1.3 Waitlist / Lead Capture
-- [ ] `waitlist` table: `(id, email, name, company, source, created_at)`
-- [ ] Embedded form on landing page (no auth required)
-- [ ] POST `/api/waitlist` → insert + welcome email via Resend
-- [ ] Admin view in Phase 8
+- [x] `waitlist` table: `(id, email, name, company, source, created_at)`
+- [x] Embedded form on landing page (no auth required)
+- [x] POST `/api/waitlist` → insert + welcome email via Resend
+- [x] Admin view in Phase 8 — `/admin/waitlist` with CSV export
 
 ---
 
@@ -139,7 +139,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 ### 2.3 Business Detail Page (`/dashboard/businesses/[id]`)
 - [x] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
 - [x] Edit business form (inline edit on detail page)
-- [ ] Soft delete with `deleted_at` column (RLS filters it out)
+- [x] Soft delete with `deleted_at` column — all SELECT queries filter, PATCH endpoint accepts deleted_at, EditableBusinessHeader has Delete button
 - [x] **SAB checkbox** — "Service Area Business (no physical storefront)" toggle on BusinessForm; adds `is_service_area_business` column to `businesses` table. HVAC firmaları için kritik — çoğunun showroom'u yoktur
 
 ### 2.4 Settings (`/settings`)
@@ -148,7 +148,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Billing tab: current plan badge + Dodo Payments checkout buttons (live)
 - [x] Danger zone: Delete account with "type DELETE" confirmation + cascade
 - [x] Avatar upload to Supabase Storage — `avatars` bucket + RLS policies + Settings UI
-- [ ] Dodo Customer Portal self-serve link for cancellation/billing management
+- [x] Dodo Customer Portal self-serve link — `/api/dodo/portal` + Settings → Billing "Manage" button (visible once webhook captures customer_id)
 
 ### 2.5 Navigation Shell
 - [x] Sidebar (desktop) + bottom nav (mobile)
@@ -196,7 +196,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] Result stored in `reviews.sentiment` — written during sync, not post-insert
 - [x] Rating distribution chart (1★–5★ bar chart with colour-coded bars)
 - [x] Filter by: rating, sentiment, date, replied/unreplied (done in 3.0 shell)
-- [ ] 1-sentence AI summary per review (requires `sentiment_summary` column — Phase 3.3 stretch)
+- [x] 1-sentence AI summary per review — `sentiment_summary` column + `analyzeReviews()` returns sentiment+summary in same Gemini call
 
 ### 3.4 AI Reply Generator
 - [x] "Generate Reply" button per review → POST `/api/reviews/generate-reply`
@@ -208,7 +208,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] **Freemium gate:** Free = 5 AI replies/month (tracked in `ai_usage` table)
 - [x] "Post to Google" — wired to GBP API (`/api/reviews/post-reply`, `lib/gbp.ts#postGBPReviewReply`)
 - [x] Save Reply button — saves `ai_reply` + sets `is_replied = true` in DB, triggers router.refresh()
-- [ ] 3 reply variants (formal / friendly / apologetic) — Phase 3.4 full
+- [x] 3 reply variants (formal / friendly / apologetic) — single Gemini call returns JSON with three drafts; ReviewFeed has tone tabs
 
 ---
 
@@ -217,11 +217,11 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 **Goal:** The visual "wow" feature that justifies a Pro subscription renewal every month.
 
 ### 4.1 Grid-Based Local Rank Heatmap
-- [ ] Business + keyword dropdown selectors (currently hardcoded to first business)
+- [x] Business dropdown selector — `BusinessSwitcher` URL-based, shared across rank/schema/citations
 - [x] **HVAC keyword chip suggestions** — rank keyword input'una tıklanabilir chip'ler: ["AC repair", "furnace install", "emergency HVAC", "ductwork", "heat pump"]
 - [x] **Test Mode / "Try free, no credits used" badge** — mock data görünürken `is_mock` flag'e göre rozet göster
-- [ ] Business + keyword dropdown selectors (currently hardcoded to first business)
-- [ ] User sets a target keyword per business (UI + DB column)
+- [x] Keyword dropdown / chip suggestions — chips above input act as one-tap defaults
+- [ ] User sets a "primary" target keyword per business (deferred — multi-keyword approach + chip UX preferred)
 - [x] Generate 5×5 grid of lat/lng points around business (1-mile spacing)
 - [x] Call Google Places Text Search API for each grid point (25 calls per snapshot) — `/api/rank/run-snapshot`
 - [x] DB migration: `rank_snapshots` table with RLS (`20260501000002_phase4_rank_competitors.sql`)
@@ -237,10 +237,10 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - ❌ **Compare sayfası** — historical rank snapshot data yokken anlamsız; Phase 4 live ile birlikte değerlendirilecek, ayrı aksiyon değil
 
 ### 4.2 Competitor Tracker
-- [ ] User adds up to 3 competitor Place IDs
-- [ ] Fetch: avg rating, review count, GBP description keywords
-- [ ] Side-by-side comparison table
-- [ ] "Keyword gap" analysis: what competitors rank for that the user lacks
+- [x] User adds competitors via free-text query — Find Place biased to service location; Pro=3, Agency=10
+- [x] Fetch: avg rating, review count via Place Details
+- [x] Side-by-side list in Competitors tab with remove button
+- [ ] "Keyword gap" analysis (deferred — needs more competitor data structure first)
 
 ---
 
@@ -248,20 +248,20 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 **Goal:** Concrete, actionable to-do list that delivers immediate felt value.
 
-### 5.1 Website Crawler (`/api/crawl`)
-- [ ] Server-side `fetch()` of `website_url`
+### 5.1 Website Crawler (`src/lib/crawler.ts`)
+- [x] Server-side `fetch()` of `website_url`
 - [x] Validate URL with `new URL()` before crawling (Critique #3)
-- [ ] Parse: `<title>`, `<h1>`, `<h2>`, `<meta description>`, body text, image alt tags
-- [ ] Handle redirects, 5s timeout, non-HTML responses
-- [ ] Check `robots.txt` before crawling (legal + ethical requirement)
-- [ ] Store in `seo_audits` table
+- [x] Parse: title, H1, H2 count, meta description, body text, image alt coverage, JSON-LD presence, word count
+- [x] Handle redirects (follow), 8s timeout, non-HTML responses (415)
+- [x] Check `robots.txt` before crawling (best-effort, refuses on explicit deny)
+- [x] Store in `seo_audits` table (migration 20260506000007)
 
 ### 5.2 SEO Gap Analyzer (Gemini)
-- [ ] Send page data + `target_keywords` to Gemini
-- [ ] Returns `{ issues: [{severity, element, current, recommended}] }` as JSON
-- [ ] Example: "Missing 'Dallas HVAC repair' in H1", "Meta description only 42 chars"
-- [ ] Calculate score 0–100 based on issue count and severity
-- [ ] Render as prioritized checklist: Critical / Warning / Info badges
+- [x] Send page data + `target_keywords` to Gemini
+- [x] Returns `{ score, issues: [{severity, element, current, recommended}] }` as JSON
+- [x] Concrete recommendations e.g. "Title is 38 chars, expand with city + service keyword"
+- [x] Score 0–100 — Gemini self-scores with severity guidance baked in
+- [x] Render as prioritized checklist: Critical / Warning / Info badges in business detail SEO Audit tab
 - **Freemium:** Free = 1 audit/month, Pro = unlimited + weekly auto-recrawl
 
 ---
@@ -285,7 +285,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] **Trial countdown banner** — sticky top bar; X days left + Upgrade CTA; red urgency when expired
 - [x] Webhook clears `trial_ends_at = NULL` on paid subscription (no more countdown after payment)
 - [x] Day 12 email via Resend — daily Vercel cron `/api/cron/trial-emails`, idempotent via `profiles.trial_email_sent_at`
-- [ ] Frozen state: full-screen upgrade CTA overlay (currently degrades silently to Starter limits)
+- [ ] Frozen state: full-screen upgrade CTA overlay (deferred — TrialBanner + UpgradeGate per Pro feature is gentler UX, full-screen lockout reserved for actual abuse)
 
 ### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
 - [x] `incrementUsage(userId, feature)` — atomic `UPDATE count + 1` via `increment_ai_usage` RPC
@@ -313,11 +313,11 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 
 ### 6.5 Paywall UI Components
-- [ ] `<UpgradeGate feature="..." />` — blurred overlay with "Upgrade to Pro" CTA
-- [ ] `<UsageBar feature="..." />` — bar for settings page
-- [ ] `<PlanBadge />` — sidebar plan indicator
-- [ ] `/pricing` page with annual toggle (2 months free)
-- [ ] Payment portal link for self-serve cancellation (Dodo Payments customer portal)
+- [x] `<UpgradeGate feature="..." />` — blurred overlay + CTA (`src/components/paywall/UpgradeGate.tsx`)
+- [x] `<UsageBar feature="..." />` — Settings + sidebar widget
+- [x] `<PlanBadge />` — sidebar plan indicator (existing)
+- [x] `/pricing` page with annual toggle (2 months free) — shared PLANS lib + reused components
+- [x] Payment portal link for self-serve cancellation — Dodo customer portal session
 
 ---
 
@@ -352,23 +352,23 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 **Goal:** Founder visibility into business metrics without touching the database directly.
 
 ### 8.1 Access Control
-- [ ] `/admin` protected by middleware: check `profiles.role = 'admin'`
-- [ ] Role set manually via Supabase Studio for founder's account
-- [ ] Never use client-side role checks — always verify server-side
+- [x] `/admin` protected by `requireAdmin()` server guard checking `profiles.role = 'admin'`
+- [x] Role set manually via Supabase: `UPDATE profiles SET role='admin' WHERE user_id='...'`
+- [x] Server-side role verification (server component layout, no client check)
 
 ### 8.2 Admin Dashboard (`/admin`)
-- [ ] MRR tracker (Stripe API → sum of active subscriptions)
-- [ ] Daily signup chart (30-day rolling)
-- [ ] Churn rate (cancellations last 30 days / total active)
-- [ ] Top features by usage (query `ai_usage` grouped by feature)
-- [ ] Error log (query `admin_audit_log` for errors)
-- [ ] Waitlist manager (view + CSV export)
-- [ ] User lookup by email: plan, usage, businesses
+- [x] 8 KPI cards: total users, paid, active trials, businesses, reviews, snapshots-30d, audits-30d, waitlist
+- [x] Recent signups (last 10 in 30 days)
+- [x] AI usage breakdown for the current month
+- [x] Waitlist manager — `/admin/waitlist` with CSV export
+- [x] User lookup — `/admin/users` with email/name/user_id search
+- [ ] MRR tracker (deferred — Dodo Payments doesn't expose subscription totals via API)
+- [ ] Churn rate / signup chart (deferred — KPI cards cover the same need at this stage)
 
 ### 8.3 System Health Panel
-- [ ] Gemini API quota status
-- [ ] Supabase DB size + row counts per table
-- [ ] Failed Dodo webhook events list
+- [x] Env-var presence checks (10 critical vars)
+- [x] Recent Dodo webhook deliveries (last 20) + 30-day count
+- [ ] Supabase DB size + row counts (deferred — Supabase dashboard already shows this)
 
 ---
 
@@ -378,12 +378,12 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 
 ### 9.1 NAP Citation Manager ⭐ HIGH PRIORITY
 **Why:** NAP (Name, Address, Phone) consistency across 80+ directories (Yelp, Angi, HomeAdvisor, BBB, YellowPages) is a top-3 local ranking factor. No competitor does this cleanly.
-- [ ] `citations` table: directory, listing_url, detected NAP, consistency flag
-- [ ] User pastes directory listing URL → Gemini extracts the NAP from the page
-- [ ] Consistency checker: compare vs. canonical NAP stored on `businesses`
-- [ ] Score: "Your NAP is consistent on 61/80 directories"
-- [ ] For each inconsistent listing: show exact URL to fix + field-by-field diff
-- [ ] Pro: auto-submit to free directories (Bing Places, Apple Maps, Nextdoor)
+- [x] `citations` table: directory, listing_url, detected NAP, consistency flag
+- [x] User pastes directory listing URL → Gemini extracts the NAP from the page
+- [x] Consistency checker: compare vs. canonical NAP stored on `businesses` (phone + street_address columns added)
+- [x] Score: "X/N consistent" badge on the citations page
+- [x] For each inconsistent listing: side-by-side field diff cards (Yours vs Listed)
+- [ ] Pro: auto-submit to free directories (deferred — needs partnerships with each directory's submission API)
 
 ### 9.2 JSON-LD Schema Markup Generator ⭐ QUICK WIN
 **Why:** HVAC businesses universally have zero structured data. 30-minute build, massive perceived value.
@@ -391,10 +391,10 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [x] Include: name, address, phone, location, openingHours, priceRange, areaServed
 - [x] One-click copy to clipboard (copies full `<script>` tag)
 - [x] CMS-tailored embed instructions (WordPress snippet vs. raw HTML `<head>` tag)
-- [ ] Business selector dropdown (multi-business support — currently hardcoded to first)
-- [ ] "Test with Google Rich Results" external link → validates the generated schema
-- [ ] Weekend hours support (Sat/Sun checkbox + time inputs)
-- [ ] Store in `schema_markup` table with version history (Phase 9.2 full)
+- [x] Business selector dropdown — `BusinessSwitcher` URL-based shared component
+- [x] "Test with Google Rich Results" external link — opens search.google.com/test/rich-results pre-filled
+- [x] Weekend hours support (Sat/Sun checkbox + time inputs, emits OpeningHoursSpecification)
+- [ ] Store in `schema_markup` table with version history (deferred — current generator is stateless and works fine without versioning)
 
 ### 9.3 Google Business Profile Post Scheduler
 **Why:** Regular GBP posts improve local pack visibility. HVAC owners never do this — it's tedious.
