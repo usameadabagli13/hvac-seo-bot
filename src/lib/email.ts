@@ -5,6 +5,7 @@ import {
   FOUNDING_COUPON_MONTHLY,
   FOUNDING_DISCOUNT,
   FOUNDING_DURATION_MONTHS,
+  FOUNDING_DISPLAY_TOTAL,
 } from "@/lib/founding";
 
 /**
@@ -100,7 +101,7 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
           <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #b45309; margin: 0 0 6px;">★ Founding Member</p>
           <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">Welcome aboard, ${greeting.replace(",", "")}.</h1>
           <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
-            You snagged one of the first 20 founding-member spots. Here's what that gets you:
+            You snagged one of the first ${FOUNDING_DISPLAY_TOTAL} founding-member spots. Here's what that gets you:
           </p>
           <ul style="font-size: 15px; color: #3f3f46; padding-left: 20px; margin: 0 0 22px;">
             <li><strong>${FOUNDING_DISCOUNT} off your first ${FOUNDING_DURATION_MONTHS} months</strong> — applied automatically every renewal during the period.</li>
@@ -144,7 +145,7 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
         <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">You're on the list</h1>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">${greeting}</p>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
-          The 20 founding-member spots are gone, but you're now on the HeatRank AI inside list. We'll send product updates, HVAC SEO playbooks, and the occasional case study — nothing else.
+          The ${FOUNDING_DISPLAY_TOTAL} founding-member spots are gone, but you're now on the HeatRank AI inside list. We'll send product updates, HVAC SEO playbooks, and the occasional case study — nothing else.
         </p>
         <p style="font-size: 15px; color: #3f3f46; margin: 0 0 22px;">
           You don't need to wait — the product is live and you can start a 14-day free Pro trial today.
