@@ -25,6 +25,7 @@ export default async function RankPage({
     .from("businesses")
     .select("id, business_name, service_location")
     .eq("user_id", user.id)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   const { business: selectedId } = await searchParams;

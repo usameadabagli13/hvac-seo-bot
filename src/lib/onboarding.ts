@@ -19,7 +19,8 @@ export async function getOnboardingState(
   const { data: businesses } = await supabase
     .from("businesses")
     .select("id")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .is("deleted_at", null);
 
   const bizIds = (businesses ?? []).map((b) => b.id);
 

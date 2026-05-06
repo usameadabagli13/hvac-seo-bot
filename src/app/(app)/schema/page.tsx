@@ -23,6 +23,7 @@ export default async function SchemaPage({
     .from("businesses")
     .select("id, business_name, service_location, website_url, target_keywords")
     .eq("user_id", user.id)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   const { business: selectedIdParam } = await searchParams;

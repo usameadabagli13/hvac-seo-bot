@@ -30,6 +30,7 @@ export default async function BusinessDetailPage({
       .select("*")
       .eq("id", id)
       .eq("user_id", session.user.id)
+      .is("deleted_at", null)
       .maybeSingle(),
     supabase
       .from("reviews")

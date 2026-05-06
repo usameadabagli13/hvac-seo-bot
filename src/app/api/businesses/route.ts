@@ -134,6 +134,15 @@ export async function PATCH(request: NextRequest) {
     updates.is_service_area_business = body.is_service_area_business;
   }
 
+  if ("deleted_at" in body) {
+    // Accept null (restore) or true (delete now); ignore other values
+    if (body.deleted_at === null) {
+      updates.deleted_at = null;
+    } else if (body.deleted_at === true || typeof body.deleted_at === "string") {
+      updates.deleted_at = new Date().toISOString();
+    }
+  }
+
   if (Object.keys(updates).length === 0) {
     return Response.json({ error: "No fields to update." }, { status: 422 });
   }

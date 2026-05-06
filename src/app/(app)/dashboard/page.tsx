@@ -16,6 +16,7 @@ export default async function DashboardPage() {
       .from("businesses")
       .select("id, business_name, service_location, website_url, target_keywords, is_service_area_business, created_at")
       .eq("user_id", user.id)
+      .is("deleted_at", null)
       .order("created_at", { ascending: false }),
     supabase
       .from("reviews")

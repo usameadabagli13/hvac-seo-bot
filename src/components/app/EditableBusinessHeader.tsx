@@ -12,6 +12,7 @@ import {
   X,
   Loader2,
   Truck,
+  Trash2,
 } from "lucide-react";
 
 interface BusinessHeaderProps {
@@ -43,6 +44,32 @@ export default function EditableBusinessHeader({ business }: BusinessHeaderProps
     setSab(!!business.is_service_area_business);
     setError(null);
     setEditing(false);
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`Delete "${business.business_name}"? Reviews, snapshots, and audits stay attached but the business is hidden from your dashboard. This is reversible — contact support to restore.`)) {
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/businesses", {
+        method:  "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ id: business.id, deleted_at: true }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setError(data.error ?? "Failed to delete.");
+        return;
+      }
+      // Send the user back to the dashboard since this business no longer exists
+      window.location.href = "/dashboard";
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSave = async () => {
@@ -215,6 +242,22 @@ export default function EditableBusinessHeader({ business }: BusinessHeaderProps
           {error}
         </p>
       )}
+
+      {/* Danger zone */}
+      <div className="pt-3 mt-1 border-t border-white/[0.05] flex items-center justify-between gap-3">
+        <p className="text-[11px] text-zinc-600">
+          Hide this business from your dashboard. Linked data is preserved.
+        </p>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={saving}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors disabled:opacity-40"
+        >
+          <Trash2 className="w-3 h-3" />
+          Delete business
+        </button>
+      </div>
     </div>
   );
 }
