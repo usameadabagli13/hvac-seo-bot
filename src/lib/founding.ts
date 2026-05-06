@@ -9,26 +9,25 @@
  * here without updating the Dodo coupon configuration.
  */
 // Real backend cap: this many actual signups receive the founder flag.
-export const FOUNDING_TOTAL_SPOTS     = 20;
+export const FOUNDING_TOTAL_SPOTS = 10;
 
 // Social-proof offset shown to visitors. The displayed counter starts as
 // if this many people had already claimed a spot, so a fresh visitor
 // never sees "0 of N taken" (which signals "nobody else thinks this is
 // worth it"). Doesn't affect who actually gets the founder flag — that's
 // still gated by FOUNDING_TOTAL_SPOTS in the DB.
-export const FOUNDING_DISPLAY_OFFSET  = 9;
-export const FOUNDING_DISPLAY_TOTAL   = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 29
-
-export const FOUNDING_DISCOUNT        = "30%";
+export const FOUNDING_DISPLAY_OFFSET = 21;
+export const FOUNDING_DISPLAY_TOTAL  = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 10 + 21 = 31
+export const FOUNDING_DISCOUNT = "30%";
 export const FOUNDING_DURATION_MONTHS = 12;
 
 // Two coupons because Dodo charges by billing cycle:
 //   - Yearly plan: 1 cycle == 12 months → FOUNDER30 (1 cycle)
 //   - Monthly plan: 12 cycles == 12 months → FOUND30 (12 cycles)
 // We send both in the welcome email and let the user pick at checkout.
-export const FOUNDING_COUPON_YEARLY  = "FOUNDER30";
+export const FOUNDING_COUPON_YEARLY = "FOUNDER30";
 export const FOUNDING_COUPON_MONTHLY = "FOUND30";
 
 // Single legacy export so older callers (admin CSV, DB seed) keep compiling.
 // Defaults to the yearly code since that's the longer-term commitment.
-export const FOUNDING_COUPON_CODE    = FOUNDING_COUPON_YEARLY;
+export const FOUNDING_COUPON_CODE = FOUNDING_COUPON_YEARLY;
