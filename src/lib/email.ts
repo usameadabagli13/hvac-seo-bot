@@ -50,6 +50,32 @@ export async function sendEmail({ to, subject, html }: SendArgs): Promise<boolea
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 
+export function waitlistWelcomeHtml(name: string | null): string {
+  const greeting = name?.trim() ? `Hey ${name.trim().split(/\s+/)[0]},` : "Hey there,";
+  return /* html */ `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #18181b; line-height: 1.55;">
+      <div style="padding: 32px 24px; background: #fafafa; border-radius: 16px;">
+        <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #71717a; margin: 0 0 6px;">HeatRank AI</p>
+        <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">You're on the list 🚀</h1>
+        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">${greeting}</p>
+        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
+          Thanks for joining the HeatRank AI waitlist. You'll be one of the first to know when we open new seats — and you'll get an extended trial when you do sign up.
+        </p>
+        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 22px;">
+          In the meantime, if you can't wait, the product is already live and you can start a free 14-day Pro trial today.
+        </p>
+        <a href="https://www.heatrankai.com/login"
+           style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
+          Skip the wait — start free
+        </a>
+      </div>
+      <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 14px 0 0;">
+        HeatRank AI · Local SEO for HVAC contractors
+      </p>
+    </div>
+  `;
+}
+
 export function trialEndingHtml(daysLeft: number): string {
   return /* html */ `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #18181b; line-height: 1.55;">

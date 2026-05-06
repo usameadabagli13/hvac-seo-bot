@@ -16,6 +16,7 @@ import {
 import DemoWidget from "@/components/marketing/DemoWidget";
 import FaqAccordion from "@/components/marketing/FaqAccordion";
 import PricingToggle from "@/components/marketing/PricingToggle";
+import WaitlistForm from "@/components/marketing/WaitlistForm";
 
 export const revalidate = 3600;
 
@@ -394,6 +395,25 @@ export default async function LandingPage({
               Start your 14-day free trial
               <ChevronRight className="w-4 h-4" />
             </Link>
+          </div>
+        </section>
+
+        {/* ── Waitlist ──────────────────────────────────────────────────────── */}
+        <section className="max-w-3xl mx-auto px-6 pt-4 pb-20">
+          <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] px-6 py-8 sm:px-10 sm:py-10">
+            <div className="mb-5">
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                Not ready yet?
+              </p>
+              <h3 className="text-xl font-semibold text-zinc-100 tracking-tight mb-1.5">
+                Join the waitlist for early-bird pricing
+              </h3>
+              <p className="text-sm text-zinc-500 leading-relaxed">
+                We email you when we open new seats. Waitlist members get an extended trial
+                and lock in launch pricing for life.
+              </p>
+            </div>
+            <WaitlistForm />
           </div>
         </section>
       </main>
