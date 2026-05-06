@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { deleteAccount } from "@/app/(app)/settings/actions";
-import { Loader2, Check, AlertTriangle, User, BarChart2, CreditCard, Trash2 } from "lucide-react";
+import { Loader2, Check, AlertTriangle, User, BarChart2, CreditCard, Trash2, Camera, X } from "lucide-react";
 import type { Plan, BillingInterval } from "@/lib/dodo";
 
 interface UsageItem {
@@ -18,6 +19,7 @@ interface Props {
   userId: string;
   email: string;
   initialName: string;
+  initialAvatarUrl: string | null;
   usageItems: UsageItem[];
   initialTab: "profile" | "usage" | "billing" | "danger";
   currentPlan: Plan;
@@ -149,12 +151,16 @@ const BILLING_PLANS: {
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function SettingsTabs({ userId, email, initialName, usageItems, initialTab, currentPlan }: Props) {
+export default function SettingsTabs({ userId, email, initialName, initialAvatarUrl, usageItems, initialTab, currentPlan }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Profile state
   const [displayName, setDisplayName] = useState(initialName);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl);
+  const [uploading, setUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -166,6 +172,80 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
   // Danger zone state
   const [confirmInput, setConfirmInput] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAvatarError(null);
+
+    // Validate
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    if (!["jpg", "jpeg", "png", "webp"].includes(ext)) {
+      setAvatarError("Use a JPG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("Image must be under 2 MB.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const supabase = createClient();
+      const path = `${userId}/avatar.${ext}`;
+
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true, cacheControl: "3600" });
+
+      if (upErr) throw upErr;
+
+      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+      // Cache-bust so the new image shows immediately
+      const publicUrl = `${urlData.publicUrl}?v=${Date.now()}`;
+
+      const { error: dbErr } = await supabase
+        .from("profiles")
+        .upsert({ user_id: userId, avatar_url: publicUrl }, { onConflict: "user_id" });
+
+      if (dbErr) throw dbErr;
+
+      setAvatarUrl(publicUrl);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Upload failed.";
+      setAvatarError(msg);
+    } finally {
+      setUploading(false);
+      // Allow re-uploading the same filename
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    if (!avatarUrl) return;
+    setAvatarError(null);
+    setUploading(true);
+    try {
+      const supabase = createClient();
+      // Try removing all common extensions; ignore individual failures
+      await supabase.storage.from("avatars").remove([
+        `${userId}/avatar.jpg`,
+        `${userId}/avatar.jpeg`,
+        `${userId}/avatar.png`,
+        `${userId}/avatar.webp`,
+      ]);
+      const { error: dbErr } = await supabase
+        .from("profiles")
+        .upsert({ user_id: userId, avatar_url: null }, { onConflict: "user_id" });
+      if (dbErr) throw dbErr;
+      setAvatarUrl(null);
+    } catch (err) {
+      setAvatarError(err instanceof Error ? err.message : "Remove failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSaveProfile = async () => {
     setSaving(true);
@@ -245,16 +325,72 @@ export default function SettingsTabs({ userId, email, initialName, usageItems, i
         <div className="max-w-md space-y-5">
           {/* Avatar */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-xl font-bold text-zinc-300 select-none flex-shrink-0">
-              {(displayName || email)[0].toUpperCase()}
-            </div>
-            <div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="relative group w-14 h-14 rounded-2xl bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-xl font-bold text-zinc-300 select-none flex-shrink-0 overflow-hidden hover:border-white/[0.18] transition-colors disabled:opacity-60"
+              title={avatarUrl ? "Change avatar" : "Upload avatar"}
+            >
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar"
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                  unoptimized
+                />
+              ) : (
+                (displayName || email)[0].toUpperCase()
+              )}
+              <span className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploading
+                  ? <Loader2 className="w-4 h-4 animate-spin text-zinc-200" />
+                  : <Camera   className="w-4 h-4 text-zinc-200" />
+                }
+              </span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleAvatarUpload}
+              className="hidden"
+            />
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-zinc-200">
                 {displayName || email.split("@")[0]}
               </p>
               <p className="text-xs text-zinc-600">{email}</p>
+              <div className="mt-1.5 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="text-[11px] text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-50"
+                >
+                  {avatarUrl ? "Change" : "Upload photo"}
+                </button>
+                {avatarUrl && (
+                  <button
+                    type="button"
+                    onClick={handleAvatarRemove}
+                    disabled={uploading}
+                    className="flex items-center gap-1 text-[11px] text-zinc-600 hover:text-rose-400 transition-colors disabled:opacity-50"
+                  >
+                    <X className="w-3 h-3" />
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
           </div>
+          {avatarError && (
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+              {avatarError}
+            </p>
+          )}
 
           {/* Display name */}
           <div className="space-y-1.5">
