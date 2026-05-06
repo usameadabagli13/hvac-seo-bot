@@ -471,12 +471,13 @@ export default function BusinessForm({
         </div>
 
         {/* ── AI Generate Button ────────────────────────────────────── */}
-        <div>
+        <div className="flex items-center gap-3 flex-wrap">
           <button
             id="generate-keywords-btn"
             type="button"
             onClick={handleGenerateKeywords}
             disabled={isGenerating}
+            title="Uses 1 of your monthly keyword generation credits"
             className={[
               "relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl",
               "text-sm font-medium select-none",
@@ -496,6 +497,7 @@ export default function BusinessForm({
             )}
             <span>{isGenerating ? "Generating…" : "Generate Keywords with AI"}</span>
           </button>
+          <span className="text-[11px] text-zinc-600">Uses 1 monthly credit</span>
         </div>
 
         {aiError && (

@@ -311,10 +311,11 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
 
         {/* Run Snapshot */}
         <div className="flex flex-col gap-2 pt-1">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={handleRunSnapshot}
               disabled={running || !keywordVal.trim()}
+              title="Uses 1 of your monthly rank snapshot credits"
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
             >
               {running
@@ -322,6 +323,7 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
                 : <Play className="w-4 h-4" />}
               {running ? "Scanning 25 grid points…" : "Run Snapshot"}
             </button>
+            <span className="text-[11px] text-zinc-600">Uses 1 monthly credit</span>
             {runMsg && !running && (
               <p className="text-xs text-emerald-400">{runMsg}</p>
             )}

@@ -211,24 +211,30 @@ function ReviewCard({ review, isConnected }: { review: Review; isConnected: bool
           <div />
         )}
 
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className={`flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 disabled:pointer-events-none min-h-[36px] ${
-            generating
-              ? "bg-white/[0.03] border-white/[0.07] text-zinc-600"
-              : reply
-              ? "bg-white/[0.04] border-white/[0.09] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.14]"
-              : "bg-zinc-800/60 border-white/[0.10] text-zinc-300 hover:bg-zinc-700/60 hover:text-zinc-100 hover:border-white/[0.16] active:scale-[0.97] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
-          }`}
-        >
-          {generating ? (
-            <Loader2 className="w-3 h-3 animate-spin" />
-          ) : (
-            <Sparkles className="w-3 h-3" />
+        <div className="flex items-center gap-2">
+          {!reply && !generating && (
+            <span className="text-[10px] text-zinc-600 hidden sm:inline">·1 credit</span>
           )}
-          {generating ? "Generating…" : reply ? "Regenerate" : "Generate AI Reply"}
-        </button>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            title={reply ? "Regenerate uses another credit" : "Uses 1 of your monthly AI reply credits"}
+            className={`flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 disabled:pointer-events-none min-h-[36px] ${
+              generating
+                ? "bg-white/[0.03] border-white/[0.07] text-zinc-600"
+                : reply
+                ? "bg-white/[0.04] border-white/[0.09] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.14]"
+                : "bg-zinc-800/60 border-white/[0.10] text-zinc-300 hover:bg-zinc-700/60 hover:text-zinc-100 hover:border-white/[0.16] active:scale-[0.97] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+            }`}
+          >
+            {generating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <Sparkles className="w-3 h-3" />
+            )}
+            {generating ? "Generating…" : reply ? "Regenerate" : "Generate AI Reply"}
+          </button>
+        </div>
       </div>
 
       {/* Row 4: error / limit */}
