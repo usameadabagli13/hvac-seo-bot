@@ -27,10 +27,21 @@ const _clients = new Map<string, Resend>();
 
 function resolveCreds(purpose: EmailPurpose): { client: Resend | null; from: string } {
   const cfg = PURPOSE_ENV[purpose];
-  // Prefer the purpose-specific key; fall back to the shared one
-  const apiKey = process.env[cfg.key] ?? process.env.RESEND_API_KEY ?? "";
-  const from   = process.env[cfg.from] ?? process.env.RESEND_FROM_EMAIL
-                  ?? "HeatRank AI <support@heatrankai.com>";
+
+  // Resolution order for the API key:
+  //   1. The purpose-specific env  (e.g. RESEND_WAITLIST_API_KEY)
+  //   2. The generic shared env    (RESEND_API_KEY)
+  //   3. The waitlist env as a last-resort fallback (covers the case where
+  //      one purpose has a working key but the other one was set up wrong)
+  const apiKey = process.env[cfg.key]
+              ?? process.env.RESEND_API_KEY
+              ?? process.env.RESEND_WAITLIST_API_KEY
+              ?? "";
+
+  const from = process.env[cfg.from]
+            ?? process.env.RESEND_FROM_EMAIL
+            ?? process.env.RESEND_WAITLIST_FROM_EMAIL
+            ?? "HeatRank AI <support@heatrankai.com>";
 
   if (!apiKey) return { client: null, from };
   let client = _clients.get(apiKey);
