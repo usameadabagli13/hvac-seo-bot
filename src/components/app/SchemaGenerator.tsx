@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, ExternalLink } from "lucide-react";
 
 interface Business {
   id: string;
@@ -16,12 +16,20 @@ interface Props {
   selectedId: string;
 }
 
+interface WeekendHours {
+  enabled: boolean;
+  open:    string;
+  close:   string;
+}
+
 function buildSchema(
   biz: Business,
   phone: string,
   streetAddress: string,
   openHour: string,
-  closeHour: string
+  closeHour: string,
+  saturday: WeekendHours,
+  sunday:   WeekendHours,
 ): string {
   const parts = biz.service_location.split(",").map((s) => s.trim());
   const locality = parts[0] ?? biz.service_location;
@@ -59,6 +67,12 @@ function buildSchema(
         opens: openHour,
         closes: closeHour,
       },
+      ...(saturday.enabled
+        ? [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday"], opens: saturday.open, closes: saturday.close }]
+        : []),
+      ...(sunday.enabled
+        ? [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Sunday"], opens: sunday.open, closes: sunday.close }]
+        : []),
     ],
   };
 
@@ -73,14 +87,16 @@ export default function SchemaGenerator({ businesses, selectedId }: Props) {
   const [streetAddress, setStreetAddress] = useState("");
   const [openHour, setOpenHour] = useState("08:00");
   const [closeHour, setCloseHour] = useState("18:00");
+  const [saturday, setSaturday] = useState<WeekendHours>({ enabled: false, open: "09:00", close: "15:00" });
+  const [sunday,   setSunday]   = useState<WeekendHours>({ enabled: false, open: "09:00", close: "15:00" });
   const [copied, setCopied] = useState(false);
   const [embedTab, setEmbedTab] = useState<EmbedTab>("HTML / Raw");
 
   const biz = businesses.find((b) => b.id === selectedId) ?? businesses[0];
 
   const schemaJson = useMemo(
-    () => (biz ? buildSchema(biz, phone, streetAddress, openHour, closeHour) : ""),
-    [biz, phone, streetAddress, openHour, closeHour]
+    () => (biz ? buildSchema(biz, phone, streetAddress, openHour, closeHour, saturday, sunday) : ""),
+    [biz, phone, streetAddress, openHour, closeHour, saturday, sunday]
   );
 
   const scriptTag = `<script type="application/ld+json">\n${schemaJson}\n</script>`;
@@ -172,6 +188,66 @@ export default function SchemaGenerator({ businesses, selectedId }: Props) {
               </div>
             </div>
 
+            {/* Saturday */}
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={saturday.enabled}
+                  onChange={(e) => setSaturday({ ...saturday, enabled: e.target.checked })}
+                  className="w-3.5 h-3.5 accent-emerald-500 cursor-pointer"
+                />
+                Saturday Hours
+              </label>
+              {saturday.enabled && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    value={saturday.open}
+                    onChange={(e) => setSaturday({ ...saturday, open: e.target.value })}
+                    className="flex-1 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm text-zinc-200 focus:outline-none focus:border-white/20"
+                  />
+                  <span className="text-xs text-zinc-600">to</span>
+                  <input
+                    type="time"
+                    value={saturday.close}
+                    onChange={(e) => setSaturday({ ...saturday, close: e.target.value })}
+                    className="flex-1 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm text-zinc-200 focus:outline-none focus:border-white/20"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Sunday */}
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-wider cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={sunday.enabled}
+                  onChange={(e) => setSunday({ ...sunday, enabled: e.target.checked })}
+                  className="w-3.5 h-3.5 accent-emerald-500 cursor-pointer"
+                />
+                Sunday Hours
+              </label>
+              {sunday.enabled && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    value={sunday.open}
+                    onChange={(e) => setSunday({ ...sunday, open: e.target.value })}
+                    className="flex-1 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm text-zinc-200 focus:outline-none focus:border-white/20"
+                  />
+                  <span className="text-xs text-zinc-600">to</span>
+                  <input
+                    type="time"
+                    value={sunday.close}
+                    onChange={(e) => setSunday({ ...sunday, close: e.target.value })}
+                    className="flex-1 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm text-zinc-200 focus:outline-none focus:border-white/20"
+                  />
+                </div>
+              )}
+            </div>
+
             {/* What's pre-filled */}
             <div className="pt-1 border-t border-white/[0.05]">
               <p className="text-[11px] text-zinc-600 leading-relaxed">
@@ -189,10 +265,23 @@ export default function SchemaGenerator({ businesses, selectedId }: Props) {
 
         {/* Right: generated code */}
         <div className="lg:col-span-3 space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
               Generated Schema
             </p>
+            <div className="flex items-center gap-2">
+              {biz?.website_url && (
+                <a
+                  href={`https://search.google.com/test/rich-results?url=${encodeURIComponent(biz.website_url)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border bg-white/[0.03] border-white/[0.08] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06] transition-all"
+                  title="Open Google's Rich Results Test for your site"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  Test with Google
+                </a>
+              )}
             <button
               onClick={handleCopy}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 ${
@@ -213,6 +302,7 @@ export default function SchemaGenerator({ businesses, selectedId }: Props) {
                 </>
               )}
             </button>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-white/[0.08] bg-zinc-900/60 overflow-hidden">
