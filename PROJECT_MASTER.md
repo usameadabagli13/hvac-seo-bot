@@ -182,7 +182,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] On-demand token refresh (5-min lookahead) — replaces cron for Phase 3.1
 - [x] `GBPConnectBanner` component — connect / connected+disconnect / api-error states
 - [x] Reviews page wired: live GBP data when connected, graceful fallback to mock on error
-- [ ] Multi-location selector (currently auto-picks first location)
+- [x] Multi-location selector — `GBPLocationSwitcher` dropdown in connect banner; updates `integrations.location_name` via `/api/google/select-location`
 - [ ] Supabase Vault encryption for stored tokens (security hardening)
 
 ### 3.2 Review Fetcher

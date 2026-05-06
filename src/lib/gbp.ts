@@ -45,7 +45,7 @@ async function refreshAccessToken(refreshToken: string): Promise<{
 }
 
 // Returns a valid access token, refreshing if needed. Returns null on failure.
-async function getValidToken(userId: string): Promise<string | null> {
+export async function getValidToken(userId: string): Promise<string | null> {
   const supabase = await createClient();
 
   const { data: integration, error } = await supabase

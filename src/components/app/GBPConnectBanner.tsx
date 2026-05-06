@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, Link2, Link2Off, Loader2 } from "lucide-react";
+import GBPLocationSwitcher from "./GBPLocationSwitcher";
 
 interface Props {
   isConnected: boolean;
@@ -21,17 +22,13 @@ export default function GBPConnectBanner({ isConnected, locationName, apiError }
 
   if (isConnected && !apiError) {
     return (
-      <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] px-4 py-3">
-        <div className="flex items-center gap-2.5">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] px-4 py-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
           <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
           <p className="text-sm text-emerald-400">
             Connected to Google Business Profile
-            {locationName && (
-              <span className="ml-1.5 text-emerald-600 font-mono text-xs">
-                {locationName}
-              </span>
-            )}
           </p>
+          <GBPLocationSwitcher initialSelected={locationName} />
         </div>
         <button
           onClick={handleDisconnect}
