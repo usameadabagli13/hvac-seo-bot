@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createAdminClient } from "@/utils/supabase/admin";
+import TestEmailButtons from "./TestEmailButtons";
 
 export const metadata: Metadata = { title: "Health — Admin" };
 export const revalidate = 60;
@@ -72,6 +73,11 @@ export default async function AdminHealthPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Test email diagnostics */}
+      <div className="mb-8">
+        <TestEmailButtons />
       </div>
 
       {/* Webhook deliveries */}
