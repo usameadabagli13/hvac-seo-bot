@@ -7,31 +7,59 @@ export default function DemoWidget() {
   const [city, setCity] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastCity, setLastCity] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     const trimmed = city.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || loading || streaming) return;
     setError(null);
     setLoading(true);
+    setStreaming(false);
     setKeywords([]);
+
     try {
       const res = await fetch("/api/demo-keywords", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ city: trimmed }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to generate keywords.");
-      setKeywords(data.keywords ?? []);
+
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "Failed to generate keywords.");
+      }
+
       setLastCity(trimmed);
+      setLoading(false);
+      setStreaming(true);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          const kw = line.trim();
+          if (kw) setKeywords((prev) => [...prev, kw]);
+        }
+      }
+      if (buffer.trim()) setKeywords((prev) => [...prev, buffer.trim()]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
       setLoading(false);
+    } finally {
+      setStreaming(false);
     }
   };
+
+  const busy = loading || streaming;
 
   return (
     <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
@@ -46,7 +74,7 @@ export default function DemoWidget() {
         />
         <button
           onClick={handleGenerate}
-          disabled={loading || !city.trim()}
+          disabled={busy || !city.trim()}
           className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none shadow-lg shadow-black/20 flex-shrink-0"
         >
           {loading ? (
@@ -60,7 +88,7 @@ export default function DemoWidget() {
         </button>
       </div>
 
-      {!loading && !keywords.length && !error && (
+      {!busy && !keywords.length && !error && (
         <p className="mt-3 text-xs text-zinc-700 text-center">
           Try: &ldquo;Dallas, TX&rdquo; · &ldquo;Phoenix, AZ&rdquo; · &ldquo;Chicago, IL&rdquo;
         </p>
@@ -81,11 +109,16 @@ export default function DemoWidget() {
             {keywords.map((kw, i) => (
               <span
                 key={i}
-                className="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-700/40 border border-zinc-600/30 text-xs text-zinc-300"
+                className="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-700/40 border border-zinc-600/30 text-xs text-zinc-300 animate-fade-in"
               >
                 {kw}
               </span>
             ))}
+            {streaming && (
+              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-800/40 border border-zinc-700/20">
+                <Loader2 className="w-3 h-3 animate-spin text-zinc-600" />
+              </span>
+            )}
           </div>
           <div className="mt-5 pt-4 border-t border-white/[0.04] flex items-center justify-between">
             <p className="text-xs text-zinc-600">

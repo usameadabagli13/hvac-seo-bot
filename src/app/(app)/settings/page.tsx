@@ -49,7 +49,7 @@ export default async function SettingsPage({
       .eq("period_start", periodStartStr),
     supabase
       .from("profiles")
-      .select("full_name, plan, avatar_url, dodo_customer_id")
+      .select("full_name, plan, is_founder, avatar_url, dodo_customer_id")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
@@ -63,7 +63,9 @@ export default async function SettingsPage({
     profile?.full_name ??
     (user.user_metadata?.full_name as string | undefined) ??
     "";
-  const currentPlan = (profile?.plan as "starter" | "pro" | "agency") ?? "starter";
+  const currentPlan: "starter" | "pro" | "agency" = profile?.is_founder
+    ? "agency"
+    : (profile?.plan as "starter" | "pro" | "agency") ?? "starter";
   const avatarUrl = (profile?.avatar_url as string | null) ?? null;
   const hasDodoCustomer = !!profile?.dodo_customer_id;
 

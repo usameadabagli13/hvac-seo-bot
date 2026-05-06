@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import BusinessDetailTabs from "./BusinessDetailTabs";
 import EditableBusinessHeader from "@/components/app/EditableBusinessHeader";
+import { resolveTrialState } from "@/lib/trial";
 
 export default async function BusinessDetailPage({
   params,
@@ -23,7 +24,7 @@ export default async function BusinessDetailPage({
     { data: rankSnapshots },
     { data: seoAudits },
     { data: competitors },
-    { data: profile },
+    { plan },
   ] = await Promise.all([
     supabase
       .from("businesses")
@@ -57,17 +58,10 @@ export default async function BusinessDetailPage({
       .select("id, name, avg_rating, review_count")
       .eq("business_id", id)
       .limit(10),
-    supabase
-      .from("profiles")
-      .select("plan")
-      .eq("user_id", session.user.id)
-      .maybeSingle(),
+    resolveTrialState(supabase, session.user.id),
   ]);
 
   if (!business) notFound();
-
-  const plan =
-    (profile?.plan as "starter" | "pro" | "agency" | undefined) ?? "starter";
 
   const avgRating =
     reviewsData && reviewsData.length > 0

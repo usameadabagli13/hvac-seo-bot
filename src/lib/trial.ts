@@ -25,9 +25,14 @@ export async function resolveTrialState(
 ): Promise<TrialState> {
   const { data: profile } = await supabase
     .from("profiles")
-    .select("plan, trial_ends_at")
+    .select("plan, trial_ends_at, is_founder")
     .eq("user_id", userId)
     .maybeSingle();
+
+  // Founders get unlimited access regardless of billing state
+  if (profile?.is_founder) {
+    return { plan: "agency", trialEndsAt: null, isOnTrial: false, trialDaysLeft: 0, trialExpired: false };
+  }
 
   const plan = (profile?.plan as Plan | undefined) ?? "starter";
   const trialEndsAt = profile?.trial_ends_at ? new Date(profile.trial_ends_at) : null;

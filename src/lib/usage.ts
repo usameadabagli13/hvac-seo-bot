@@ -26,6 +26,18 @@ export async function checkUsageAllowed(
   if (limit === undefined) return true; // unknown feature = no cap yet
 
   const supabase = await createClient();
+
+  // Founders and paid plans (pro/agency) have no limits
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plan, is_founder")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (profile?.is_founder || profile?.plan === "pro" || profile?.plan === "agency") {
+    return true;
+  }
+
   const { data, error } = await supabase
     .from("ai_usage")
     .select("count")
