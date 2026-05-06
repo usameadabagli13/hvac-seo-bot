@@ -1,8 +1,9 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import { ChevronLeft, Building2, MapPin, Globe, Calendar } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import BusinessDetailTabs from "./BusinessDetailTabs";
+import EditableBusinessHeader from "@/components/app/EditableBusinessHeader";
 
 export default async function BusinessDetailPage({
   params,
@@ -93,43 +94,17 @@ export default async function BusinessDetailPage({
           All Businesses
         </Link>
 
-        {/* Business header */}
-        <div className="mb-8 flex items-start gap-4">
-          <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-            <Building2 className="w-5 h-5 text-zinc-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">
-              {business.business_name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
-              <span className="flex items-center gap-1 text-xs text-zinc-500">
-                <MapPin className="w-3 h-3" />
-                {business.service_location}
-              </span>
-              {business.website_url && (
-                <a
-                  href={business.website_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-                >
-                  <Globe className="w-3 h-3" />
-                  {business.website_url}
-                </a>
-              )}
-              <span className="flex items-center gap-1 text-xs text-zinc-600">
-                <Calendar className="w-3 h-3" />
-                Added{" "}
-                {new Date(business.created_at).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* Business header (editable) */}
+        <EditableBusinessHeader
+          business={{
+            id:                       business.id,
+            business_name:            business.business_name,
+            service_location:         business.service_location,
+            website_url:              business.website_url ?? null,
+            is_service_area_business: business.is_service_area_business ?? null,
+            created_at:               business.created_at,
+          }}
+        />
 
         {/* Stats strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
