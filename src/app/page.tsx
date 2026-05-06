@@ -172,9 +172,9 @@ export default async function LandingPage({
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-zinc-100 tracking-tight leading-[1.1] mb-6 max-w-3xl mx-auto">
-            Stop Losing Customers to{" "}
+            Local SEO Tools for{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-500">
-              Competitors on Google
+              HVAC Contractors
             </span>
           </h1>
 
