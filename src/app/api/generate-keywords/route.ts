@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { checkUsageAllowed, incrementUsage } from "@/lib/usage";
+import { fetchGoogleSuggestions } from "@/lib/google-suggest";
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,6 +51,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Pull real Google Suggest data so the model is grounded in actual search
+    // demand for the area. Seeds cover HVAC base terms + the business itself.
+    // If Suggest fails entirely we still proceed — the prompt handles that.
+    const suggestSeeds = [
+      `${businessName} ${location}`,
+      `HVAC ${location}`,
+      `AC repair ${location}`,
+      `furnace repair ${location}`,
+      `heating ${location}`,
+      `${location} HVAC near me`,
+    ];
+
+    const suggestions = (await fetchGoogleSuggestions(suggestSeeds)).slice(0, 40);
+    console.log(`[generate-keywords] pulled ${suggestions.length} Google Suggest seeds`);
+
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: "gemini-3.1-flash-lite-preview",
@@ -62,6 +78,21 @@ export async function POST(request: NextRequest) {
     // The prompt analyzes the business name to figure out the actual industry,
     // then generates keywords specific to it. Falls back to HVAC only when the
     // name actually implies HVAC.
+    const suggestBlock = suggestions.length > 0
+      ? [
+          `STEP 2 — Real Google search demand for this area:`,
+          `Below are actual queries people typed into Google in this market (pulled from Google Autocomplete).`,
+          `Use them as the foundation. Pick the highest-intent ones, polish capitalization,`,
+          `and shape your final list around what people are ACTUALLY searching — not what sounds plausible.`,
+          ``,
+          ...suggestions.map((s) => `- ${s}`),
+          ``,
+        ]
+      : [
+          `STEP 2 — (Google Suggest data unavailable; use your training knowledge instead.)`,
+          ``,
+        ];
+
     const prompt = [
       `You are a local SEO expert. Generate 12 high-intent local search keywords for this business.`,
       ``,
@@ -73,15 +104,18 @@ export async function POST(request: NextRequest) {
       `- "tesisatçı" = plumber, "kuaför" = hairdresser, "lokanta" = restaurant, etc.`,
       `- If the name clearly indicates HVAC (heating, cooling, AC, furnace, HVAC), use HVAC keywords.`,
       `- Otherwise generate keywords for whatever industry the name actually represents.`,
+      `- The Google Suggest list below is HVAC-biased — IGNORE it if the business is in a different industry.`,
       ``,
-      `STEP 2 — Generate keywords specific to that industry:`,
+      ...suggestBlock,
+      `STEP 3 — Generate the final list:`,
       `- Mix short-tail and long-tail`,
       `- Include "${location}" in at least 5 keywords`,
-      `- Cover the most commercially valuable services for that industry`,
+      `- Cover the most commercially valuable services for the identified industry`,
       `- Include at least one urgency/emergency keyword if relevant (e.g. "24 hour", "emergency", "near me")`,
       `- Keywords MUST be in English (search-engine ready), even if the business name was in another language`,
+      `- Do NOT just copy Suggest entries verbatim — refine them, merge duplicates, fix capitalization`,
       ``,
-      `STEP 3 — Output:`,
+      `STEP 4 — Output:`,
       `Return ONLY a raw JSON array of 12 keyword strings.`,
       `No markdown. No code fences. No explanation. No extra text. Just [ ... ].`,
       ``,
