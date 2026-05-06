@@ -16,8 +16,8 @@ export const FOUNDING_TOTAL_SPOTS = 12;
 // never sees "0 of N taken" (which signals "nobody else thinks this is
 // worth it"). Doesn't affect who actually gets the founder flag — that's
 // still gated by FOUNDING_TOTAL_SPOTS in the DB.
-export const FOUNDING_DISPLAY_OFFSET = 21;
-export const FOUNDING_DISPLAY_TOTAL  = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 12 + 21 = 33
+export const FOUNDING_DISPLAY_OFFSET = 18;
+export const FOUNDING_DISPLAY_TOTAL  = FOUNDING_TOTAL_SPOTS + FOUNDING_DISPLAY_OFFSET; // 12 + 18 = 30
 export const FOUNDING_DISCOUNT = "30%";
 export const FOUNDING_DURATION_MONTHS = 12;
 
