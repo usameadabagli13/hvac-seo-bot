@@ -19,20 +19,23 @@ export interface TrialState {
  *   - future date   → active Pro trial
  *   - past date     → expired trial → downgrade to 'starter'
  */
+const FOUNDER_STATE: TrialState = { plan: "agency", trialEndsAt: null, isOnTrial: false, trialDaysLeft: 0, trialExpired: false };
+
 export async function resolveTrialState(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<TrialState> {
+  // Env-based bypass — works regardless of DB state
+  const adminId = process.env.ADMIN_USER_ID;
+  if (adminId && userId === adminId) return FOUNDER_STATE;
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("plan, trial_ends_at, is_founder")
     .eq("user_id", userId)
     .maybeSingle();
 
-  // Founders get unlimited access regardless of billing state
-  if (profile?.is_founder) {
-    return { plan: "agency", trialEndsAt: null, isOnTrial: false, trialDaysLeft: 0, trialExpired: false };
-  }
+  if (profile?.is_founder) return FOUNDER_STATE;
 
   const plan = (profile?.plan as Plan | undefined) ?? "starter";
   const trialEndsAt = profile?.trial_ends_at ? new Date(profile.trial_ends_at) : null;

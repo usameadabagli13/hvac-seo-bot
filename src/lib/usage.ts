@@ -22,6 +22,10 @@ export async function checkUsageAllowed(
   // Bypass all limits in development so testing never gets blocked
   if (process.env.NODE_ENV === "development") return true;
 
+  // Env-based admin bypass — works regardless of DB state
+  const adminId = process.env.ADMIN_USER_ID;
+  if (adminId && userId === adminId) return true;
+
   const limit = FREE_LIMITS[feature];
   if (limit === undefined) return true; // unknown feature = no cap yet
 
