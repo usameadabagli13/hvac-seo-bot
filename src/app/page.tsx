@@ -17,6 +17,7 @@ import DemoWidget from "@/components/marketing/DemoWidget";
 import FaqAccordion from "@/components/marketing/FaqAccordion";
 import PricingToggle from "@/components/marketing/PricingToggle";
 import WaitlistForm from "@/components/marketing/WaitlistForm";
+import FoundingBanner from "@/components/marketing/FoundingBanner";
 import { PLANS } from "@/lib/plans";
 
 export const revalidate = 3600;
@@ -111,6 +112,9 @@ export default async function LandingPage({
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-zinc-700/10 rounded-full blur-[140px]" />
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-zinc-800/10 rounded-full blur-[120px]" />
       </div>
+
+      {/* ── Founding member promo bar (top of page; non-sticky) ─────────────── */}
+      <FoundingBanner />
 
       {/* ── Nav ─────────────────────────────────────────────────────────────── */}
       <header className="relative border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-20">
@@ -268,6 +272,27 @@ export default async function LandingPage({
           <PricingToggle plans={PLANS} />
         </section>
 
+        {/* ── Founding Member offer (right after pricing for max impact) ───── */}
+        <section id="founding-offer" className="max-w-3xl mx-auto px-6 pb-24 scroll-mt-20">
+          <div className="rounded-3xl border border-amber-500/25 bg-gradient-to-br from-amber-500/[0.10] via-amber-500/[0.04] to-transparent px-6 py-8 sm:px-10 sm:py-10 shadow-2xl shadow-amber-500/[0.04]">
+            <div className="mb-5">
+              <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">
+                ★ Limited launch offer
+              </p>
+              <h3 className="text-2xl font-semibold text-zinc-100 tracking-tight mb-2">
+                Become a founding member — 30% off your first year
+              </h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                The first 20 HVAC contractors to claim a spot get <strong className="text-amber-300">30% off
+                the Pro plan for 12 months</strong>, plus a permanent <strong className="text-amber-300">★ Founder
+                badge</strong> on their account — priority support and early access to every new feature,
+                forever. Once the spots are gone, founder status closes for good.
+              </p>
+            </div>
+            <WaitlistForm />
+          </div>
+        </section>
+
         {/* ── Testimonials ────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 pb-24">
           <div className="text-center mb-12">
@@ -335,26 +360,6 @@ export default async function LandingPage({
           </div>
         </section>
 
-        {/* ── Founding Member offer ────────────────────────────────────────── */}
-        <section className="max-w-3xl mx-auto px-6 pt-4 pb-20">
-          <div className="rounded-3xl border border-amber-500/15 bg-gradient-to-br from-amber-500/[0.06] via-white/[0.02] to-white/[0.02] px-6 py-8 sm:px-10 sm:py-10">
-            <div className="mb-5">
-              <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">
-                Limited offer
-              </p>
-              <h3 className="text-xl font-semibold text-zinc-100 tracking-tight mb-1.5">
-                Become a founding member — 30% off your first year
-              </h3>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                The first 20 HVAC contractors to claim a spot get <strong className="text-zinc-300">30% off
-                the Pro plan for 12 months</strong>, plus a permanent <strong className="text-zinc-300">★ Founder
-                badge</strong> on their account — priority support and early access to every new feature,
-                forever. Once the spots are gone, founder status closes for good.
-              </p>
-            </div>
-            <WaitlistForm />
-          </div>
-        </section>
       </main>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}

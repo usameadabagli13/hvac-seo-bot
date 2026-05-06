@@ -1,5 +1,11 @@
 import { Resend } from "resend";
-import { FOUNDING_COUPON_CODE, FOUNDING_DISCOUNT, FOUNDING_DURATION_MONTHS } from "@/lib/founding";
+import {
+  FOUNDING_COUPON_CODE,
+  FOUNDING_COUPON_YEARLY,
+  FOUNDING_COUPON_MONTHLY,
+  FOUNDING_DISCOUNT,
+  FOUNDING_DURATION_MONTHS,
+} from "@/lib/founding";
 
 let _resend: Resend | null = null;
 
@@ -26,7 +32,9 @@ interface SendArgs {
 export async function sendEmail({ to, subject, html }: SendArgs): Promise<boolean> {
   const client = getClient();
   if (!client) {
-    console.log(`[email] (no RESEND_API_KEY) would have sent to=${to} subject="${subject}"`);
+    console.warn(
+      `[email] RESEND_API_KEY is NOT SET on this environment. Skipping send (would have gone to=${to} subject="${subject}"). Add it in Vercel → Settings → Environment Variables.`,
+    );
     return true;
   }
 
@@ -69,9 +77,22 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
             <li>Direct line to the team — reply to this email and the founder reads it.</li>
           </ul>
           <div style="background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 16px 20px; margin: 0 0 22px;">
-            <p style="font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: #b45309; margin: 0 0 4px;">Your founding code</p>
-            <p style="font-size: 22px; font-weight: 700; color: #18181b; margin: 0; font-family: ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.05em;">${FOUNDING_COUPON_CODE}</p>
-            <p style="font-size: 12px; color: #78716c; margin: 6px 0 0;">Apply at checkout. ${FOUNDING_DISCOUNT} off Pro plan for ${FOUNDING_DURATION_MONTHS} months — your founder badge is permanent.</p>
+            <p style="font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: #b45309; margin: 0 0 8px;">Your founding codes</p>
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #fed7aa;">
+                  <p style="font-size: 11px; color: #92400e; margin: 0 0 2px; text-transform: uppercase; letter-spacing: 0.06em;">Yearly plan</p>
+                  <p style="font-size: 18px; font-weight: 700; color: #18181b; margin: 0; font-family: ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.04em;">${FOUNDING_COUPON_YEARLY}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0;">
+                  <p style="font-size: 11px; color: #92400e; margin: 0 0 2px; text-transform: uppercase; letter-spacing: 0.06em;">Monthly plan</p>
+                  <p style="font-size: 18px; font-weight: 700; color: #18181b; margin: 0; font-family: ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.04em;">${FOUNDING_COUPON_MONTHLY}</p>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size: 12px; color: #78716c; margin: 10px 0 0;">Pick whichever billing cycle suits you and paste the matching code at checkout. Both lock in ${FOUNDING_DISCOUNT} off Pro for ${FOUNDING_DURATION_MONTHS} months. Your founder badge is permanent.</p>
           </div>
           <a href="https://www.heatrankai.com/login"
              style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
