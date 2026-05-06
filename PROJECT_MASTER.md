@@ -138,7 +138,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 ### 2.3 Business Detail Page (`/dashboard/businesses/[id]`)
 - [x] Tabbed layout: Overview / Keywords / Reviews / SEO Audit / Competitors
-- [ ] Edit business form (inline edit on detail page)
+- [x] Edit business form (inline edit on detail page)
 - [ ] Soft delete with `deleted_at` column (RLS filters it out)
 - [x] **SAB checkbox** — "Service Area Business (no physical storefront)" toggle on BusinessForm; adds `is_service_area_business` column to `businesses` table. HVAC firmaları için kritik — çoğunun showroom'u yoktur
 
@@ -147,7 +147,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] API Usage tab: visual usage bars per feature with monthly reset date
 - [x] Billing tab: current plan badge + Dodo Payments checkout buttons (live)
 - [x] Danger zone: Delete account with "type DELETE" confirmation + cascade
-- [ ] Avatar upload to Supabase Storage (deferred — needs Storage bucket setup)
+- [x] Avatar upload to Supabase Storage — `avatars` bucket + RLS policies + Settings UI
 - [ ] Dodo Customer Portal self-serve link for cancellation/billing management
 
 ### 2.5 Navigation Shell
@@ -171,7 +171,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] "Generate AI Reply" placeholder button (disabled until Phase 3.1 GBP connected)
 - [x] Reviews added to Sidebar nav (`G R` shortcut)
 - [x] "SAMPLE DATA" banner — GBP bağlı değilken mock review'lar gösterilir, amber banner ile işaretlenir
-- [ ] "This uses 1 credit" tooltip/warning before generating a reply (freemium UX)
+- [x] "This uses 1 credit" hint + tooltip on Generate Reply / Run Snapshot / Generate Keywords
 
 ### 3.1 GBP OAuth Integration
 - [x] `integrations` table with RLS (migration `20260501000001_add_integrations.sql`)
@@ -284,7 +284,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] `src/lib/trial.ts` — `resolveTrialState()` auto-downgrades to 'starter' when expired
 - [x] **Trial countdown banner** — sticky top bar; X days left + Upgrade CTA; red urgency when expired
 - [x] Webhook clears `trial_ends_at = NULL` on paid subscription (no more countdown after payment)
-- [ ] Day 12: email via Resend — "2 days left in your trial"
+- [x] Day 12 email via Resend — daily Vercel cron `/api/cron/trial-emails`, idempotent via `profiles.trial_email_sent_at`
 - [ ] Frozen state: full-screen upgrade CTA overlay (currently degrades silently to Starter limits)
 
 ### 6.3 Usage Tracking Utilities (`src/lib/usage.ts`)
