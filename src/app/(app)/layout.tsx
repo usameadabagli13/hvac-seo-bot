@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Sidebar from "@/components/app/Sidebar";
 import TrialBanner from "@/components/app/TrialBanner";
+import OnboardingTour from "@/components/app/OnboardingTour";
 import { resolveTrialState } from "@/lib/trial";
+import { getOnboardingState } from "@/lib/onboarding";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -11,13 +13,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const periodStart = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`;
 
-  const [{ plan, isOnTrial, trialDaysLeft, trialExpired }, { data: usageRows }] = await Promise.all([
+  const [{ plan, isOnTrial, trialDaysLeft, trialExpired }, { data: usageRows }, onboarding] = await Promise.all([
     resolveTrialState(supabase, session.user.id),
     supabase
       .from("ai_usage")
       .select("feature, count")
       .eq("user_id", session.user.id)
       .eq("period_start", periodStart),
+    getOnboardingState(supabase, session.user.id),
   ]);
 
   const usage: Record<string, number> = {};
@@ -36,6 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         )}
         {children}
       </div>
+      <OnboardingTour state={onboarding} />
     </div>
   );
 }

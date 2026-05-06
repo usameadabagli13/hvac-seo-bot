@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import BusinessManager from "./BusinessManager";
 import Link from "next/link";
-import { BarChart3, Tag, MessageSquare, Zap, ChevronRight, MapPin, Code2, Star, CheckCircle2, Circle } from "lucide-react";
+import { BarChart3, Tag, MessageSquare, Zap, ChevronRight, MapPin, Code2, Star } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -11,7 +11,7 @@ export default async function DashboardPage() {
   const user = session?.user;
   if (!user) redirect("/login");
 
-  const [{ data: businesses }, { count: reviewCount }, { data: recentReviews }, { data: gbpIntegration }] = await Promise.all([
+  const [{ data: businesses }, { count: reviewCount }, { data: recentReviews }] = await Promise.all([
     supabase
       .from("businesses")
       .select("id, business_name, service_location, website_url, target_keywords, is_service_area_business, created_at")
@@ -27,32 +27,7 @@ export default async function DashboardPage() {
       .eq("user_id", user.id)
       .order("review_date", { ascending: false })
       .limit(3),
-    supabase
-      .from("integrations")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("provider", "google_business_profile")
-      .maybeSingle(),
   ]);
-
-  // Check if user has run at least one real (non-mock) snapshot
-  const bizIds = (businesses ?? []).map((b) => b.id);
-  let hasSnapshot = false;
-  if (bizIds.length > 0) {
-    const { count: snapCount } = await supabase
-      .from("rank_snapshots")
-      .select("id", { count: "exact", head: true })
-      .in("business_id", bizIds)
-      .eq("is_mock", false);
-    hasSnapshot = (snapCount ?? 0) > 0;
-  }
-
-  const activation = {
-    hasBusiness: (businesses?.length ?? 0) > 0,
-    hasGBP:      !!gbpIntegration,
-    hasSnapshot,
-  };
-  const activationDone = activation.hasBusiness && activation.hasGBP && activation.hasSnapshot;
 
   const totalKeywords = (businesses ?? []).reduce(
     (sum, b) => sum + (Array.isArray(b.target_keywords) ? b.target_keywords.length : 0),
@@ -106,52 +81,6 @@ export default async function DashboardPage() {
               Add Business
               <ChevronRight className="w-4 h-4" />
             </a>
-          </div>
-        )}
-
-        {/* ── Activation checklist (hidden once all steps done) ────────── */}
-        {!activationDone && (
-          <div className="mb-10 rounded-2xl border border-white/[0.07] bg-white/[0.02] px-6 py-5">
-            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">
-              Getting started
-            </p>
-            <div className="space-y-3">
-              {[
-                {
-                  done:  activation.hasBusiness,
-                  label: "Add your business",
-                  cta:   { label: "Add now", href: "#business-form" },
-                },
-                {
-                  done:  activation.hasGBP,
-                  label: "Connect Google Business Profile",
-                  cta:   { label: "Connect", href: "/reviews" },
-                },
-                {
-                  done:  activation.hasSnapshot,
-                  label: "Run your first rank snapshot",
-                  cta:   { label: "Run now", href: "/rank" },
-                },
-              ].map((step, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  {step.done
-                    ? <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    : <Circle       className="w-4 h-4 text-zinc-700 flex-shrink-0" />
-                  }
-                  <span className={`flex-1 text-sm ${step.done ? "text-zinc-600 line-through" : "text-zinc-300"}`}>
-                    {step.label}
-                  </span>
-                  {!step.done && (
-                    <Link
-                      href={step.cta.href}
-                      className="text-xs font-semibold text-zinc-400 hover:text-zinc-100 transition-colors"
-                    >
-                      {step.cta.label} →
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
