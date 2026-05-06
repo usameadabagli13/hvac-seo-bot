@@ -49,7 +49,7 @@ export default async function SettingsPage({
       .eq("period_start", periodStartStr),
     supabase
       .from("profiles")
-      .select("full_name, plan, avatar_url")
+      .select("full_name, plan, avatar_url, dodo_customer_id")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
@@ -65,6 +65,7 @@ export default async function SettingsPage({
     "";
   const currentPlan = (profile?.plan as "starter" | "pro" | "agency") ?? "starter";
   const avatarUrl = (profile?.avatar_url as string | null) ?? null;
+  const hasDodoCustomer = !!profile?.dodo_customer_id;
 
   // Build usage items — in dev mode limits are null so the bar shows "Dev Mode"
   const usageItems = Object.entries(FREE_LIMITS).map(([feature, limit]) => ({
@@ -101,6 +102,7 @@ export default async function SettingsPage({
           usageItems={usageItems}
           initialTab={initialTab}
           currentPlan={currentPlan}
+          hasDodoCustomer={hasDodoCustomer}
         />
       </main>
     </>

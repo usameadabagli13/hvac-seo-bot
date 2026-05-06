@@ -23,6 +23,7 @@ interface Props {
   usageItems: UsageItem[];
   initialTab: "profile" | "usage" | "billing" | "danger";
   currentPlan: Plan;
+  hasDodoCustomer: boolean;
 }
 
 const TABS = [
@@ -151,7 +152,7 @@ const BILLING_PLANS: {
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function SettingsTabs({ userId, email, initialName, initialAvatarUrl, usageItems, initialTab, currentPlan }: Props) {
+export default function SettingsTabs({ userId, email, initialName, initialAvatarUrl, usageItems, initialTab, currentPlan, hasDodoCustomer }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isAnnual, setIsAnnual] = useState(true);
 
@@ -168,6 +169,8 @@ export default function SettingsTabs({ userId, email, initialName, initialAvatar
   // Billing state
   const [upgradingPlan, setUpgradingPlan] = useState<Plan | null>(null);
   const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const [portalBusy,  setPortalBusy]  = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
 
   // Danger zone state
   const [confirmInput, setConfirmInput] = useState("");
@@ -475,6 +478,43 @@ export default function SettingsTabs({ userId, email, initialName, initialAvatar
       {/* ── Billing tab ──────────────────────────────────────────────────── */}
       {activeTab === "billing" && (
         <div className="space-y-5 max-w-2xl">
+          {/* Manage existing subscription */}
+          {hasDodoCustomer && (
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-zinc-200">Manage your subscription</p>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Change plan, update card, or cancel via the secure Dodo Payments portal.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  setPortalBusy(true);
+                  setPortalError(null);
+                  try {
+                    const res = await fetch("/api/dodo/portal", { method: "POST" });
+                    const data = await res.json() as { url?: string; error?: string };
+                    if (!res.ok || !data.url) throw new Error(data.error ?? "Could not open portal.");
+                    window.location.href = data.url;
+                  } catch (err) {
+                    setPortalError(err instanceof Error ? err.message : "Unknown error.");
+                    setPortalBusy(false);
+                  }
+                }}
+                disabled={portalBusy}
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/[0.10] text-xs font-semibold text-zinc-200 hover:bg-white/[0.10] hover:border-white/[0.18] transition-all disabled:opacity-50"
+              >
+                {portalBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CreditCard className="w-3.5 h-3.5" />}
+                {portalBusy ? "Opening…" : "Manage"}
+              </button>
+            </div>
+          )}
+          {portalError && (
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-2.5">
+              {portalError}
+            </p>
+          )}
+
           {/* Toggle */}
           <div className="flex items-center gap-3">
             <span className={`text-sm font-medium transition-colors duration-200 ${!isAnnual ? "text-zinc-200" : "text-zinc-600"}`}>

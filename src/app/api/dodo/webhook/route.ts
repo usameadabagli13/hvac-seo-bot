@@ -36,6 +36,14 @@ function extractProductId(data: Record<string, unknown>): string | undefined {
   return items?.[0]?.product_id;
 }
 
+function extractCustomerId(data: Record<string, unknown>): string | undefined {
+  if (typeof data.customer_id === "string") return data.customer_id;
+  const cust = data.customer as Record<string, unknown> | undefined;
+  if (cust && typeof cust.customer_id === "string") return cust.customer_id;
+  if (cust && typeof cust.id           === "string") return cust.id;
+  return undefined;
+}
+
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
@@ -106,6 +114,8 @@ export async function POST(request: NextRequest) {
   const productToPlan = getProductToPlan();
   const newPlan: Plan = (productId && productToPlan[productId]) ? productToPlan[productId] : "starter";
 
+  const customerId = extractCustomerId(data);
+
   // ── Update profiles.plan ──────────────────────────────────────────────────
   switch (eventType) {
     case "subscription.active":
@@ -114,9 +124,13 @@ export async function POST(request: NextRequest) {
       // Paid → end the trial window so resolveTrialState() stops counting down.
       await supabase
         .from("profiles")
-        .update({ plan: newPlan, trial_ends_at: null })
+        .update({
+          plan:               newPlan,
+          trial_ends_at:      null,
+          ...(customerId ? { dodo_customer_id: customerId } : {}),
+        })
         .eq("user_id", userId);
-      console.log(`[dodo/webhook] ${eventType}: user=${userId} plan=${newPlan} (trial cleared)`);
+      console.log(`[dodo/webhook] ${eventType}: user=${userId} plan=${newPlan} customer=${customerId ?? "n/a"}`);
       break;
 
     case "subscription.cancelled":
