@@ -331,6 +331,12 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
               {runError}
             </p>
           )}
+          <p className="text-[11px] text-zinc-600 leading-relaxed">
+            We match your business on Google Maps using its name and city.
+            For best accuracy, make sure the business name here matches your
+            Google Business Profile listing exactly. No credit is used if we
+            can&apos;t find your listing or you don&apos;t rank in the top 20.
+          </p>
         </div>
       </div>
 

@@ -12,8 +12,14 @@ export async function GET(request: NextRequest) {
   const redirect = (err: string) =>
     NextResponse.redirect(`${APP_URL}/reviews?error=${err}`);
 
-  if (error) return redirect("oauth_denied");
-  if (!code || !state) return redirect("oauth_invalid");
+  if (error) {
+    console.error("[gbp/callback] OAuth provider returned error:", error, searchParams.get("error_description"));
+    return redirect("oauth_denied");
+  }
+  if (!code || !state) {
+    console.error("[gbp/callback] missing code or state. raw query:", request.nextUrl.search);
+    return redirect("oauth_invalid");
+  }
 
   // Verify CSRF state
   const storedState = request.cookies.get("gbp_oauth_state")?.value;

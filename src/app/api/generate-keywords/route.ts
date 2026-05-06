@@ -59,24 +59,37 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // The prompt is kept intentionally explicit and short to prevent the model
-    // from wrapping the output in markdown or prose.
+    // The prompt analyzes the business name to figure out the actual industry,
+    // then generates keywords specific to it. Falls back to HVAC only when the
+    // name actually implies HVAC.
     const prompt = [
-      `Return ONLY a raw JSON array of 12 HVAC SEO keyword strings.`,
-      `No markdown. No code fences. No explanation. No extra text.`,
-      `Just the array, starting with [ and ending with ].`,
+      `You are a local SEO expert. Generate 12 high-intent local search keywords for this business.`,
       ``,
-      `Business: "${businessName}"`,
+      `Business name: "${businessName}"`,
       `Location: "${location}"`,
       ``,
-      `Rules:`,
-      `- Mix short-tail and long-tail keywords`,
-      `- Include "${location}" in at least 5 keywords`,
-      `- Cover: AC repair, heating, installation, maintenance, emergency HVAC`,
-      `- Include at least one seasonal keyword`,
+      `STEP 1 — Identify the industry from the business name:`,
+      `- The business name may be in any language (Turkish, Spanish, English, etc.)`,
+      `- "tesisatçı" = plumber, "kuaför" = hairdresser, "lokanta" = restaurant, etc.`,
+      `- If the name clearly indicates HVAC (heating, cooling, AC, furnace, HVAC), use HVAC keywords.`,
+      `- Otherwise generate keywords for whatever industry the name actually represents.`,
       ``,
-      `Example output (do not include this):`,
-      `["HVAC repair Dallas TX","AC installation Dallas","emergency heating repair Dallas TX"]`,
+      `STEP 2 — Generate keywords specific to that industry:`,
+      `- Mix short-tail and long-tail`,
+      `- Include "${location}" in at least 5 keywords`,
+      `- Cover the most commercially valuable services for that industry`,
+      `- Include at least one urgency/emergency keyword if relevant (e.g. "24 hour", "emergency", "near me")`,
+      `- Keywords MUST be in English (search-engine ready), even if the business name was in another language`,
+      ``,
+      `STEP 3 — Output:`,
+      `Return ONLY a raw JSON array of 12 keyword strings.`,
+      `No markdown. No code fences. No explanation. No extra text. Just [ ... ].`,
+      ``,
+      `Examples for context (do NOT include these in the output):`,
+      `For "Acme HVAC" + "Dallas, TX":`,
+      `["HVAC repair Dallas TX","emergency AC installation Dallas","furnace repair near me", ...]`,
+      `For "tesisatçı" + "San Bernardino, CA":`,
+      `["plumber San Bernardino CA","emergency plumbing San Bernardino","drain cleaning near me", ...]`,
     ].join("\n");
 
     console.log("[generate-keywords] calling Gemini with prompt length:", prompt.length);

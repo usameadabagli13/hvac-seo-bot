@@ -197,6 +197,20 @@ export async function POST(request: NextRequest) {
     })
   );
 
+  // If every grid point came back null, the business doesn't rank for this
+  // keyword anywhere in the area — refund the credit and tell the user.
+  const hits = rows.filter((r) => r.rank_position !== null).length;
+  if (hits === 0) {
+    console.warn(`[rank/run-snapshot] zero hits for "${kw}" (business=${business_id}) — not charging credit`);
+    return Response.json(
+      {
+        error:
+          `Your business didn't rank in the top 20 for "${kw}" anywhere in the search area. No credit was used. Try a different keyword, or connect Google Business Profile to verify the listing.`,
+      },
+      { status: 422 },
+    );
+  }
+
   const { error: upsertError } = await supabase
     .from("rank_snapshots")
     .upsert(rows, { onConflict: "business_id,keyword,lat,lng,snapshot_date" });
@@ -208,6 +222,6 @@ export async function POST(request: NextRequest) {
 
   await incrementUsage(user.id, "rank_snapshot");
 
-  console.log(`[rank/run-snapshot] ${rows.length} points saved for "${kw}" (business=${business_id})`);
-  return Response.json({ ok: true, points: rows.length, keyword: kw });
+  console.log(`[rank/run-snapshot] ${rows.length} points saved (${hits} ranked) for "${kw}" (business=${business_id})`);
+  return Response.json({ ok: true, points: rows.length, ranked: hits, keyword: kw });
 }

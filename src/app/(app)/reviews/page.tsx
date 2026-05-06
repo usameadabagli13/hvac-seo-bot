@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import ReviewFeed, { type Review, MOCK_REVIEWS } from "@/components/app/ReviewFeed";
+import ReviewFeed, { type Review } from "@/components/app/ReviewFeed";
+import { MOCK_REVIEWS } from "@/lib/mock-reviews";
 import { getGBPStatus } from "@/lib/gbp";
 import GBPConnectBanner from "@/components/app/GBPConnectBanner";
 import SyncReviewsButton from "@/components/app/SyncReviewsButton";
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
 };
 
 const ERROR_MESSAGES: Record<string, string> = {
-  oauth_denied: "Google authorization was cancelled.",
+  oauth_denied: "Google authorization was cancelled or denied. If your app is still in Google verification, you may need to be added as a test user.",
   oauth_invalid: "Invalid OAuth response. Please try again.",
-  oauth_csrf: "Security check failed. Please try again.",
-  token_exchange_failed: "Failed to exchange authorization code. Check your Google Cloud credentials.",
-  no_session: "Session expired. Please sign in again.",
-  db_error: "Failed to save your connection. Please try again.",
+  oauth_csrf: "Security check failed — please retry the connection.",
+  token_exchange_failed: "Couldn't complete the Google sign-in. This usually means the OAuth app is unverified or the redirect URI doesn't match. Contact support if it persists.",
+  no_session: "Your session expired. Please sign in again and retry.",
+  db_error: "Couldn't save your connection. Please try again.",
 };
 
 export default async function ReviewsPage({
