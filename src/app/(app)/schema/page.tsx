@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import SchemaGenerator from "@/components/app/SchemaGenerator";
+import BusinessSwitcher from "@/components/app/BusinessSwitcher";
 
 export const metadata: Metadata = {
   title: "Schema Markup — HeatRank AI",
 };
 
-export default async function SchemaPage() {
+export default async function SchemaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ business?: string }>;
+}) {
   const supabase = await createClient();
 
   const { data: { session } } = await supabase.auth.getSession();
@@ -19,6 +24,12 @@ export default async function SchemaPage() {
     .select("id, business_name, service_location, website_url, target_keywords")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  const { business: selectedIdParam } = await searchParams;
+  const selectedId =
+    (selectedIdParam && businesses?.find((b) => b.id === selectedIdParam)?.id) ||
+    businesses?.[0]?.id ||
+    "";
 
   return (
     <>
@@ -43,7 +54,13 @@ export default async function SchemaPage() {
           </p>
         </div>
 
-        <SchemaGenerator businesses={businesses ?? []} />
+        {(businesses ?? []).length > 1 && (
+          <div className="mb-6">
+            <BusinessSwitcher businesses={businesses ?? []} selectedId={selectedId} />
+          </div>
+        )}
+
+        <SchemaGenerator businesses={businesses ?? []} selectedId={selectedId} />
       </main>
     </>
   );

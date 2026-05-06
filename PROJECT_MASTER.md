@@ -544,15 +544,15 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] **Settings quick-fixes:** billing "$49" → "$69"; remove "Phase 6 coming"; usage limits 2 kw→1, 5 reply→3; "FREE" badge → "STARTER"
 - [x] **UI label cleanup:** "Phase 4" removed from `/rank`; "Phase 3.4" removed from `/reviews`
 - [x] **Landing page:** header CTA "Start Free" → "Start Free Trial"
-- [ ] Add Privacy Policy + Terms of Service pages (footer links go to `/privacy` and `/terms` — currently 404)
+- [x] Add Privacy Policy + Terms of Service pages — live at `/privacy` and `/terms`
 - [x] **SAB checkbox** — BusinessForm.tsx'e "Service Area Business" toggle + `businesses.is_service_area_business` migration
 - [x] **HVAC keyword chips** — rank sayfası keyword input'una tıklanabilir chip önerileri
 - [x] **Test Mode badge** — rank mock data görünürken "Try free, no credits used" rozeti (`is_mock` flag)
 - [x] **14-day trial + countdown banner** — `profiles.trial_ends_at` + auto-downgrade + sticky banner + Dodo webhook clears trial on payment (Phase 6.2)
-- [ ] **Activation Checklist kartı** — dashboard'a "Add Business → Connect GBP → Run First Scan" adım kartı (kısa vade)
-- [ ] **Sidebar usage widget** — "Replies: 2/3" göstergesi sidebar'a taşı (kısa vade)
-- [ ] **GBP production approval başvurusu** — Google 4-8 hafta sürüyor, şimdi başla
-- [ ] Multi-business selector: rank + schema sayfalarında dropdown
+- [x] **Activation Checklist kartı** — dashboard'a "Add Business → Connect GBP → Run First Scan" adım kartı
+- [x] **Sidebar usage widget** — "Replies: 2/3" göstergesi sidebar'a taşındı (sadece Starter plan)
+- [x] **GBP production approval** — Google OAuth uygulaması doğrulandı, production'da
+- [x] Multi-business selector: rank + schema sayfalarında URL-based `BusinessSwitcher` dropdown
 - [x] Add `loading.tsx` skeleton to `/reviews`, `/rank`, `/schema`, `/settings`
 - [x] Add `error.tsx` to `/rank` (others already existed)
 - [x] Wire `profiles.full_name` to Settings: reads from `profiles` (falls back to auth metadata), saves to both

@@ -2,13 +2,18 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import RankMapLoader from "@/components/app/RankMapLoader";
+import BusinessSwitcher from "@/components/app/BusinessSwitcher";
 import type { HeatmapPoint } from "@/components/app/RankMap";
 
 export const metadata: Metadata = {
   title: "Rank Tracker — HeatRank AI",
 };
 
-export default async function RankPage() {
+export default async function RankPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ business?: string }>;
+}) {
   const supabase = await createClient();
 
   const { data: { session } } = await supabase.auth.getSession();
@@ -22,7 +27,11 @@ export default async function RankPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  const biz = businesses?.[0] ?? null;
+  const { business: selectedId } = await searchParams;
+  const biz =
+    (selectedId && businesses?.find((b) => b.id === selectedId)) ||
+    businesses?.[0] ||
+    null;
 
   // ── Geocode service_location for map center ───────────────────────────────
   let centerLat = 39.5;
@@ -138,6 +147,9 @@ export default async function RankPage() {
           </div>
         ) : (
           <div className="space-y-6">
+            {/* Business switcher (only if 2+ businesses) */}
+            <BusinessSwitcher businesses={businesses ?? []} selectedId={biz.id} />
+
             {/* Business label */}
             <div className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.07] bg-white/[0.02]">
               <div>

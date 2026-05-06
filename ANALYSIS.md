@@ -16,7 +16,6 @@
 | 7 | Mobil responsive pass — tüm sayfalar 390px'de test | Tümü | 2-3 saat | Hedef kitle %70+ mobil |
 | 8 | `loading.tsx` skeleton dosyaları ekle | Tümü | 1 saat | Server fetch sırasında beyaz ekran |
 | 9 | `error.tsx` eksik sayfalar: `/rank`, `/schema`, `/settings` | Tümü | 30 dk | Crash = beyaz ekran |
-| 10 | GBP production approval başvurusu | — | 1 saat | Google 4-8 hafta sürüyor |
 
 ---
 
@@ -28,8 +27,7 @@
 | 2 | 14-day trial logic: signup → `trial_ends_at` column → middleware freeze | ⭐⭐⭐ |
 | 3 | Onboarding wizard: Profile → Add Business → Generate Keywords → Done | ⭐⭐ |
 | 4 | `/dashboard/businesses/[id]` detail page | ⭐⭐ |
-| 5 | Privacy Policy + Terms of Service sayfaları | ⭐⭐ |
-| 6 | 3 HVAC Facebook grubuna katıl, "free audit" postla | ⭐⭐ |
+| 5 | 3 HVAC Facebook grubuna katıl, "free audit" postla | ⭐⭐ |
 
 ## 📅 ORTA VADE (1 Ay)
 
@@ -264,7 +262,6 @@ Starter kasıtlı olarak "sinir bozucu ama ucuz" → kullanıcı düşünsün:
 | Header CTA "Start Free" | "Start Free Trial" yap |
 | Testimonials sahte | İlk gerçek kullanıcılardan sonra değiştir |
 | Video/GIF demo yok | Dashboard screen recording ekle |
-| Privacy/Terms → 404 | Basit sayfalar oluştur |
 
 ---
 
@@ -304,7 +301,6 @@ Starter kasıtlı olarak "sinir bozucu ama ucuz" → kullanıcı düşünsün:
 | 3 | Supabase generated types | Tip güvenliği, `as` cast'leri kaldır | 30 dk |
 | 4 | `gemini.ts` singleton | Tek yerden yönet | 30 dk |
 | 5 | Rate limit IP bazlı | Abuse prevention | 1 saat |
-| 6 | Privacy + Terms sayfaları | Legal, footer 404 fix | 1 saat |
 
 ---
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Copy, Check, ChevronDown } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
 interface Business {
   id: string;
@@ -13,6 +13,7 @@ interface Business {
 
 interface Props {
   businesses: Business[];
+  selectedId: string;
 }
 
 function buildSchema(
@@ -67,8 +68,7 @@ function buildSchema(
 const EMBED_TABS = ["HTML / Raw", "WordPress"] as const;
 type EmbedTab = (typeof EMBED_TABS)[number];
 
-export default function SchemaGenerator({ businesses }: Props) {
-  const [selectedIdx, setSelectedIdx] = useState(0);
+export default function SchemaGenerator({ businesses, selectedId }: Props) {
   const [phone, setPhone] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [openHour, setOpenHour] = useState("08:00");
@@ -76,7 +76,7 @@ export default function SchemaGenerator({ businesses }: Props) {
   const [copied, setCopied] = useState(false);
   const [embedTab, setEmbedTab] = useState<EmbedTab>("HTML / Raw");
 
-  const biz = businesses[selectedIdx];
+  const biz = businesses.find((b) => b.id === selectedId) ?? businesses[0];
 
   const schemaJson = useMemo(
     () => (biz ? buildSchema(biz, phone, streetAddress, openHour, closeHour) : ""),
@@ -108,29 +108,6 @@ export default function SchemaGenerator({ businesses }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* ── Business selector ──────────────────────────────────────────── */}
-      {businesses.length > 1 && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-            Business
-          </label>
-          <div className="relative max-w-xs">
-            <select
-              value={selectedIdx}
-              onChange={(e) => setSelectedIdx(Number(e.target.value))}
-              className="w-full appearance-none px-4 py-2.5 pr-9 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm text-zinc-200 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/10 transition-all duration-200"
-            >
-              {businesses.map((b, i) => (
-                <option key={b.id} value={i} className="bg-zinc-900 text-zinc-200">
-                  {b.business_name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
-          </div>
-        </div>
-      )}
-
       {/* ── Two-column layout ───────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Left: optional extra fields */}
