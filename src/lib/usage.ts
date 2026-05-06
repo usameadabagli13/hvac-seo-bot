@@ -7,6 +7,7 @@ const FREE_LIMITS: Record<string, number> = {
   keyword_generation: 1,
   review_reply: 3,
   rank_snapshot: 1,
+  seo_audit: 1,
 };
 
 function getPeriodStart(): string {

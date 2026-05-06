@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   BarChart3,
   Tag,
@@ -15,6 +16,10 @@ import {
   Lock,
   TrendingUp,
   AlertCircle,
+  Loader2,
+  Play,
+  AlertTriangle,
+  Info,
 } from "lucide-react";
 import BusinessForm from "../../BusinessForm";
 import type { Business } from "../../BusinessManager";
@@ -38,12 +43,37 @@ interface RankSnapshot {
   snapshot_date: string;
 }
 
+interface SeoIssue {
+  severity:    "critical" | "warning" | "info";
+  element:     string;
+  current:     string | null;
+  recommended: string;
+}
+
 interface SeoAudit {
   score: number | null;
   audited_at: string;
   crawled_url: string | null;
   issues: unknown;
 }
+
+const SEVERITY_STYLES: Record<SeoIssue["severity"], { badge: string; icon: React.ReactNode; label: string }> = {
+  critical: {
+    badge: "bg-rose-500/10 border-rose-500/25 text-rose-400",
+    icon:  <AlertTriangle className="w-3 h-3" />,
+    label: "Critical",
+  },
+  warning: {
+    badge: "bg-amber-500/10 border-amber-500/25 text-amber-400",
+    icon:  <AlertCircle className="w-3 h-3" />,
+    label: "Warning",
+  },
+  info: {
+    badge: "bg-zinc-500/10 border-zinc-500/25 text-zinc-400",
+    icon:  <Info className="w-3 h-3" />,
+    label: "Info",
+  },
+};
 
 interface Competitor {
   id: string;
@@ -85,8 +115,33 @@ export default function BusinessDetailTabs({
   latestAudit,
   competitors,
 }: Props) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isEditing, setIsEditing] = useState(false);
+  const [auditing,    setAuditing]    = useState(false);
+  const [auditError,  setAuditError]  = useState<string | null>(null);
+
+  const handleRunAudit = async () => {
+    setAuditing(true);
+    setAuditError(null);
+    try {
+      const res = await fetch("/api/seo/audit", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ business_id: business.id }),
+      });
+      const data = await res.json() as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setAuditError(data.error ?? "Audit failed.");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setAuditError("Network error. Please try again.");
+    } finally {
+      setAuditing(false);
+    }
+  };
 
   return (
     <div>
@@ -407,55 +462,107 @@ export default function BusinessDetailTabs({
           feature="SEO Audit"
         >
           <div className="space-y-4">
-            {latestAudit ? (
-              <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-                  <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
-                    Latest Audit
-                  </p>
-                  <span className="text-[11px] text-zinc-600">
-                    {latestAudit.audited_at}
-                  </span>
-                </div>
-                <div className="px-5 py-5 flex items-center gap-6">
-                  <div className="flex-shrink-0 text-center">
-                    <p
-                      className={`text-4xl font-bold tabular-nums ${
-                        (latestAudit.score ?? 0) >= 80
-                          ? "text-emerald-400"
-                          : (latestAudit.score ?? 0) >= 50
-                          ? "text-amber-400"
-                          : "text-rose-400"
-                      }`}
-                    >
-                      {latestAudit.score ?? "—"}
-                    </p>
-                    <p className="text-[10px] text-zinc-600 mt-0.5">SEO Score</p>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {latestAudit.crawled_url && (
-                      <p className="text-xs text-zinc-500 truncate mb-1">
-                        {latestAudit.crawled_url}
-                      </p>
-                    )}
-                    <p className="text-xs text-zinc-600">
-                      Issues found:{" "}
-                      {Array.isArray(latestAudit.issues)
-                        ? latestAudit.issues.length
-                        : "—"}
-                    </p>
-                  </div>
-                </div>
+            {/* Run Audit button */}
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <p className="text-sm font-semibold text-zinc-200">On-page SEO audit</p>
+                <p className="text-xs text-zinc-600 mt-0.5">
+                  We crawl your homepage, then Gemini scores it and flags issues.
+                </p>
               </div>
+              <button
+                onClick={handleRunAudit}
+                disabled={auditing || !business.website_url}
+                title={!business.website_url ? "Add a website URL first" : "Uses 1 of your monthly audit credits"}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all disabled:opacity-40 disabled:pointer-events-none"
+              >
+                {auditing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                {auditing ? "Auditing…" : latestAudit ? "Re-run audit" : "Run audit"}
+              </button>
+            </div>
+            {auditError && (
+              <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                {auditError}
+              </p>
+            )}
+
+            {latestAudit ? (
+              <>
+                {/* Score card */}
+                <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] overflow-hidden">
+                  <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
+                      Latest Audit
+                    </p>
+                    <span className="text-[11px] text-zinc-600">{latestAudit.audited_at}</span>
+                  </div>
+                  <div className="px-5 py-5 flex items-center gap-6">
+                    <div className="flex-shrink-0 text-center">
+                      <p
+                        className={`text-4xl font-bold tabular-nums ${
+                          (latestAudit.score ?? 0) >= 80
+                            ? "text-emerald-400"
+                            : (latestAudit.score ?? 0) >= 50
+                            ? "text-amber-400"
+                            : "text-rose-400"
+                        }`}
+                      >
+                        {latestAudit.score ?? "—"}
+                      </p>
+                      <p className="text-[10px] text-zinc-600 mt-0.5">SEO Score</p>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {latestAudit.crawled_url && (
+                        <p className="text-xs text-zinc-500 truncate mb-1">
+                          {latestAudit.crawled_url}
+                        </p>
+                      )}
+                      <p className="text-xs text-zinc-600">
+                        Issues found:{" "}
+                        {Array.isArray(latestAudit.issues) ? latestAudit.issues.length : "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Issue list */}
+                {Array.isArray(latestAudit.issues) && latestAudit.issues.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pt-2">
+                      Recommendations
+                    </p>
+                    {(latestAudit.issues as SeoIssue[]).map((issue, i) => {
+                      const style = SEVERITY_STYLES[issue.severity] ?? SEVERITY_STYLES.info;
+                      return (
+                        <div key={i} className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-4 py-3.5 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-semibold uppercase tracking-wider ${style.badge}`}>
+                              {style.icon}
+                              {style.label}
+                            </span>
+                            <span className="text-xs font-semibold text-zinc-300">{issue.element}</span>
+                          </div>
+                          {issue.current && (
+                            <p className="text-[11px] text-zinc-600">
+                              <span className="text-zinc-700">Now:</span> {issue.current}
+                            </p>
+                          )}
+                          <p className="text-xs text-zinc-400 leading-relaxed">
+                            <span className="text-emerald-500/80 font-semibold">Fix:</span> {issue.recommended}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="rounded-2xl border border-dashed border-white/[0.07] bg-white/[0.01] px-5 py-12 flex flex-col items-center text-center gap-3">
                 <AlertCircle className="w-5 h-5 text-zinc-700" />
                 <div>
-                  <p className="text-xs font-medium text-zinc-500 mb-1">
-                    No audit run yet
-                  </p>
+                  <p className="text-xs font-medium text-zinc-500 mb-1">No audit run yet</p>
                   <p className="text-[11px] text-zinc-700">
-                    SEO Crawler coming soon — will analyse your website and score it automatically.
+                    Click <span className="text-zinc-500 font-semibold">Run audit</span> above to analyse your homepage. Uses 1 monthly credit.
                   </p>
                 </div>
               </div>
