@@ -163,34 +163,21 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
   `;
 }
 
+// Deliverability note: this template is intentionally plain — minimal HTML,
+// no buttons, no card styling, no images. Gmail's Promotions filter heavily
+// weights design density, CTAs, and marketing words. A plain-text-style HTML
+// email lands in Primary inbox far more often.
 export function newsletterWelcomeHtml(): string {
   return /* html */ `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #18181b; line-height: 1.55;">
-      <div style="padding: 32px 24px; background: #fafafa; border-radius: 16px;">
-        <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #b45309; margin: 0 0 6px;">HeatRank AI · Newsletter</p>
-        <h1 style="font-size: 22px; font-weight: 600; color: #18181b; margin: 0 0 12px;">You&apos;re subscribed.</h1>
-        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 14px;">
-          Every Monday morning you&apos;ll get one short, actionable HVAC SEO tip in your inbox — the kind that takes 10 minutes to apply but moves rankings over the year.
-        </p>
-        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 22px;">
-          Want to skip the wait? Here are three of our most-read playbooks:
-        </p>
-        <ul style="font-size: 14px; color: #3f3f46; padding-left: 20px; margin: 0 0 22px;">
-          <li><a href="https://www.heatrankai.com/resources/google-business-profile-hvac-checklist" style="color: #b45309; text-decoration: underline;">12-Point Google Business Profile checklist</a></li>
-          <li><a href="https://www.heatrankai.com/resources/hvac-keyword-strategy-2026" style="color: #b45309; text-decoration: underline;">HVAC keyword strategy that actually works in 2026</a></li>
-          <li><a href="https://www.heatrankai.com/resources/negative-review-response-templates" style="color: #b45309; text-decoration: underline;">5 templates for replying to bad reviews</a></li>
-        </ul>
-        <a href="https://www.heatrankai.com/login"
-           style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
-          Try HeatRank AI free for 14 days
-        </a>
-        <p style="font-size: 12px; color: #71717a; margin: 22px 0 0;">
-          Don&apos;t want these emails? Just reply with &ldquo;unsubscribe&rdquo; and you&apos;re out.
-        </p>
-      </div>
-      <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 14px 0 0;">
-        HeatRank AI · Local SEO for HVAC contractors
-      </p>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
+      <p>Hey,</p>
+      <p>Thanks for signing up. I&apos;m the founder of HeatRank AI — a small tool that helps HVAC contractors rank higher on Google without paying agency rates.</p>
+      <p>Every Monday I&apos;ll send you one short tip you can actually apply that week. No fluff, no &ldquo;5 reasons SEO is important&rdquo; filler.</p>
+      <p>While you wait, here&apos;s the piece I&apos;d start with:</p>
+      <p><a href="https://www.heatrankai.com/resources/google-business-profile-hvac-checklist" style="color: #1a1a1a;">The 12-point Google Business Profile checklist for HVAC contractors</a></p>
+      <p>If anything&apos;s ever off, just hit reply — I read every email myself.</p>
+      <p>— The HeatRank team</p>
+      <p style="color: #888; font-size: 12px; margin-top: 28px;">Don&apos;t want these? Reply with &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.</p>
     </div>
   `;
 }
@@ -203,42 +190,29 @@ export interface NewsletterTip {
   readMoreUrl: string;
 }
 
+// Plain-text-style HTML for Primary inbox delivery. No buttons, no cards.
 export function newsletterTipHtml(tip: NewsletterTip): string {
   const bulletsHtml = tip.bullets
-    .map((b) => `<li style="margin-bottom: 8px;">${b}</li>`)
+    .map((b) => `<li style="margin-bottom: 6px;">${b}</li>`)
     .join("");
 
   return /* html */ `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; color: #18181b; line-height: 1.55;">
-      <div style="padding: 32px 24px; background: #fafafa; border-radius: 16px;">
-        <p style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b45309; font-weight: 600; margin: 0 0 6px;">
-          ${tip.category} · HVAC SEO Tip
-        </p>
-        <h1 style="font-size: 24px; font-weight: 700; color: #18181b; margin: 0 0 14px; line-height: 1.25;">
-          ${tip.title}
-        </h1>
-        <p style="font-size: 15px; color: #3f3f46; margin: 0 0 18px;">
-          ${tip.hook}
-        </p>
-        <div style="background: #ffffff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px 22px; margin: 0 0 22px;">
-          <p style="font-size: 11px; color: #71717a; text-transform: uppercase; letter-spacing: 0.10em; margin: 0 0 10px; font-weight: 600;">Quick takeaways</p>
-          <ul style="font-size: 14px; color: #3f3f46; padding-left: 18px; margin: 0;">
-            ${bulletsHtml}
-          </ul>
-        </div>
-        <a href="${tip.readMoreUrl}"
-           style="display: inline-block; padding: 12px 22px; background: #18181b; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px;">
-          Read the full guide →
-        </a>
-        <p style="font-size: 13px; color: #71717a; margin: 22px 0 0;">
-          Want this automated? <a href="https://www.heatrankai.com/login" style="color: #b45309;">HeatRank AI</a> handles GBP, reviews, rank tracking, and SEO audits for $39/mo.
-        </p>
-      </div>
-      <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 14px 0 6px;">
-        HeatRank AI · Local SEO for HVAC contractors
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
+      <p>Hey,</p>
+      <p>Quick HVAC SEO tip for the week — ${tip.category.toLowerCase()}.</p>
+      <p><strong>${tip.title}</strong></p>
+      <p>${tip.hook}</p>
+      <p>Three things to do this week:</p>
+      <ul style="padding-left: 20px; margin: 0 0 16px;">
+        ${bulletsHtml}
+      </ul>
+      <p>Full write-up here if you want to go deeper:<br/>
+        <a href="${tip.readMoreUrl}" style="color: #1a1a1a;">${tip.readMoreUrl}</a>
       </p>
-      <p style="font-size: 11px; color: #a1a1aa; text-align: center; margin: 0;">
-        Don&apos;t want these? <a href="mailto:support@heatrankai.com?subject=unsubscribe" style="color: #71717a;">Unsubscribe</a>
+      <p>Reply if you have questions — I read every email.</p>
+      <p>— The HeatRank team</p>
+      <p style="color: #888; font-size: 12px; margin-top: 28px;">
+        Don&apos;t want these? Reply &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.
       </p>
     </div>
   `;

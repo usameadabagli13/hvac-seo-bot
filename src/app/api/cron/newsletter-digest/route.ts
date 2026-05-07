@@ -76,10 +76,14 @@ async function handle(request: NextRequest) {
   let sent = 0;
   let fail = 0;
 
+  // Lowercase, no emoji, no exclamation — looks like a personal email subject,
+  // not a marketing blast. Helps Gmail Primary inbox classification.
+  const subject = `quick tip: ${tip.title.toLowerCase().replace(/^the\s+/i, "")}`;
+
   for (const s of subs) {
     const ok = await sendEmail({
       to:      s.email,
-      subject: tip.title,
+      subject,
       html:    newsletterTipHtml(tip),
       purpose: "newsletter",
     });
@@ -87,8 +91,8 @@ async function handle(request: NextRequest) {
     else fail++;
   }
 
-  console.log(`[cron/newsletter-digest] week=${isoWeek(new Date())} subject="${tip.title}" total=${subs.length} sent=${sent} failed=${fail}`);
-  return Response.json({ ok: true, total: subs.length, sent, failed: fail, subject: tip.title });
+  console.log(`[cron/newsletter-digest] week=${isoWeek(new Date())} subject="${subject}" total=${subs.length} sent=${sent} failed=${fail}`);
+  return Response.json({ ok: true, total: subs.length, sent, failed: fail, subject });
 }
 
 export async function GET(request: NextRequest)  { return handle(request); }

@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     if (isNew || existing?.unsubscribed_at) {
       await sendEmail({
         to:      email,
-        subject: "You're in — one HVAC SEO tip per week",
+        subject: "thanks for signing up",
         html:    newsletterWelcomeHtml(),
         purpose: "newsletter",
       });
