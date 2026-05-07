@@ -16,10 +16,6 @@ export const metadata: Metadata = {
   title: "HeatRank AI: Local SEO Tools for HVAC Contractors",
   description:
     "Boost your HVAC business rankings with HeatRank AI. Access local keyword research, automated review management, and SEO audits. Start your 14-day free trial today!",
-  icons: {
-    icon: "/heatrank-logo.png",
-    apple: "/heatrank-logo.png",
-  },
   openGraph: {
     title: "HeatRank AI: Local SEO Tools for HVAC Contractors",
     description:

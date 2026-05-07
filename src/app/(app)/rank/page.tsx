@@ -20,13 +20,22 @@ export default async function RankPage({
   const user = session?.user;
   if (!user) redirect("/login");
 
-  // Load user's businesses
-  const { data: businesses } = await supabase
-    .from("businesses")
-    .select("id, business_name, service_location")
-    .eq("user_id", user.id)
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+  // Load user's businesses + GBP connection status in parallel
+  const [{ data: businesses }, { data: gbpIntegration }] = await Promise.all([
+    supabase
+      .from("businesses")
+      .select("id, business_name, service_location")
+      .eq("user_id", user.id)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("integrations")
+      .select("id, location_name")
+      .eq("user_id", user.id)
+      .eq("provider", "google_business_profile")
+      .maybeSingle(),
+  ]);
+  const gbpConnected = !!gbpIntegration?.location_name;
 
   const { business: selectedId } = await searchParams;
   const biz =
@@ -167,6 +176,7 @@ export default async function RankPage({
               centerLat={centerLat}
               centerLng={centerLng}
               isMock={isMock}
+              gbpConnected={gbpConnected}
             />
 
           </div>

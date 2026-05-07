@@ -124,6 +124,26 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "business_id and keyword are required." }, { status: 400 });
   }
 
+  // GBP connection gate — without GBP we can't reliably identify the user's
+  // listing, so the snapshot would burn a credit on a guess.
+  const { data: gbpIntegration } = await supabase
+    .from("integrations")
+    .select("id, location_name")
+    .eq("user_id", user.id)
+    .eq("provider", "google_business_profile")
+    .maybeSingle();
+
+  if (!gbpIntegration?.location_name) {
+    return Response.json(
+      {
+        error:
+          "Connect your Google Business Profile first. Without it we can't reliably identify your listing on Google Maps, so we won't burn a snapshot credit on a guess.",
+        code: "GBP_NOT_CONNECTED",
+      },
+      { status: 422 }
+    );
+  }
+
   // Ownership check
   const { data: biz } = await supabase
     .from("businesses")

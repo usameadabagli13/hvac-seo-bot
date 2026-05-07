@@ -19,6 +19,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   token_exchange_failed: "Couldn't complete the Google sign-in. This usually means the OAuth app is unverified or the redirect URI doesn't match. Contact support if it persists.",
   no_session: "Your session expired. Please sign in again and retry.",
   db_error: "Couldn't save your connection. Please try again.",
+  gbp_no_accounts: "You signed in successfully, but Google didn't return any Business Profile accounts for this email. Make sure you signed in with the Google account that owns your Business Profile.",
+  gbp_no_locations: "Connected to Google, but no business locations were found. Add or claim your business at business.google.com first, then come back and reconnect.",
+  gbp_api_error: "Connected to Google, but we couldn't read your Business Profile (API error). This often means the GBP API isn't enabled for your account. Try again in a few minutes.",
 };
 
 export default async function ReviewsPage({

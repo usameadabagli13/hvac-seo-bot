@@ -23,6 +23,7 @@ interface Props {
   centerLat:    number;
   centerLng:    number;
   isMock:       boolean;
+  gbpConnected: boolean;
 }
 
 interface PopupInfo {
@@ -103,7 +104,7 @@ const labelLayer: LayerProps = {
 
 const KEYWORD_CHIPS = ["AC repair", "furnace install", "emergency HVAC", "ductwork", "heat pump"];
 
-export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng, isMock }: Props) {
+export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng, isMock, gbpConnected }: Props) {
   const router  = useRouter();
   const mapRef  = useRef<MapRef>(null);
   const [popup,      setPopup]      = useState<PopupInfo | null>(null);
@@ -311,11 +312,33 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
 
         {/* Run Snapshot */}
         <div className="flex flex-col gap-2 pt-1">
+          {!gbpConnected && (
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <p className="text-xs font-semibold text-amber-300">
+                  Connect Google Business Profile to run snapshots
+                </p>
+                <p className="text-[11px] text-amber-200/70 mt-0.5 leading-relaxed">
+                  Without GBP we can&apos;t reliably identify your listing — so we won&apos;t burn a credit on a guess.
+                </p>
+              </div>
+              <a
+                href="/dashboard/settings"
+                className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-zinc-950 text-xs font-semibold hover:bg-amber-400 transition-colors"
+              >
+                Connect GBP
+              </a>
+            </div>
+          )}
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={handleRunSnapshot}
-              disabled={running || !keywordVal.trim()}
-              title="Uses 1 of your monthly rank snapshot credits"
+              disabled={running || !keywordVal.trim() || !gbpConnected}
+              title={
+                !gbpConnected
+                  ? "Connect Google Business Profile first"
+                  : "Uses 1 of your monthly rank snapshot credits"
+              }
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
             >
               {running
@@ -334,10 +357,8 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
             </p>
           )}
           <p className="text-[11px] text-zinc-600 leading-relaxed">
-            We match your business on Google Maps using its name and city.
-            For best accuracy, make sure the business name here matches your
-            Google Business Profile listing exactly. No credit is used if we
-            can&apos;t find your listing or you don&apos;t rank in the top 20.
+            We match your listing using Google Business Profile. No credit is used
+            if you don&apos;t rank in the top 20 anywhere in the search area.
           </p>
         </div>
       </div>

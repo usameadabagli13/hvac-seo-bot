@@ -52,15 +52,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Pull real Google Suggest data so the model is grounded in actual search
-    // demand for the area. Seeds cover HVAC base terms + the business itself.
-    // If Suggest fails entirely we still proceed — the prompt handles that.
+    // demand for the area. Seeds use the business name + location only — no
+    // industry assumptions, so the model isn't biased toward HVAC for non-HVAC
+    // businesses.
     const suggestSeeds = [
       `${businessName} ${location}`,
-      `HVAC ${location}`,
-      `AC repair ${location}`,
-      `furnace repair ${location}`,
-      `heating ${location}`,
-      `${location} HVAC near me`,
+      `${businessName}`,
+      `${businessName} near me`,
+      `best ${businessName}`,
+      `${location} ${businessName}`,
     ];
 
     const suggestions = (await fetchGoogleSuggestions(suggestSeeds)).slice(0, 40);
@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
     const model = genAI.getGenerativeModel({
       model: "gemini-3.1-flash-lite-preview",
       generationConfig: {
-        // Force plain text so the model cannot produce markdown fences
         responseMimeType: "application/json",
+        temperature: 0.4,
       },
     });
 
@@ -80,50 +80,46 @@ export async function POST(request: NextRequest) {
     // name actually implies HVAC.
     const suggestBlock = suggestions.length > 0
       ? [
-          `STEP 2 — Real Google search demand for this area:`,
-          `Below are actual queries people typed into Google in this market (pulled from Google Autocomplete).`,
-          `Use them as the foundation. Pick the highest-intent ones, polish capitalization,`,
-          `and shape your final list around what people are ACTUALLY searching — not what sounds plausible.`,
+          `STEP 2 — Real Google search demand for this business + area:`,
+          `These are actual queries people typed into Google related to "${businessName}" in "${location}".`,
+          `Use them to confirm the industry and shape your final list around real demand.`,
           ``,
           ...suggestions.map((s) => `- ${s}`),
           ``,
         ]
       : [
-          `STEP 2 — (Google Suggest data unavailable; use your training knowledge instead.)`,
+          `STEP 2 — (Google Suggest data unavailable; rely on the business name to infer the industry.)`,
           ``,
         ];
 
     const prompt = [
-      `You are a local SEO expert. Generate 12 high-intent local search keywords for this business.`,
+      `You are a local SEO expert. Generate exactly 12 high-intent LOCAL search keywords for this specific business in this specific location.`,
       ``,
       `Business name: "${businessName}"`,
       `Location: "${location}"`,
       ``,
-      `STEP 1 — Identify the industry from the business name:`,
-      `- The business name may be in any language (Turkish, Spanish, English, etc.)`,
-      `- "tesisatçı" = plumber, "kuaför" = hairdresser, "lokanta" = restaurant, etc.`,
-      `- If the name clearly indicates HVAC (heating, cooling, AC, furnace, HVAC), use HVAC keywords.`,
-      `- Otherwise generate keywords for whatever industry the name actually represents.`,
-      `- The Google Suggest list below is HVAC-biased — IGNORE it if the business is in a different industry.`,
+      `STEP 1 — Identify the industry from the business name (NOT from any default assumption):`,
+      `- The business name may be in any language (Turkish, Spanish, English, French, etc.).`,
+      `- Examples: "tesisatçı"=plumber, "kuaför"=hairdresser, "lokanta"=restaurant, "elektrikçi"=electrician, "boyacı"=painter.`,
+      `- ONLY use HVAC/heating/cooling keywords if the business name itself contains HVAC terms (HVAC, heating, cooling, AC, furnace, climate, air conditioning).`,
+      `- If the name does not indicate HVAC, DO NOT generate HVAC keywords. Generate keywords for the actual identified industry.`,
       ``,
       ...suggestBlock,
-      `STEP 3 — Generate the final list:`,
-      `- Mix short-tail and long-tail`,
-      `- Include "${location}" in at least 5 keywords`,
-      `- Cover the most commercially valuable services for the identified industry`,
-      `- Include at least one urgency/emergency keyword if relevant (e.g. "24 hour", "emergency", "near me")`,
-      `- Keywords MUST be in English (search-engine ready), even if the business name was in another language`,
-      `- Do NOT just copy Suggest entries verbatim — refine them, merge duplicates, fix capitalization`,
+      `STEP 3 — Generate the final list (MANDATORY rules — break any rule = wrong output):`,
+      `- Every keyword must be relevant to the identified industry from STEP 1.`,
+      `- At least 8 of the 12 keywords MUST contain the location string "${location}" (or its city name) verbatim.`,
+      `- Mix short-tail (2–3 words) and long-tail (4–6 words).`,
+      `- Include at least one urgency keyword (e.g. "emergency", "24 hour", "same day", "near me") if appropriate for the industry.`,
+      `- Keywords MUST be in English, search-engine ready, lowercase except proper nouns.`,
+      `- Do NOT use generic keywords that could apply to any business in any city. Each keyword must be tied to either the location or the specific service.`,
       ``,
       `STEP 4 — Output:`,
-      `Return ONLY a raw JSON array of 12 keyword strings.`,
-      `No markdown. No code fences. No explanation. No extra text. Just [ ... ].`,
+      `Return ONLY a raw JSON array of exactly 12 keyword strings. No markdown, no code fences, no explanation. Just [ ... ].`,
       ``,
-      `Examples for context (do NOT include these in the output):`,
-      `For "Acme HVAC" + "Dallas, TX":`,
-      `["HVAC repair Dallas TX","emergency AC installation Dallas","furnace repair near me", ...]`,
-      `For "tesisatçı" + "San Bernardino, CA":`,
-      `["plumber San Bernardino CA","emergency plumbing San Bernardino","drain cleaning near me", ...]`,
+      `Examples (do NOT include in output):`,
+      `For "Acme HVAC" + "Dallas, TX": ["HVAC repair Dallas TX","emergency AC repair Dallas","furnace replacement Dallas",...]`,
+      `For "tesisatçı Mehmet" + "San Bernardino, CA": ["plumber San Bernardino CA","emergency plumber San Bernardino","drain cleaning San Bernardino",...]`,
+      `For "Bella's Pizza" + "Austin, TX": ["pizza delivery Austin","best pizza Austin TX","late night pizza Austin",...]`,
     ].join("\n");
 
     console.log("[generate-keywords] calling Gemini with prompt length:", prompt.length);

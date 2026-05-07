@@ -21,6 +21,7 @@ interface Props {
   centerLat:    number;
   centerLng:    number;
   isMock:       boolean;
+  gbpConnected: boolean;
 }
 
 export default function RankMapLoader(props: Props) {

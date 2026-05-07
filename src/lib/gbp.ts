@@ -229,10 +229,10 @@ export async function getGBPStatus(userId: string): Promise<GBPStatus> {
     .select("account_name, location_name")
     .eq("user_id", userId)
     .eq("provider", "google_business_profile")
-    .single();
+    .maybeSingle();
 
   return {
-    connected: !!data,
+    connected: !!data?.location_name,
     accountName: data?.account_name ?? null,
     locationName: data?.location_name ?? null,
   };

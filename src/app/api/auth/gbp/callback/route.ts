@@ -63,15 +63,22 @@ export async function GET(request: NextRequest) {
   // Resolve the first GBP account + location for this user
   let accountName: string | null = null;
   let locationName: string | null = null;
+  let lookupFailureReason: "no_accounts" | "no_locations" | "api_error" | null = null;
 
   try {
     const accountsRes = await fetch(
       "https://mybusinessaccountmanagement.googleapis.com/v1/accounts",
       { headers: { Authorization: `Bearer ${tokens.access_token}` } }
     );
-    if (accountsRes.ok) {
+    if (!accountsRes.ok) {
+      console.error("[gbp/callback] accounts API failed:", accountsRes.status, await accountsRes.text());
+      lookupFailureReason = "api_error";
+    } else {
       const accountsData = await accountsRes.json() as { accounts?: { name: string }[] };
       accountName = accountsData.accounts?.[0]?.name ?? null;
+      if (!accountName) {
+        lookupFailureReason = "no_accounts";
+      }
     }
 
     if (accountName) {
@@ -79,15 +86,20 @@ export async function GET(request: NextRequest) {
         `https://mybusinessbusinessinformation.googleapis.com/v1/${accountName}/locations?readMask=name`,
         { headers: { Authorization: `Bearer ${tokens.access_token}` } }
       );
-      if (locRes.ok) {
+      if (!locRes.ok) {
+        console.error("[gbp/callback] locations API failed:", locRes.status, await locRes.text());
+        lookupFailureReason = "api_error";
+      } else {
         const locData = await locRes.json() as { locations?: { name: string }[] };
         locationName = locData.locations?.[0]?.name ?? null;
+        if (!locationName) {
+          lookupFailureReason = "no_locations";
+        }
       }
     }
   } catch (err) {
-    // Non-fatal: we store tokens even if account/location lookup fails.
-    // The reviews page will retry on next load.
-    console.error("[gbp/callback] account/location lookup failed:", err);
+    console.error("[gbp/callback] account/location lookup threw:", err);
+    lookupFailureReason = "api_error";
   }
 
   // Upsert integration record
@@ -112,7 +124,12 @@ export async function GET(request: NextRequest) {
     return redirect("db_error");
   }
 
-  const response = NextResponse.redirect(`${APP_URL}/reviews`);
+  // If we saved tokens but couldn't resolve a location, redirect with a
+  // specific warning so the user understands why nothing's working yet.
+  const finalUrl = lookupFailureReason
+    ? `${APP_URL}/reviews?error=gbp_${lookupFailureReason}`
+    : `${APP_URL}/reviews`;
+  const response = NextResponse.redirect(finalUrl);
   // Clear the CSRF cookie
   response.cookies.set("gbp_oauth_state", "", { maxAge: 0, path: "/" });
   return response;
