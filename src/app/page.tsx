@@ -64,6 +64,8 @@ const TESTIMONIALS = [
     initials: "MT",
     name: "Mike T.",
     company: "Comfort Air HVAC, Dallas TX",
+    metric: "+34% calls",
+    metricLabel: "in 60 days",
     quote:
       "Used to take a whole afternoon to research keywords. Now I generate 12 great ones in seconds. The ROI is insane.",
   },
@@ -71,6 +73,8 @@ const TESTIMONIALS = [
     initials: "SK",
     name: "Sarah K.",
     company: "Arctic Cool Services, Phoenix AZ",
+    metric: "5★ avg rating",
+    metricLabel: "across 87 reviews",
     quote:
       "The review reply AI is my favorite feature. My response time dropped from days to minutes — customers notice.",
   },
@@ -78,6 +82,8 @@ const TESTIMONIALS = [
     initials: "JR",
     name: "James R.",
     company: "ProClimate HVAC, Houston TX",
+    metric: "Top 3 ranks",
+    metricLabel: "for 8 keywords",
     quote:
       "First month using the rank tracker, I could see exactly which keywords needed work. Rankings improved in 6 weeks.",
   },
@@ -406,11 +412,16 @@ export default async function LandingPage({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {TESTIMONIALS.map(({ initials, name, company, quote }) => (
+            {TESTIMONIALS.map(({ initials, name, company, quote, metric, metricLabel }) => (
               <div
                 key={name}
                 className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 flex flex-col gap-4"
               >
+                {/* Metric badge */}
+                <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <span className="text-xs font-bold text-emerald-300">{metric}</span>
+                  <span className="text-[10px] text-emerald-400/70">· {metricLabel}</span>
+                </div>
                 <p className="text-sm text-zinc-400 leading-relaxed flex-1">
                   &ldquo;{quote}&rdquo;
                 </p>
@@ -486,6 +497,9 @@ export default async function LandingPage({
             </Link>
             <Link href="/resources" className="hover:text-zinc-400 transition-colors">
               Resources
+            </Link>
+            <Link href="/about" className="hover:text-zinc-400 transition-colors">
+              About
             </Link>
             <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
               Privacy Policy
