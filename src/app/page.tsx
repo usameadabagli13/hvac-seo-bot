@@ -262,6 +262,35 @@ export default async function LandingPage({
           <DemoWidget />
         </section>
 
+        {/* ── How It Works ─────────────────────────────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-6 pb-24">
+          <div className="text-center mb-12">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+              How it works
+            </p>
+            <h2 className="text-3xl font-bold text-zinc-100 tracking-tight">
+              Three steps. No agency. No phone calls.
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4 relative">
+            {/* Connector line behind cards (desktop only) */}
+            <div className="hidden sm:block absolute top-7 left-[16%] right-[16%] h-px bg-gradient-to-r from-white/[0.05] via-white/[0.10] to-white/[0.05] pointer-events-none" />
+            {[
+              { step: "1", title: "Add your business",       desc: "Type your business name and city. We seed your dashboard with HVAC keywords specific to your market." },
+              { step: "2", title: "Run the AI tools",        desc: "Generate keywords, audit your homepage, get rank heatmaps, and reply to reviews — all from one dashboard." },
+              { step: "3", title: "Watch your rank climb",   desc: "Apply the recommendations and rerun snapshots weekly. Most contractors see top-10 movement within 6–8 weeks." },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-white/[0.10] transition-all">
+                <div className="w-10 h-10 rounded-full bg-zinc-900 border border-white/[0.10] flex items-center justify-center mb-4 text-sm font-bold text-zinc-200 relative z-10">
+                  {step}
+                </div>
+                <h3 className="text-base font-semibold text-zinc-100 mb-1.5">{title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── Features ────────────────────────────────────────────────────────── */}
         <section id="features" className="max-w-6xl mx-auto px-6 pb-24 scroll-mt-20">
           <div className="text-center mb-12">
@@ -412,9 +441,12 @@ export default async function LandingPage({
             <span className="text-sm text-zinc-500 font-medium">HeatRank AI</span>
           </div>
 
-          <div className="flex items-center gap-6 text-xs text-zinc-600">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-600">
             <Link href="/pricing" className="hover:text-zinc-400 transition-colors">
               Pricing
+            </Link>
+            <Link href="/vs-seo-agency" className="hover:text-zinc-400 transition-colors">
+              vs SEO Agency
             </Link>
             <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
               Privacy Policy

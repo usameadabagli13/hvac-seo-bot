@@ -51,16 +51,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Pull real Google Suggest data so the model is grounded in actual search
-    // demand for the area. Seeds use the business name + location only — no
-    // industry assumptions, so the model isn't biased toward HVAC for non-HVAC
-    // businesses.
+    // HeatRank AI is HVAC-only — every business on the platform is an HVAC
+    // contractor. Seed Google Suggest with HVAC + the business name so we get
+    // real local HVAC demand grounded in this market.
     const suggestSeeds = [
       `${businessName} ${location}`,
-      `${businessName}`,
-      `${businessName} near me`,
-      `best ${businessName}`,
-      `${location} ${businessName}`,
+      `HVAC ${location}`,
+      `AC repair ${location}`,
+      `furnace repair ${location}`,
+      `heating ${location}`,
+      `air conditioning ${location}`,
+      `${location} HVAC near me`,
     ];
 
     const suggestions = (await fetchGoogleSuggestions(suggestSeeds)).slice(0, 40);
@@ -93,33 +94,27 @@ export async function POST(request: NextRequest) {
         ];
 
     const prompt = [
-      `You are a local SEO expert. Generate exactly 12 high-intent LOCAL search keywords for this specific business in this specific location.`,
+      `You are a local SEO expert specialized in HVAC contractors. Generate exactly 12 high-intent LOCAL HVAC search keywords for this contractor.`,
       ``,
       `Business name: "${businessName}"`,
       `Location: "${location}"`,
       ``,
-      `STEP 1 — Identify the industry from the business name (NOT from any default assumption):`,
-      `- The business name may be in any language (Turkish, Spanish, English, French, etc.).`,
-      `- Examples: "tesisatçı"=plumber, "kuaför"=hairdresser, "lokanta"=restaurant, "elektrikçi"=electrician, "boyacı"=painter.`,
-      `- ONLY use HVAC/heating/cooling keywords if the business name itself contains HVAC terms (HVAC, heating, cooling, AC, furnace, climate, air conditioning).`,
-      `- If the name does not indicate HVAC, DO NOT generate HVAC keywords. Generate keywords for the actual identified industry.`,
+      `Context: This is an HVAC SEO platform. Every business on it is an HVAC / heating / cooling / air conditioning contractor, regardless of how the business name reads. Treat this business as an HVAC contractor.`,
       ``,
       ...suggestBlock,
-      `STEP 3 — Generate the final list (MANDATORY rules — break any rule = wrong output):`,
-      `- Every keyword must be relevant to the identified industry from STEP 1.`,
-      `- At least 8 of the 12 keywords MUST contain the location string "${location}" (or its city name) verbatim.`,
+      `MANDATORY rules (break any rule = wrong output):`,
+      `- Every keyword MUST be HVAC-related: AC, air conditioning, heating, furnace, heat pump, ductwork, ventilation, thermostat, indoor air quality, HVAC repair/install/maintenance.`,
+      `- At least 9 of the 12 keywords MUST contain "${location}" (or its city name) verbatim.`,
       `- Mix short-tail (2–3 words) and long-tail (4–6 words).`,
-      `- Include at least one urgency keyword (e.g. "emergency", "24 hour", "same day", "near me") if appropriate for the industry.`,
-      `- Keywords MUST be in English, search-engine ready, lowercase except proper nouns.`,
-      `- Do NOT use generic keywords that could apply to any business in any city. Each keyword must be tied to either the location or the specific service.`,
+      `- Include at least one urgency keyword: "emergency", "24 hour", "same day", or "near me".`,
+      `- Cover commercially valuable HVAC services: repair, install/replacement, maintenance/tune-up, emergency.`,
+      `- Keywords MUST be in English, lowercase except proper nouns and city names.`,
+      `- Each keyword must be specific to either the location or a specific HVAC service — no generic filler.`,
       ``,
-      `STEP 4 — Output:`,
-      `Return ONLY a raw JSON array of exactly 12 keyword strings. No markdown, no code fences, no explanation. Just [ ... ].`,
+      `Output: Return ONLY a raw JSON array of exactly 12 keyword strings. No markdown, no code fences, no explanation. Just [ ... ].`,
       ``,
-      `Examples (do NOT include in output):`,
-      `For "Acme HVAC" + "Dallas, TX": ["HVAC repair Dallas TX","emergency AC repair Dallas","furnace replacement Dallas",...]`,
-      `For "tesisatçı Mehmet" + "San Bernardino, CA": ["plumber San Bernardino CA","emergency plumber San Bernardino","drain cleaning San Bernardino",...]`,
-      `For "Bella's Pizza" + "Austin, TX": ["pizza delivery Austin","best pizza Austin TX","late night pizza Austin",...]`,
+      `Example for "Acme Cooling" + "Dallas, TX":`,
+      `["HVAC repair Dallas TX","emergency AC repair Dallas","furnace replacement Dallas","24 hour AC service Dallas","heat pump installation Dallas","HVAC maintenance Dallas TX","air conditioning install Dallas","commercial HVAC Dallas","ductwork repair Dallas","heating contractor Dallas TX","HVAC tune-up Dallas","AC repair near me"]`,
     ].join("\n");
 
     console.log("[generate-keywords] calling Gemini with prompt length:", prompt.length);

@@ -508,15 +508,18 @@ export default function BusinessDetailTabs({
                   We crawl your homepage, then Gemini scores it and flags issues.
                 </p>
               </div>
-              <button
-                onClick={handleRunAudit}
-                disabled={auditing || !business.website_url}
-                title={!business.website_url ? "Add a website URL first" : "Uses 1 of your monthly audit credits"}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all disabled:opacity-40 disabled:pointer-events-none"
-              >
-                {auditing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-                {auditing ? "Auditing…" : latestAudit ? "Re-run audit" : "Run audit"}
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-zinc-600 hidden sm:inline">· 1 credit</span>
+                <button
+                  onClick={handleRunAudit}
+                  disabled={auditing || !business.website_url}
+                  title={!business.website_url ? "Add a website URL first" : "Uses 1 of your monthly audit credits"}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all disabled:opacity-40 disabled:pointer-events-none"
+                >
+                  {auditing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                  {auditing ? "Auditing…" : latestAudit ? "Re-run audit" : "Run audit"}
+                </button>
+              </div>
             </div>
             {auditError && (
               <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
