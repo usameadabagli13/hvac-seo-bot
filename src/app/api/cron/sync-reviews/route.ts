@@ -56,7 +56,7 @@ async function refreshAccessToken(
 }
 
 async function handle(request: NextRequest) {
-  const expected = process.env.REVIEW_SYNC_SECRET;
+  const expected = process.env.CRON_SECRET;
   const got = request.headers.get("authorization");
   if (!expected || got !== `Bearer ${expected}`) {
     return Response.json({ error: "Unauthorized." }, { status: 401 });
