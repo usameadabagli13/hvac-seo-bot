@@ -233,6 +233,36 @@ export default async function LandingPage({
           </p>
         </section>
 
+        {/* ── HVAC Industry Stats ──────────────────────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-6 pb-20">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-6 py-10 sm:px-12">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2 text-center">
+              The HVAC SEO opportunity
+            </p>
+            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-100 text-center mb-8 tracking-tight">
+              Why local SEO matters for HVAC contractors
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {[
+                { value: "97%",  label: "of homeowners search online before hiring an HVAC contractor" },
+                { value: "46%",  label: "of all Google searches are looking for local information" },
+                { value: "76%",  label: "of local searches result in a phone call within 24 hours" },
+                { value: "$10B", label: "annual US HVAC services market — yours to capture" },
+              ].map(({ value, label }) => (
+                <div key={value} className="text-center">
+                  <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent mb-2">
+                    {value}
+                  </div>
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">{label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-zinc-700 mt-8 text-center">
+              Sources: Google Local Search Study, BrightLocal Consumer Review Survey, IBISWorld HVAC Industry Report
+            </p>
+          </div>
+        </section>
+
         {/* ── Live Demo Widget ────────────────────────────────────────────────── */}
         <section id="demo" className="max-w-2xl mx-auto px-6 pb-24 scroll-mt-20">
           <div className="text-center mb-6">

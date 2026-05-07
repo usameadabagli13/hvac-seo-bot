@@ -23,10 +23,19 @@ export async function generateMetadata({
   return {
     title: `HVAC SEO for ${city.name}, ${city.state} Contractors | HeatRank AI`,
     description: `Rank higher on Google in ${city.name}. HeatRank AI gives ${city.name} HVAC contractors AI-powered keyword research, review management, and rank tracking — no SEO agency needed.`,
+    alternates: {
+      canonical: `/hvac-seo/${city.slug}`,
+    },
     openGraph: {
       title: `HVAC SEO for ${city.name} Contractors | HeatRank AI`,
       description: `Dominate local search in ${city.name}, ${city.stateFull}. AI-powered SEO tools built exclusively for HVAC contractors.`,
       type: "website",
+      url: `/hvac-seo/${city.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `HVAC SEO for ${city.name} Contractors`,
+      description: `AI-powered local SEO for HVAC contractors in ${city.name}, ${city.stateFull}.`,
     },
   };
 }
@@ -75,24 +84,36 @@ export default async function CityPage({
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": `HVAC SEO for ${city.name}, ${city.state} Contractors`,
-    "description": `HeatRank AI helps HVAC contractors in ${city.name}, ${city.stateFull} rank higher on Google with AI-powered keyword research, review management, and rank tracking.`,
-    "url": `https://www.heatrankai.com/hvac-seo/${city.slug}`,
-    "isPartOf": { "@id": "https://www.heatrankai.com/#website" },
-    "about": {
-      "@type": "Service",
-      "name": `HVAC SEO Services for ${city.name} Contractors`,
-      "areaServed": {
-        "@type": "City",
-        "name": city.name,
-        "containedInPlace": {
-          "@type": "State",
-          "name": city.stateFull,
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": `HVAC SEO for ${city.name}, ${city.state} Contractors`,
+        "description": `HeatRank AI helps HVAC contractors in ${city.name}, ${city.stateFull} rank higher on Google with AI-powered keyword research, review management, and rank tracking.`,
+        "url": `https://www.heatrankai.com/hvac-seo/${city.slug}`,
+        "isPartOf": { "@id": "https://www.heatrankai.com/#website" },
+        "about": {
+          "@type": "Service",
+          "name": `HVAC SEO Services for ${city.name} Contractors`,
+          "areaServed": {
+            "@type": "City",
+            "name": city.name,
+            "containedInPlace": {
+              "@type": "State",
+              "name": city.stateFull,
+            },
+          },
+          "provider": { "@id": "https://www.heatrankai.com/#organization" },
         },
       },
-      "provider": { "@id": "https://www.heatrankai.com/#organization" },
-    },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home",      "item": "https://www.heatrankai.com/" },
+          { "@type": "ListItem", "position": 2, "name": "HVAC SEO",  "item": "https://www.heatrankai.com/" },
+          { "@type": "ListItem", "position": 3, "name": city.name,   "item": `https://www.heatrankai.com/hvac-seo/${city.slug}` },
+        ],
+      },
+    ],
   };
 
   return (

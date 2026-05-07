@@ -9,6 +9,13 @@ import { PLANS } from "@/lib/plans";
 export const metadata: Metadata = {
   title:       "Pricing — HeatRank AI",
   description: "Simple plans built for HVAC contractors. Free 14-day trial. Cancel anytime.",
+  alternates:  { canonical: "/pricing" },
+  openGraph:   {
+    title:       "HeatRank AI Pricing",
+    description: "Simple plans built for HVAC contractors. Free 14-day trial. Cancel anytime.",
+    url:         "/pricing",
+    type:        "website",
+  },
 };
 
 export default function PricingPage() {
@@ -60,6 +67,20 @@ export default function PricingPage() {
           <span>✓ No credit card</span>
           <span>✓ Cancel anytime</span>
           <span>✓ Annual saves ~20%</span>
+        </div>
+
+        {/* Money-back guarantee */}
+        <div className="mt-10 max-w-2xl mx-auto rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] px-6 py-5 flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-base">🛡️</span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-emerald-300 mb-1">30-day money-back guarantee</p>
+            <p className="text-xs text-emerald-200/70 leading-relaxed">
+              Try Pro risk-free. If HeatRank AI isn&apos;t a fit in your first 30 days after billing,
+              email us and we&apos;ll refund every cent. No phone tag, no questions asked.
+            </p>
+          </div>
         </div>
 
         {/* FAQ */}
