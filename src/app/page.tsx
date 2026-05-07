@@ -210,6 +210,29 @@ export default async function LandingPage({
           </div>
         </section>
 
+        {/* ── Dashboard Screenshot ────────────────────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-6 pb-16">
+          <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden shadow-2xl shadow-black/40">
+            <div className="absolute inset-x-0 top-0 h-8 bg-zinc-900/80 flex items-center px-4 gap-1.5 border-b border-white/[0.05]">
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+              <span className="ml-3 text-[10px] text-zinc-600 font-mono">heatrankai.com/dashboard</span>
+            </div>
+            <Image
+              src="/dashboard-preview.png"
+              alt="HeatRank AI dashboard — HVAC SEO software showing keyword research, review management, and rank tracking"
+              width={1440}
+              height={900}
+              className="w-full h-auto pt-8"
+              priority={false}
+            />
+          </div>
+          <p className="text-center text-xs text-zinc-600 mt-3">
+            Everything in one place — keywords, reviews, rank tracker, and SEO audit
+          </p>
+        </section>
+
         {/* ── Live Demo Widget ────────────────────────────────────────────────── */}
         <section id="demo" className="max-w-2xl mx-auto px-6 pb-24 scroll-mt-20">
           <div className="text-center mb-6">
