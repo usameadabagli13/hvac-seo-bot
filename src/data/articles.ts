@@ -1,0 +1,186 @@
+export interface Article {
+  slug:        string;
+  title:       string;
+  description: string;
+  readTime:    string;
+  published:   string;     // ISO date
+  category:    string;
+  body:        ArticleSection[];
+}
+
+export interface ArticleSection {
+  type:    "p" | "h2" | "ul" | "ol" | "callout";
+  content: string | string[];
+}
+
+export const ARTICLES: Article[] = [
+  {
+    slug: "google-business-profile-hvac-checklist",
+    title: "The 12-Point Google Business Profile Checklist for HVAC Contractors",
+    description: "A practical checklist to optimize your Google Business Profile for local HVAC search — covering categories, photos, services, and Q&A.",
+    readTime: "6 min read",
+    published: "2026-04-15",
+    category: "Local SEO",
+    body: [
+      { type: "p", content: "Your Google Business Profile (GBP) is the single biggest local-SEO lever an HVAC contractor has. Done right, it puts you in the Map Pack — the block of three local businesses Google shows above organic results, where 76% of local searches click. Done wrong, you're invisible no matter how good your website looks." },
+      { type: "p", content: "This is the exact 12-point checklist we run for every HeatRank AI customer. Work through it in order. Most owners can finish in under 90 minutes." },
+      { type: "h2", content: "1. Verify your listing" },
+      { type: "p", content: "If you haven't claimed your profile yet, search your business name on Google Maps. Claim and verify (postcard, phone, or video). Without verification, none of the other steps matter." },
+      { type: "h2", content: "2. Pick the correct primary category" },
+      { type: "p", content: "Use \"HVAC contractor\" — not \"Air conditioning repair service\" or \"Heating contractor\" alone. The HVAC category covers both AC and heating, which matches how homeowners actually search." },
+      { type: "h2", content: "3. Add 5 secondary categories" },
+      { type: "ul", content: [
+        "Air conditioning repair service",
+        "Heating contractor",
+        "Furnace repair service",
+        "Air conditioning system supplier",
+        "Heat pump supplier",
+      ]},
+      { type: "h2", content: "4. Set your service area properly" },
+      { type: "p", content: "Mark yourself as a Service Area Business (SAB) if you don't have a public storefront. Add every ZIP code you actually serve — not just your home base. Don't pad with cities you can't get to in under an hour; Google can detect this." },
+      { type: "h2", content: "5. Match NAP everywhere" },
+      { type: "p", content: "Your business Name, Address, and Phone (NAP) must match exactly on your GBP, your website, your Yelp, your BBB profile, and every other directory. \"123 Main St.\" and \"123 Main Street\" are different strings to Google's algorithm." },
+      { type: "h2", content: "6. Upload at least 30 photos" },
+      { type: "ul", content: [
+        "Trucks (with logo visible)",
+        "Crews on jobs (with PPE)",
+        "Recent installs (interior + exterior)",
+        "Logo and storefront if you have one",
+        "Equipment you sell (Trane, Carrier, Lennox)",
+      ]},
+      { type: "callout", content: "Profiles with 100+ photos get 520% more calls than profiles with under 10 photos. Source: Google internal data." },
+      { type: "h2", content: "7. Fill out every Service" },
+      { type: "p", content: "Under \"Services\" add every type of work you do: AC repair, AC install, furnace repair, furnace install, heat pump service, ductwork, indoor air quality, maintenance plans. Each one is a chance to rank for a different keyword." },
+      { type: "h2", content: "8. Add hours including emergency availability" },
+      { type: "p", content: "If you offer 24/7 emergency service, set your hours to \"Open 24 hours\" — not \"By appointment.\" Google rewards listings with explicit availability for emergency searches." },
+      { type: "h2", content: "9. Set up Google Posts" },
+      { type: "p", content: "Post at least once a week — a special offer, a recent install photo, a seasonal tune-up reminder. Posts expire after 7 days, so consistency matters. Active profiles outrank dormant ones." },
+      { type: "h2", content: "10. Enable messaging" },
+      { type: "p", content: "Turn on Google Business messaging. Reply within 30 minutes during business hours — Google shows a response-time badge that affects ranking." },
+      { type: "h2", content: "11. Build review velocity" },
+      { type: "p", content: "Aim for 2-4 new Google reviews per week. Send a review-request text or email to every customer 24 hours after the job is complete. Reply to every review within 24 hours — yes, even the 5-stars." },
+      { type: "h2", content: "12. Answer your own Q&A" },
+      { type: "p", content: "Customers can post questions on your GBP. They often go unanswered for weeks. Beat them to it: pre-populate the Q&A with the 5 most common HVAC questions (price ranges, financing, emergency availability, brands you carry, warranty) and answer them yourself." },
+      { type: "h2", content: "What this looks like in 90 days" },
+      { type: "p", content: "If you complete this checklist and stay consistent (photos, posts, reviews, Q&A), you should see your GBP move into the Map Pack for at least a handful of keywords within 60-90 days. From there, the snowball effect kicks in: more visibility means more calls means more reviews means more visibility." },
+      { type: "p", content: "HeatRank AI automates the parts that scale — review replies, rank tracking, keyword research — so you can focus on the things only you can do (photos, Q&A, choosing the right categories)." },
+    ],
+  },
+  {
+    slug: "hvac-keyword-strategy-2026",
+    title: "HVAC Keyword Strategy in 2026: What Still Works",
+    description: "Most HVAC contractors target the wrong keywords. Here's a 2026 framework for picking keywords that actually convert into calls.",
+    readTime: "8 min read",
+    published: "2026-04-22",
+    category: "Keyword research",
+    body: [
+      { type: "p", content: "Most HVAC contractors target \"HVAC\" and \"AC repair\" and wonder why they don't get calls. These keywords are too broad, too competitive, and they don't match how real homeowners search when they're ready to buy." },
+      { type: "p", content: "Here's a 2026-tested framework that prioritizes intent over volume. It's the same approach we use to set the seed keywords for every HeatRank AI customer." },
+      { type: "h2", content: "The intent ladder" },
+      { type: "p", content: "Every HVAC search falls somewhere on a 4-rung ladder, from research to ready-to-buy. Most contractors only target the bottom rung (high commercial intent). The smart move is to spread across all four — different homeowners, different timing, but every one is a future customer." },
+      { type: "ol", content: [
+        "Research: \"How does central air work\" — long sales cycle",
+        "Comparison: \"Best HVAC brands 2026\" — buyer mid-cycle",
+        "Local: \"AC repair Dallas\" — ready to call",
+        "Emergency: \"Emergency AC repair near me\" — calling now",
+      ]},
+      { type: "h2", content: "Volume traps to avoid" },
+      { type: "p", content: "\"HVAC\" gets 1,500,000 searches per month. Sounds great. But: 60% of those searches are people researching the abbreviation or looking for HVAC trade schools, not service. The intent-matched volume — people who actually want to hire someone — is closer to 100,000, and it's spread across thousands of variations." },
+      { type: "p", content: "Better target: \"24 hour AC repair Dallas\" — only 600 searches per month, but every one is from a panicked homeowner ready to call the first listing they see." },
+      { type: "callout", content: "Long-tail wins. A 4-word keyword with 600 searches converts ~12x better than a 1-word keyword with 100,000 searches." },
+      { type: "h2", content: "The geographic multiplier" },
+      { type: "p", content: "Every HVAC keyword should have a city or neighborhood version. \"Furnace repair\" → \"Furnace repair Plano TX\" + \"Furnace repair Frisco TX\" + every other city you serve." },
+      { type: "p", content: "If you serve 8 cities, you have 8x the keyword opportunity. Build dedicated service pages for the top 3 cities first. The other 5 can live as anchor links on your service-area page until you have time to expand." },
+      { type: "h2", content: "Seasonal pivots" },
+      { type: "p", content: "HVAC search is brutally seasonal:" },
+      { type: "ul", content: [
+        "AC repair / AC install: peaks May-August",
+        "Furnace repair / heating install: peaks November-February",
+        "Tune-ups / maintenance: spikes April and October",
+        "Emergency keywords: surge during heatwaves and cold snaps",
+      ]},
+      { type: "p", content: "Don't push AC keywords in January. Don't waste budget on furnace ads in July. Rotate your content focus quarterly to match what people are actually searching." },
+      { type: "h2", content: "The 'near me' factor" },
+      { type: "p", content: "Roughly 30% of mobile HVAC searches include \"near me.\" Google interprets this geographically, so technical optimization for \"AC repair near me\" is identical to \"AC repair [your city]\" — but only if you have a verified Google Business Profile and consistent NAP citations." },
+      { type: "h2", content: "Putting it together" },
+      { type: "p", content: "Pick 12 starter keywords spread across the intent ladder. Aim for at least 8 with a location modifier. Create one dedicated service page per top-3 city. Track ranks weekly. Adjust seasonally." },
+      { type: "p", content: "If that sounds like a lot — HeatRank AI generates the 12 keywords automatically based on your business name and service area, then tracks ranks for you every week." },
+    ],
+  },
+  {
+    slug: "negative-review-response-templates",
+    title: "How to Respond to Negative Reviews (HVAC Edition + 5 Templates)",
+    description: "A bad review can sink your local rankings — or it can become your best marketing. Here's how to reply professionally with 5 ready-to-use templates.",
+    readTime: "5 min read",
+    published: "2026-04-29",
+    category: "Reviews",
+    body: [
+      { type: "p", content: "Every HVAC contractor gets a 1-star review eventually. The customer was upset about a price quote, the technician was running late, an honest miscommunication. Most contractors handle these badly: they argue, they delete, or they ignore." },
+      { type: "p", content: "The right reply turns the review into proof you're a professional company. Future readers see how you handle conflict — and that often matters more than the star rating itself." },
+      { type: "h2", content: "The 4-part reply formula" },
+      { type: "ol", content: [
+        "Thank them by first name (\"Hi John, thanks for taking the time to share this.\")",
+        "Acknowledge the specific issue without admitting fault",
+        "Offer a path forward (phone number to discuss, manager to call)",
+        "Sign off as a real person (\"– Mike, owner\")",
+      ]},
+      { type: "callout", content: "Never argue facts in public. Move the conversation offline. The reply is for future readers, not the angry customer." },
+      { type: "h2", content: "Template 1 — Late or missed appointment" },
+      { type: "p", content: "\"Hi [Name], I'm sorry our technician was late to your appointment yesterday. That's not the standard we hold ourselves to. We had an emergency call earlier that ran long, but that's our problem to manage — not yours to absorb. I'd like to make this right; please call me directly at [phone]. – [Owner], owner\"" },
+      { type: "h2", content: "Template 2 — Pricing dispute" },
+      { type: "p", content: "\"Hi [Name], thanks for the feedback. Our pricing reflects licensed, insured work with full warranty coverage, but I understand it didn't feel right for your situation. I'd love to walk you through the breakdown so you can see exactly what was included. Please reach out at [phone] — happy to clear it up. – [Owner], owner\"" },
+      { type: "h2", content: "Template 3 — Repair didn't fix the issue" },
+      { type: "p", content: "\"Hi [Name], I'm really sorry the repair didn't solve the problem. We stand behind our work — every job comes with a warranty. Please call our service line at [phone] and we'll get a senior tech out at no charge to diagnose what we missed. – [Owner], owner\"" },
+      { type: "h2", content: "Template 4 — Communication breakdown" },
+      { type: "p", content: "\"Hi [Name], I appreciate you flagging this. Communication is the part of our job we work hardest on, and clearly we missed the mark this time. I'd like to hear what happened directly so we can train better. Call me anytime at [phone]. – [Owner], owner\"" },
+      { type: "h2", content: "Template 5 — Suspected fake / wrong company" },
+      { type: "p", content: "\"Hi, we don't have a record of working with you — could you check the receipt and make sure you have the right HVAC company? We share our name with [other local company]. Either way, happy to help; please call [phone]. – [Owner], owner\"" },
+      { type: "p", content: "Notice none of these are defensive. None of them call the customer wrong. None of them re-litigate the original issue. They acknowledge, redirect to a private channel, and let the next reader judge based on tone, not facts." },
+      { type: "h2", content: "Reply speed matters" },
+      { type: "p", content: "Reply within 24 hours, even on weekends. Google tracks response time and uses it as a ranking factor. A 1-star review with a 24-hour reply hurts you less than a 1-star review left silent for 6 months." },
+      { type: "p", content: "HeatRank AI generates 3 reply variants for every review in 4 seconds — you pick the tone, edit if needed, and post." },
+    ],
+  },
+  {
+    slug: "schema-markup-for-hvac-sites",
+    title: "Schema Markup for HVAC Sites: A Plain-English Guide",
+    description: "What schema markup is, why HVAC contractors need it, and exactly which types to use. With copy-paste examples.",
+    readTime: "7 min read",
+    published: "2026-05-06",
+    category: "Technical SEO",
+    body: [
+      { type: "p", content: "Schema markup is invisible code on your website that tells Google exactly what your content means: that you're a local business, what services you offer, your hours, your ratings. Sites with proper schema get more clicks because Google can show enhanced results — star ratings, prices, hours — directly on the search page." },
+      { type: "p", content: "Most HVAC contractor sites have no schema at all. Adding it is a one-time job that pays off forever." },
+      { type: "h2", content: "The 3 schema types every HVAC site needs" },
+      { type: "ol", content: [
+        "LocalBusiness — your business identity, address, hours",
+        "Service — each individual service you offer",
+        "AggregateRating — your star rating from Google reviews",
+      ]},
+      { type: "h2", content: "1. LocalBusiness schema" },
+      { type: "p", content: "This is the foundation. It tells Google you're a real local company at a specific address with verifiable contact info. Use the more specific HVACBusiness type if your platform supports it." },
+      { type: "callout", content: "HeatRank AI's Schema Markup tool generates this automatically — paste your details, copy the JSON-LD into your homepage <head>, done." },
+      { type: "h2", content: "2. Service schema" },
+      { type: "p", content: "For each service page (AC repair, furnace install, etc.), add Service schema. This lets Google understand exactly what you offer — and gives you a chance to rank in service-specific searches." },
+      { type: "p", content: "Each Service entry should include: name, description, provider (your business), areaServed (the cities/ZIPs), and serviceType." },
+      { type: "h2", content: "3. AggregateRating schema" },
+      { type: "p", content: "Add this to your homepage to show your Google star rating in search results. The ratingValue, reviewCount, and itemReviewed fields are required. If you have a 4.7 average from 89 reviews, that golden ★★★★★ in search results dramatically lifts click-through rate." },
+      { type: "h2", content: "Where to put schema markup" },
+      { type: "p", content: "Schema goes inside a <script type=\"application/ld+json\"> block in your page's <head>. Most modern site builders (WordPress with a plugin, Webflow, Wix, Squarespace) have a way to inject JSON-LD. If you're stuck, ask your developer or use a plugin like Yoast SEO or Rank Math." },
+      { type: "h2", content: "Common mistakes" },
+      { type: "ul", content: [
+        "Lying about review counts — Google will catch and penalize this",
+        "Using LocalBusiness on every page (use it on homepage; use Service on service pages)",
+        "Forgetting to update schema when you change your phone number or address",
+        "Mixing schema with conflicting NAP info from elsewhere on the page",
+      ]},
+      { type: "h2", content: "How to test it" },
+      { type: "p", content: "Google has a free Rich Results Test at search.google.com/test/rich-results. Paste your URL and Google will show you exactly what it can and can't read. If you see errors, fix them before they hurt rankings." },
+      { type: "p", content: "Schema isn't a magic bullet — it doesn't directly raise rankings. But it dramatically improves how your site shows up in search results, which improves CTR, which improves rankings over time. It's a one-time effort with permanent payoff." },
+    ],
+  },
+];
+
+export function getArticleBySlug(slug: string): Article | undefined {
+  return ARTICLES.find((a) => a.slug === slug);
+}

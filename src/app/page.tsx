@@ -20,6 +20,7 @@ import WaitlistForm from "@/components/marketing/WaitlistForm";
 import FoundingBanner from "@/components/marketing/FoundingBanner";
 import MobileNav from "@/components/marketing/MobileNav";
 import StickyMobileCTA from "@/components/marketing/StickyMobileCTA";
+import Newsletter from "@/components/marketing/Newsletter";
 import { PLANS } from "@/lib/plans";
 
 export const revalidate = 3600;
@@ -539,6 +540,7 @@ export default async function LandingPage({
                 <li><Link href="/tools" className="hover:text-zinc-300 transition-colors">Free tools</Link></li>
                 <li><Link href="/glossary" className="hover:text-zinc-300 transition-colors">SEO glossary</Link></li>
                 <li><Link href="/faq" className="hover:text-zinc-300 transition-colors">FAQ</Link></li>
+                <li><Link href="/integrations" className="hover:text-zinc-300 transition-colors">Integrations</Link></li>
               </ul>
             </div>
 
@@ -548,9 +550,24 @@ export default async function LandingPage({
               <ul className="space-y-2 text-xs text-zinc-500">
                 <li><Link href="/about" className="hover:text-zinc-300 transition-colors">About</Link></li>
                 <li><Link href="/contact" className="hover:text-zinc-300 transition-colors">Contact</Link></li>
+                <li><Link href="/roadmap" className="hover:text-zinc-300 transition-colors">Roadmap</Link></li>
+                <li><Link href="/changelog" className="hover:text-zinc-300 transition-colors">Changelog</Link></li>
                 <li><Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link></li>
               </ul>
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div className="pt-8 mt-2 border-t border-white/[0.04]">
+            <div className="grid sm:grid-cols-[1fr_1.2fr] gap-6 items-center">
+              <div>
+                <p className="text-sm font-semibold text-zinc-200 mb-1">One HVAC SEO tip per week</p>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Free, actionable, no fluff. Unsubscribe in one click whenever.
+                </p>
+              </div>
+              <Newsletter />
             </div>
           </div>
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, BookOpen, MapPin, Star, Search, Wrench, TrendingUp } from "lucide-react";
+import { ChevronRight, BookOpen, MapPin, Star, Search, Wrench, TrendingUp, Clock } from "lucide-react";
+import { ARTICLES } from "@/data/articles";
 
 export const metadata: Metadata = {
   title:       "HVAC SEO Resources & Tips | HeatRank AI",
@@ -128,8 +129,31 @@ export default function ResourcesPage() {
           </p>
         </section>
 
+        {/* In-depth articles */}
+        <section className="pb-12">
+          <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-5">In-depth guides</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {ARTICLES.map((a) => (
+              <Link
+                key={a.slug}
+                href={`/resources/${a.slug}`}
+                className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-white/[0.14] hover:bg-white/[0.04] transition-all"
+              >
+                <p className="text-[10px] font-medium text-amber-400 uppercase tracking-widest mb-2">{a.category}</p>
+                <h3 className="text-base font-semibold text-zinc-100 group-hover:text-amber-300 transition-colors mb-1.5 leading-snug">{a.title}</h3>
+                <p className="text-xs text-zinc-500 leading-relaxed mb-3 line-clamp-2">{a.description}</p>
+                <div className="flex items-center gap-1.5 text-[11px] text-zinc-600">
+                  <Clock className="w-3 h-3" />
+                  {a.readTime}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Tips */}
         <section className="pb-16 space-y-5">
+          <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest">Quick tips</p>
           {TIPS.map(({ icon: Icon, title, desc, bullets }, i) => (
             <article
               key={title}
