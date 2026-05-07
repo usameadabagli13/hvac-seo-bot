@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { sendEmail, newsletterWelcomeHtml } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,17 +11,41 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient();
+
+    // Detect first-time vs re-subscribe so we only send a welcome on the first signup
+    const { data: existing } = await supabase
+      .from("newsletter_subscribers")
+      .select("email, unsubscribed_at")
+      .eq("email", email)
+      .maybeSingle();
+
+    const isNew = !existing;
+
     const { error } = await supabase
       .from("newsletter_subscribers")
       .upsert(
-        { email, subscribed_at: new Date().toISOString(), source: "marketing_site" },
+        {
+          email,
+          subscribed_at:   new Date().toISOString(),
+          source:          "marketing_site",
+          unsubscribed_at: null,
+        },
         { onConflict: "email" }
       );
 
     if (error) {
       console.error("[newsletter] db error:", error);
-      // Don't 500 — silent OK so users get success even if table missing
       return Response.json({ ok: true });
+    }
+
+    // Send welcome email — only on first subscribe (or after unsubscribe + resubscribe)
+    if (isNew || existing?.unsubscribed_at) {
+      await sendEmail({
+        to:      email,
+        subject: "You're in — one HVAC SEO tip per week",
+        html:    newsletterWelcomeHtml(),
+        purpose: "newsletter",
+      });
     }
 
     return Response.json({ ok: true });
