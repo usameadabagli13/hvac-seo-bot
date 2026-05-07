@@ -58,7 +58,7 @@ export default function MobileNav() {
           </div>
 
           {/* Top CTAs — visible immediately, no scroll needed */}
-          <div className="px-5 pt-4 pb-3 space-y-2 flex-shrink-0 border-b border-white/[0.04]">
+          <div className="px-5 pt-4 pb-4 space-y-2.5 flex-shrink-0 border-b border-white/[0.06]">
             <Link
               href="/login"
               onClick={() => setOpen(false)}
@@ -69,10 +69,13 @@ export default function MobileNav() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.03] text-zinc-300 text-sm hover:bg-white/[0.06] transition-all"
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-xl border border-white/[0.18] bg-zinc-900 text-zinc-100 text-base font-semibold hover:bg-zinc-800 transition-all"
             >
               Sign in
             </Link>
+            <p className="text-[11px] text-zinc-500 text-center pt-1">
+              14-day free trial · No credit card · Cancel anytime
+            </p>
           </div>
 
           {/* Links list */}
@@ -90,11 +93,10 @@ export default function MobileNav() {
             ))}
           </nav>
 
-          {/* Footer */}
-          <div className="px-5 py-4 border-t border-white/[0.06] flex-shrink-0">
-            <p className="text-[11px] text-zinc-600 text-center">
-              14-day free trial · No credit card · Cancel anytime
-            </p>
+          {/* Footer — small trust strip */}
+          <div className="px-5 py-3 border-t border-white/[0.06] flex-shrink-0 flex items-center justify-center gap-2 text-[10px] text-zinc-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            SOC 2 · GDPR · 99.9% uptime
           </div>
         </div>
       )}
