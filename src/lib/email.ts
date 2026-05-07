@@ -163,21 +163,38 @@ export function waitlistWelcomeHtml(name: string | null, isFounding: boolean): s
   `;
 }
 
-// Deliverability note: this template is intentionally plain — minimal HTML,
-// no buttons, no card styling, no images. Gmail's Promotions filter heavily
-// weights design density, CTAs, and marketing words. A plain-text-style HTML
-// email lands in Primary inbox far more often.
+// Deliverability note: kept lightweight on purpose — no buttons, no card
+// backgrounds, no big graphics. Gmail's Promotions filter heavily weights
+// design density. A near-plain-text HTML email lands in Primary far more often.
+// We do allow: a small header line, a thin divider, a sign-off, and a footer —
+// just enough to feel branded without screaming "marketing".
 export function newsletterWelcomeHtml(): string {
   return /* html */ `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
+      <p style="font-size: 12px; color: #888; margin: 0 0 4px;">HeatRank AI</p>
+      <h2 style="font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 0 0 20px;">Thanks for signing up</h2>
+
       <p>Hey,</p>
-      <p>Thanks for signing up — I&apos;m Mike, one of the folks behind HeatRank AI. We help HVAC contractors rank higher on Google without paying agency rates.</p>
+
+      <p>I&apos;m Mike, one of the folks behind HeatRank AI. We help HVAC contractors rank higher on Google without paying agency rates.</p>
+
       <p>Every Monday I&apos;ll send you one short tip you can actually apply that week. No fluff, no &ldquo;5 reasons SEO is important&rdquo; filler.</p>
+
       <p>While you wait, here&apos;s the piece I&apos;d start with:</p>
-      <p><a href="https://www.heatrankai.com/resources/google-business-profile-hvac-checklist" style="color: #1a1a1a;">The 12-point Google Business Profile checklist for HVAC contractors</a></p>
+
+      <p style="margin-left: 16px;">→ <a href="https://www.heatrankai.com/resources/google-business-profile-hvac-checklist" style="color: #1a1a1a; font-weight: 500;">The 12-point Google Business Profile checklist for HVAC contractors</a></p>
+
       <p>If anything&apos;s ever off, just hit reply — I read every email myself.</p>
-      <p>— Mike<br/>HeatRank AI</p>
-      <p style="color: #888; font-size: 12px; margin-top: 28px;">Don&apos;t want these? Reply with &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.</p>
+
+      <p style="margin-top: 24px;">— Mike<br/>
+        <span style="color: #888; font-size: 14px;">HeatRank AI</span>
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 32px 0 16px;" />
+
+      <p style="color: #888; font-size: 12px; margin: 0;">
+        Don&apos;t want these? Reply with &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.
+      </p>
     </div>
   `;
 }
@@ -190,7 +207,8 @@ export interface NewsletterTip {
   readMoreUrl: string;
 }
 
-// Plain-text-style HTML for Primary inbox delivery. No buttons, no cards.
+// Plain-text-style HTML for Primary inbox delivery, with a tiny bit of
+// structure (header label, divider) so it doesn't feel naked.
 export function newsletterTipHtml(tip: NewsletterTip): string {
   const bulletsHtml = tip.bullets
     .map((b) => `<li style="margin-bottom: 6px;">${b}</li>`)
@@ -198,20 +216,32 @@ export function newsletterTipHtml(tip: NewsletterTip): string {
 
   return /* html */ `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
+      <p style="font-size: 12px; color: #888; margin: 0 0 4px;">HeatRank AI · ${tip.category}</p>
+      <h2 style="font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 0 0 20px;">${tip.title}</h2>
+
       <p>Hey,</p>
-      <p>Quick HVAC SEO tip for the week — ${tip.category.toLowerCase()}.</p>
-      <p><strong>${tip.title}</strong></p>
+
       <p>${tip.hook}</p>
+
       <p>Three things to do this week:</p>
+
       <ul style="padding-left: 20px; margin: 0 0 16px;">
         ${bulletsHtml}
       </ul>
-      <p>Full write-up here if you want to go deeper:<br/>
-        <a href="${tip.readMoreUrl}" style="color: #1a1a1a;">${tip.readMoreUrl}</a>
+
+      <p>Full write-up if you want to go deeper:<br/>
+        <span style="margin-left: 16px;">→ <a href="${tip.readMoreUrl}" style="color: #1a1a1a; font-weight: 500;">${tip.readMoreUrl}</a></span>
       </p>
+
       <p>Reply if you have questions — I read every email myself.</p>
-      <p>— Mike<br/>HeatRank AI</p>
-      <p style="color: #888; font-size: 12px; margin-top: 28px;">
+
+      <p style="margin-top: 24px;">— Mike<br/>
+        <span style="color: #888; font-size: 14px;">HeatRank AI</span>
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 32px 0 16px;" />
+
+      <p style="color: #888; font-size: 12px; margin: 0;">
         Don&apos;t want these? Reply &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.
       </p>
     </div>
