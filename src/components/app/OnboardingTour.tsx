@@ -37,7 +37,7 @@ export default function OnboardingTour({ state }: Props) {
     return (
       <button
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-900/95 border border-white/[0.10] backdrop-blur-md shadow-2xl shadow-black/40 hover:border-white/[0.18] transition-colors"
+        className="fixed bottom-20 right-4 lg:bottom-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-900/95 border border-white/[0.10] backdrop-blur-md shadow-2xl shadow-black/40 hover:border-white/[0.18] transition-colors"
       >
         <Rocket className="w-4 h-4 text-emerald-400" />
         <span className="text-xs font-semibold text-zinc-200">
@@ -49,7 +49,7 @@ export default function OnboardingTour({ state }: Props) {
 
   // ── Expanded card ──────────────────────────────────────────────────────────
   return (
-    <div className="fixed bottom-4 right-4 z-40 w-[320px] max-w-[calc(100vw-2rem)] rounded-2xl bg-zinc-900/95 border border-white/[0.10] backdrop-blur-md shadow-2xl shadow-black/40 overflow-hidden">
+    <div className="fixed bottom-20 right-4 lg:bottom-4 z-40 w-[320px] max-w-[calc(100vw-2rem)] rounded-2xl bg-zinc-900/95 border border-white/[0.10] backdrop-blur-md shadow-2xl shadow-black/40 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">

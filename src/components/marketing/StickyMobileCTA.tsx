@@ -21,7 +21,7 @@ export default function StickyMobileCTA() {
   if (!show || dismissed) return null;
 
   return (
-    <div className="sm:hidden fixed bottom-3 inset-x-3 z-40 rounded-2xl border border-white/[0.12] bg-zinc-900/95 backdrop-blur-md shadow-2xl shadow-black/50 flex items-center gap-2 p-2 pl-4 animate-in slide-in-from-bottom-4">
+    <div className="sm:hidden fixed bottom-3 inset-x-3 z-40 rounded-2xl border border-white/[0.14] bg-zinc-950 shadow-2xl shadow-black/60 flex items-center gap-2 p-2 pl-4">
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-zinc-100 leading-tight truncate">14-day free trial</p>
         <p className="text-[10px] text-zinc-500">No credit card required</p>

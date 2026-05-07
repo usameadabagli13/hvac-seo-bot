@@ -44,53 +44,57 @@ export default function MobileNav() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 sm:hidden">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute top-0 right-0 bottom-0 w-[85vw] max-w-xs bg-zinc-950 border-l border-white/[0.10] flex flex-col">
-            <div className="flex items-center justify-between px-5 h-14 border-b border-white/[0.06]">
-              <span className="text-sm font-semibold text-zinc-200">Menu</span>
-              <button
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.05]"
-                aria-label="Close menu"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+        <div className="fixed inset-0 z-[100] sm:hidden bg-zinc-950 flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 h-14 border-b border-white/[0.06] flex-shrink-0">
+            <span className="text-sm font-semibold text-zinc-200">Menu</span>
+            <button
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center w-9 h-9 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.05]"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-            <nav className="flex-1 overflow-y-auto py-3">
-              {LINKS.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-between px-5 py-3 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.04] transition-colors"
-                >
-                  <span>{l.label}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-700" />
-                </Link>
-              ))}
-            </nav>
+          {/* Top CTAs — visible immediately, no scroll needed */}
+          <div className="px-5 pt-4 pb-3 space-y-2 flex-shrink-0 border-b border-white/[0.04]">
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-xl bg-white text-zinc-950 text-base font-bold hover:bg-zinc-100 active:scale-[0.98] transition-all"
+            >
+              Start free trial
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.03] text-zinc-300 text-sm hover:bg-white/[0.06] transition-all"
+            >
+              Sign in
+            </Link>
+          </div>
 
-            <div className="p-5 border-t border-white/[0.06] space-y-2">
+          {/* Links list */}
+          <nav className="flex-1 overflow-y-auto py-2">
+            {LINKS.map((l) => (
               <Link
-                href="/login"
+                key={l.href}
+                href={l.href}
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 transition-all"
+                className="flex items-center justify-between px-5 py-3.5 text-base text-zinc-200 hover:text-white hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors"
               >
-                Start free trial
+                <span>{l.label}</span>
+                <ChevronRight className="w-4 h-4 text-zinc-600" />
               </Link>
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.03] text-zinc-300 text-sm hover:bg-white/[0.06] transition-all"
-              >
-                Sign in
-              </Link>
-            </div>
+            ))}
+          </nav>
+
+          {/* Footer */}
+          <div className="px-5 py-4 border-t border-white/[0.06] flex-shrink-0">
+            <p className="text-[11px] text-zinc-600 text-center">
+              14-day free trial · No credit card · Cancel anytime
+            </p>
           </div>
         </div>
       )}
