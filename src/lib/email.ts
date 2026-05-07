@@ -171,12 +171,12 @@ export function newsletterWelcomeHtml(): string {
   return /* html */ `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
       <p>Hey,</p>
-      <p>Thanks for signing up. I&apos;m the founder of HeatRank AI — a small tool that helps HVAC contractors rank higher on Google without paying agency rates.</p>
+      <p>Thanks for signing up — I&apos;m Mike, one of the folks behind HeatRank AI. We help HVAC contractors rank higher on Google without paying agency rates.</p>
       <p>Every Monday I&apos;ll send you one short tip you can actually apply that week. No fluff, no &ldquo;5 reasons SEO is important&rdquo; filler.</p>
       <p>While you wait, here&apos;s the piece I&apos;d start with:</p>
       <p><a href="https://www.heatrankai.com/resources/google-business-profile-hvac-checklist" style="color: #1a1a1a;">The 12-point Google Business Profile checklist for HVAC contractors</a></p>
       <p>If anything&apos;s ever off, just hit reply — I read every email myself.</p>
-      <p>— The HeatRank team</p>
+      <p>— Mike<br/>HeatRank AI</p>
       <p style="color: #888; font-size: 12px; margin-top: 28px;">Don&apos;t want these? Reply with &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.</p>
     </div>
   `;
@@ -209,8 +209,8 @@ export function newsletterTipHtml(tip: NewsletterTip): string {
       <p>Full write-up here if you want to go deeper:<br/>
         <a href="${tip.readMoreUrl}" style="color: #1a1a1a;">${tip.readMoreUrl}</a>
       </p>
-      <p>Reply if you have questions — I read every email.</p>
-      <p>— The HeatRank team</p>
+      <p>Reply if you have questions — I read every email myself.</p>
+      <p>— Mike<br/>HeatRank AI</p>
       <p style="color: #888; font-size: 12px; margin-top: 28px;">
         Don&apos;t want these? Reply &ldquo;unsubscribe&rdquo; and I&apos;ll take you off.
       </p>

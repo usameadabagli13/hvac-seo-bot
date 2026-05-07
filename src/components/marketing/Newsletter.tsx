@@ -31,13 +31,20 @@ export default function Newsletter() {
 
   if (status === "ok") {
     return (
-      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.05] px-5 py-4 flex items-center gap-3">
+      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.05] px-5 py-4 flex items-start gap-3">
         <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
           <Check className="w-4 h-4 text-emerald-400" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-emerald-300">You&apos;re in.</p>
-          <p className="text-[11px] text-emerald-200/70">Check your inbox for a confirmation.</p>
+          <p className="text-sm font-semibold text-emerald-300 mb-1">You&apos;re in.</p>
+          <p className="text-[11px] text-emerald-200/80 leading-relaxed">
+            A welcome email is on its way from <span className="font-medium text-emerald-200">Mike at HeatRank AI</span>.
+          </p>
+          <p className="text-[11px] text-emerald-200/60 leading-relaxed mt-1.5">
+            <span className="font-semibold">Don&apos;t see it?</span> Check your{" "}
+            <span className="font-medium text-emerald-200">Promotions</span> tab (Gmail) or{" "}
+            <span className="font-medium text-emerald-200">Junk</span> folder. Drag it to your inbox so you don&apos;t miss the weekly tip.
+          </p>
         </div>
       </div>
     );
