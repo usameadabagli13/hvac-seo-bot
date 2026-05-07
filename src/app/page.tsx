@@ -148,6 +148,12 @@ export default async function LandingPage({
               Pricing
             </Link>
             <Link
+              href="/vs-seo-agency"
+              className="hidden md:block text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              Compare
+            </Link>
+            <Link
               href="/login"
               className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
             >
@@ -477,6 +483,9 @@ export default async function LandingPage({
             </Link>
             <Link href="/vs-seo-agency" className="hover:text-zinc-400 transition-colors">
               vs SEO Agency
+            </Link>
+            <Link href="/resources" className="hover:text-zinc-400 transition-colors">
+              Resources
             </Link>
             <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
               Privacy Policy
