@@ -162,6 +162,47 @@ export default async function CityPage({
           <p className="mt-3 text-xs text-zinc-600">No credit card required</p>
         </section>
 
+        {/* Dashboard mockup */}
+        <section className="py-10">
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs text-zinc-500">{city.name} · Live keyword preview</span>
+              </div>
+              <span className="text-[10px] text-zinc-600 border border-white/[0.06] px-2 py-0.5 rounded-full">AI-generated</span>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {[
+                `${city.name} AC repair`,
+                `${city.name} furnace replacement`,
+                `HVAC contractor ${city.name}`,
+                `${city.name} heating service`,
+                `emergency AC ${city.name}`,
+                `${city.name} air conditioning install`,
+                `best HVAC ${city.name} ${city.state}`,
+                `${city.name} furnace repair near me`,
+              ].map((kw) => (
+                <span key={kw} className="px-2.5 py-1 rounded-lg bg-zinc-700/40 border border-zinc-600/30 text-xs text-zinc-300">
+                  {kw}
+                </span>
+              ))}
+            </div>
+
+            <div className="border-t border-white/[0.05] pt-4">
+              <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Rank heatmap · {city.name} area</p>
+              <div className="grid grid-cols-5 gap-1 w-fit">
+                {[1,4,2,7,3,5,1,3,6,2,3,2,1,4,8,6,3,2,1,5,4,7,3,2,1].map((rank, i) => {
+                  const color = rank <= 3 ? "bg-emerald-500" : rank <= 5 ? "bg-amber-500" : rank <= 7 ? "bg-orange-500" : "bg-zinc-600";
+                  return <div key={i} className={`w-7 h-7 rounded ${color} opacity-80 flex items-center justify-center text-[9px] font-bold text-white/80`}>{rank}</div>;
+                })}
+              </div>
+              <p className="text-[10px] text-zinc-700 mt-2">Green = top 3 · Amber = 4–5 · Orange = 6–7</p>
+            </div>
+          </div>
+        </section>
+
         {/* City-specific context */}
         <section className="py-10 border-t border-white/[0.06]">
           <div className="grid sm:grid-cols-2 gap-8 items-start">

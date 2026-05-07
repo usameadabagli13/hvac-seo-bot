@@ -80,8 +80,9 @@ export default function PricingToggle({ plans }: { plans: Plan[] }) {
                 <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-white/70 via-white/15 to-transparent pointer-events-none" />
 
                 <div className="relative rounded-2xl border border-white/[0.30] bg-zinc-900 p-6 flex flex-col flex-1">
-                  <span className="inline-flex w-fit items-center gap-1 px-3 py-1 rounded-full bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-widest mb-4 shadow-lg">
-                    ✦ Most Popular
+                  <span className="inline-flex w-fit items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold uppercase tracking-widest mb-4 shadow-lg shadow-amber-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
+                    Most Popular
                   </span>
 
                   <p className="text-sm font-semibold text-zinc-200 mb-1">{plan.name}</p>

@@ -223,6 +223,19 @@ export default async function LandingPage({
               Enter your city and watch real AI-generated HVAC keywords appear.
             </p>
           </div>
+          {/* Social proof strip */}
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <div className="flex -space-x-2">
+              {["bg-amber-500","bg-blue-500","bg-emerald-500","bg-purple-500","bg-rose-500"].map((c,i) => (
+                <div key={i} className={`w-7 h-7 rounded-full ${c} border-2 border-zinc-950 flex items-center justify-center text-[9px] font-bold text-white`}>
+                  {["MT","SK","JR","AB","CL"][i]}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-zinc-500">
+              Tried by contractors in <span className="text-zinc-300 font-medium">25+ US cities</span>
+            </p>
+          </div>
           <DemoWidget />
         </section>
 
