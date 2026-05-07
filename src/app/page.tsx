@@ -180,7 +180,7 @@ export default async function LandingPage({
         </div>
       </header>
 
-      <main className="relative">
+      <main id="main" className="relative">
         {/* ── Hero ──────────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] text-xs text-zinc-400 mb-6">

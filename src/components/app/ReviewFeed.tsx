@@ -493,20 +493,30 @@ export default function ReviewFeed({
 
   if (reviews.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/[0.07] bg-white/[0.01] px-6 py-16 flex flex-col items-center text-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-          <MessageSquare className="w-5 h-5 text-zinc-600" />
+      <div className="rounded-2xl border border-dashed border-white/[0.07] bg-white/[0.01] px-6 py-16 flex flex-col items-center text-center gap-4">
+        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+          <MessageSquare className="w-5 h-5 text-amber-400" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-zinc-400 mb-1">
-            {isConnected ? "No reviews yet" : "No reviews to show"}
+        <div className="max-w-sm">
+          <p className="text-sm font-semibold text-zinc-200 mb-1.5">
+            {isConnected ? "No reviews synced yet" : "Reviews will appear here"}
           </p>
-          <p className="text-xs text-zinc-600 max-w-xs leading-relaxed">
+          <p className="text-xs text-zinc-500 leading-relaxed">
             {isConnected
-              ? "Use the \"Sync Reviews\" button above to pull your latest Google reviews."
-              : "Connect your Google Business Profile above to import real customer reviews and start generating AI replies."}
+              ? "Click \"Sync Reviews\" above to pull your latest Google reviews. We'll auto-sync daily after that."
+              : "Connect your Google Business Profile to import customer reviews and start generating AI replies in seconds."}
           </p>
         </div>
+        {!isConnected && (
+          <div className="flex flex-col items-center gap-2 mt-2">
+            <p className="text-[10px] text-zinc-700 uppercase tracking-widest">Why connect?</p>
+            <ul className="text-[11px] text-zinc-500 space-y-1 text-left">
+              <li>• AI-generated reply drafts in 3 styles</li>
+              <li>• Sentiment scoring on every review</li>
+              <li>• Daily auto-sync — never miss one</li>
+            </ul>
+          </div>
+        )}
       </div>
     );
   }
