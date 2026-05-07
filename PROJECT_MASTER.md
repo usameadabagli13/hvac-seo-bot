@@ -1,5 +1,5 @@
 # PROJECT_MASTER.md — HVAC SEO Bot
-> **Living document. Update checkboxes as features ship. Last reviewed: 2026-05-02.**
+> **Living document. Update checkboxes as features ship. Last reviewed: 2026-05-07.**
 
 ---
 
@@ -94,19 +94,28 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 **Goal:** Drive signups before the product is fully built. Every day without a landing page is lost MRR.
 
 ### 1.1 Landing Page (`/`)
-- [x] Hero section — headline, sub-headline, single CTA ("Start Free")
+- [x] Hero section — headline, sub-headline, single CTA ("Start Free Trial")
 - [x] Live keyword demo widget (show AI keywords without signing up — calls rate-limited `/api/demo-keywords`)
 - [x] Features grid — 6 features, icon + copy, zinc card style
-- [x] Pricing section — Free / Pro / Agency tiers
-- [x] Social proof — 3 realistic testimonials with avatar initials
+- [x] Pricing section — Starter / Pro / Agency tiers with annual toggle
+- [x] Social proof — 3 testimonials with green metric badges (+34% calls, 5★, Top 3 ranks)
 - [x] FAQ accordion (5 questions covering trust objections)
-- [x] Footer — links, legal, copyright
+- [x] Footer — 4-column (Brand / Product / Resources / Company) + newsletter widget
+- [x] Dashboard screenshot section (real product image after hero)
+- [x] "How it works" 3-step section (Add business → Run AI → Watch rank)
+- [x] HVAC industry stats section (97% / 46% / 76% / $10B)
+- [x] Trust bar (SOC 2 / GDPR / 256-bit / 99.9% uptime badges)
+- [x] Founding member promo bar with claimed counter
+- [x] Social-proof avatar strip above demo widget
+- [x] Mobile hamburger nav drawer (`MobileNav` — 15 links)
+- [x] Sticky mobile CTA (`StickyMobileCTA` — appears 600px+ scroll, dismissible)
 
 ### 1.2 Auth Flow
-- [x] `/login` — Google OAuth button (Google-only, no password flow)
+- [x] `/login` — Google OAuth button + email magic link (signInWithOtp)
 - [x] `/auth/callback` — Redirect to `/onboarding` for new users, `/dashboard` for returning
 - [x] `/auth/error` — Friendly error page for failed OAuth states
-- [ ] `/forgot-password` — N/A (Google OAuth only; re-evaluate if email auth added later)
+- [x] Email magic link login alongside Google OAuth (Supabase signInWithOtp)
+- [ ] `/forgot-password` — N/A (magic link covers reset use case)
 
 ### 1.3 Waitlist / Lead Capture
 - [x] `waitlist` table: `(id, email, name, company, source, created_at)`
@@ -189,7 +198,7 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 - [x] `/api/reviews/fetch` — calls GBP API, upserts into `reviews` table
 - [x] Deduplication via `UNIQUE(business_id, platform, review_id)`
 - [x] Reviews page reads from DB first; "Sync Reviews" button triggers manual re-fetch
-- [ ] Daily background sync via Supabase Edge Function (automated — Phase 3.2 stretch)
+- [x] Daily background sync via Vercel Cron at `/api/cron/sync-reviews` (Hobby-plan: daily 6am UTC)
 
 ### 3.3 Sentiment Analysis Dashboard
 - [x] Gemini classifies each review: `positive | neutral | negative` (batch, single API call per sync)
@@ -394,6 +403,8 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [x] Business selector dropdown — `BusinessSwitcher` URL-based shared component
 - [x] "Test with Google Rich Results" external link — opens search.google.com/test/rich-results pre-filled
 - [x] Weekend hours support (Sat/Sun checkbox + time inputs, emits OpeningHoursSpecification)
+- [x] Site-wide JSON-LD `@graph`: Organization, WebSite, SoftwareApplication, AggregateOffer, FAQPage in `layout.tsx`
+- [x] Per-page schema: WebPage + Service + BreadcrumbList on city pages, Article on blog posts
 - [ ] Store in `schema_markup` table with version history (deferred — current generator is stateless and works fine without versioning)
 
 ### 9.3 Google Business Profile Post Scheduler
@@ -425,6 +436,93 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [ ] Transcribe via Gemini audio input
 - [ ] Gemini polishes transcription into a professional reply
 - [ ] User reads, confirms, posts to GBP — zero typing required
+
+---
+
+## Phase 10: Marketing & SEO Content Expansion ✅ SHIPPED 2026-05-07
+
+**Goal:** Build out the public site for organic SEO traffic, conversion optimization, and lead capture.
+
+### 10.1 Geographic landing pages
+- [x] `/hvac-seo/[city]` — 25 dedicated city pages (Dallas, Houston, Phoenix, etc.) with `generateStaticParams`, climate notes, market analysis, rank heatmap mockup, nearby areas
+- [x] `/hvac-seo/state/[state]` — 18 dynamic state aggregation pages (TX, FL, CA, AZ, GA, CO, IL, etc.) listing all our cities in that state
+- [x] BreadcrumbList JSON-LD on city pages
+- [x] Sitemap auto-generates city + state routes from `CITIES` data
+
+### 10.2 Competitor comparison pages
+- [x] `/vs-seo-agency` — HeatRank vs hiring an SEO agency (price + feature table + when-to-pick-each)
+- [x] `/vs-podium` — HeatRank vs Podium (HVAC-focus + 80% cheaper)
+- [x] `/vs-birdeye` — HeatRank vs Birdeye (HVAC-tuned, no annual contract)
+
+### 10.3 Long-form content (`/resources`)
+- [x] `/resources` — quick-tips landing + in-depth guides list
+- [x] `/resources/[slug]` — dynamic article pages with Article schema
+- [x] 4 in-depth blog articles (~700-1000 words each):
+  - "12-Point Google Business Profile Checklist for HVAC Contractors"
+  - "HVAC Keyword Strategy in 2026: What Still Works"
+  - "How to Respond to Negative Reviews (HVAC + 5 Templates)"
+  - "Schema Markup for HVAC Sites: A Plain-English Guide"
+- [x] `/glossary` — 22 HVAC SEO terms in plain English
+
+### 10.4 Free SEO tools (lead magnets)
+- [x] `/tools` — landing page (3 tools listed)
+- [x] `/tools/title-tag-checker` — live SERP preview, 5 grading checks (length, HVAC keyword, brand suffix, title case, word count), letter grade
+- [x] `/tools/meta-description-generator` — 3 variant templates per click (service + city + brand), copy-to-clipboard
+- [x] `/tools/keyword-density` — uni/bigram analyzer with stopword filter + missing-HVAC-term flagging
+- [x] All tools client-side only (no signup, no API calls — pure lead magnets)
+
+### 10.5 Trust + transparency pages
+- [x] `/about` — founder story + values + no-contracts pitch
+- [x] `/contact` — support email cards (support@heatrankai.com)
+- [x] `/faq` — dedicated FAQ page reusing the homepage accordion
+- [x] `/case-studies` — 3 HVAC contractor case studies with metrics + quotes
+- [x] `/integrations` — 8 live integrations + 6 coming-soon (GBP, Stripe, Resend, Supabase, Gemini, Mapbox, etc.)
+- [x] `/roadmap` — public roadmap (Shipped / In progress / Next up / Future)
+- [x] `/changelog` — versioned release notes (v1.0 → v1.4)
+
+### 10.6 SEO infrastructure
+- [x] `metadataBase: new URL("https://www.heatrankai.com")` in layout
+- [x] Canonical URLs on all marketing pages (`alternates.canonical`)
+- [x] Twitter Card metadata on all major pages
+- [x] Dynamic OG images via `next/og` `ImageResponse` for homepage + city pages (1200×630)
+- [x] `sitemap.ts` auto-generates URLs from `CITIES` + `ARTICLES` data + static routes
+- [x] `robots.ts` allows all crawlers, points to sitemap.xml
+- [x] Article schema (`@type: Article`) on blog posts
+- [x] Pricing page money-back guarantee card
+- [x] Founding member offer with claimed-counter on homepage
+
+### 10.7 Newsletter capture
+- [x] `Newsletter` component (email capture, success/error states)
+- [x] `/api/newsletter` — writes to `newsletter_subscribers` table (silent OK if table missing)
+- [x] Widget added to homepage footer
+- [ ] **Required setup:** Supabase table `newsletter_subscribers (email text primary key, subscribed_at timestamptz, source text)` — must be created manually in production
+
+### 10.8 Mobile + accessibility
+- [x] `MobileNav` slide-out drawer (15 links + sign-in CTAs)
+- [x] `StickyMobileCTA` appears after 600px scroll, dismissible
+- [x] Skip-to-content link in `layout.tsx` (focusable, sr-only when not focused)
+- [x] `prefers-reduced-motion` global CSS rule (disables animations for motion-sensitive users)
+- [x] Better `:focus-visible` rings (amber 2px outline) for keyboard nav
+- [x] `<main id="main">` target for skip link
+
+### 10.9 Quality + error handling
+- [x] `app/global-error.tsx` — root error boundary outside the layout
+- [x] `app/not-found.tsx` — branded 404 with popular city links + sign-in CTA
+- [x] `app/(app)/dashboard/loading.tsx` — skeleton (stat cards + columns)
+- [x] `app/(app)/citations/loading.tsx` — skeleton rows
+- [x] `src/app/icon.png` + `apple-icon.png` (Next.js file convention) — replaces Vercel favicon
+- [x] Migrated `src/middleware.ts` → `src/proxy.ts` (Next.js 16 convention)
+
+### 10.10 Live-site bug fixes (2026-05-07)
+- [x] Vercel ▲ favicon replaced with HeatRank logo via `app/icon.png` + `app/apple-icon.png`
+- [x] Keyword AI now HVAC-only (was producing generic keywords for non-HVAC business names);
+      Suggest seeds rebuilt around HVAC + business name; temperature 0.4; 9/12 location-tagged required
+- [x] Run Snapshot disabled when GBP not connected (server returns 422 `GBP_NOT_CONNECTED`,
+      UI shows amber CTA banner) — no more wasted credits on guesses
+- [x] GBP OAuth callback surfaces specific reasons: `gbp_no_accounts`, `gbp_no_locations`,
+      `gbp_api_error` with friendly messages on `/reviews`
+- [x] `getGBPStatus` switched from `.single()` → `.maybeSingle()` to stop throwing
+      when user has no integration row (was triggering "Reviews failed to load")
 
 ---
 
@@ -561,3 +659,22 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] **usage.ts limits fixed** — keyword_generation: 1/mo, review_reply: 3/mo (matches Phase 6.4 pricing table)
 - [x] **Business detail page live** — 5-tab layout (Overview / Keywords / Reviews / SEO Audit / Competitors)
 - [x] **Dashboard stats + activity feed** — real review count, recent 3 reviews, quick-action cards
+- [x] **Email magic link login** — `/login` adds `signInWithOtp` flow alongside Google OAuth
+- [x] **Auto review sync cron** — daily Vercel Cron at `/api/cron/sync-reviews` (Hobby-plan compatible)
+- [x] **Day-12 trial expiry email cron** — daily Vercel Cron at `/api/cron/trial-emails`
+- [x] **25 city landing pages** (`/hvac-seo/[city]`) for organic local SEO
+- [x] **18 state aggregation pages** (`/hvac-seo/state/[state]`) auto-generated from CITIES
+- [x] **3 competitor comparison pages** — `/vs-seo-agency`, `/vs-podium`, `/vs-birdeye`
+- [x] **3 free SEO tools** — title checker, meta generator, keyword density (lead magnets, no signup)
+- [x] **4 long-form blog articles** at `/resources/[slug]` with Article schema
+- [x] **Trust + transparency pages** — /about, /contact, /faq, /case-studies, /glossary, /integrations, /roadmap, /changelog
+- [x] **Mobile UX** — `MobileNav` drawer + `StickyMobileCTA`
+- [x] **A11y** — skip link, prefers-reduced-motion, focus-visible rings
+- [x] **Dynamic OG images** via `next/og` for homepage + city pages
+- [x] **Canonical URLs + Twitter Cards** on all marketing pages
+- [x] **404 page** + `global-error.tsx` root boundary
+- [x] **Sitemap auto-generation** from CITIES + ARTICLES data
+- [x] **Custom favicon** — `app/icon.png` + `apple-icon.png` (replaces Vercel default)
+- [x] **`middleware.ts` → `proxy.ts`** — Next.js 16 convention migration
+- [x] **5 live-site bug fixes** — favicon, keyword AI, snapshot gate, GBP errors, reviews crash
+- [ ] **Pending:** Create Supabase `newsletter_subscribers` table for newsletter widget to persist
