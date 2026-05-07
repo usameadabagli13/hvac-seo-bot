@@ -18,6 +18,8 @@ import FaqAccordion from "@/components/marketing/FaqAccordion";
 import PricingToggle from "@/components/marketing/PricingToggle";
 import WaitlistForm from "@/components/marketing/WaitlistForm";
 import FoundingBanner from "@/components/marketing/FoundingBanner";
+import MobileNav from "@/components/marketing/MobileNav";
+import StickyMobileCTA from "@/components/marketing/StickyMobileCTA";
 import { PLANS } from "@/lib/plans";
 
 export const revalidate = 3600;
@@ -119,6 +121,8 @@ export default async function LandingPage({
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-zinc-800/10 rounded-full blur-[120px]" />
       </div>
 
+      <StickyMobileCTA />
+
       {/* ── Founding member promo bar (top of page; non-sticky) ─────────────── */}
       <FoundingBanner />
 
@@ -141,6 +145,7 @@ export default async function LandingPage({
           </Link>
 
           <nav className="flex items-center gap-5">
+            <MobileNav />
             <Link
               href="#features"
               className="hidden sm:block text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
@@ -219,6 +224,29 @@ export default async function LandingPage({
                 {label}
               </div>
             ))}
+          </div>
+
+          {/* Trust bar — security + legal badges */}
+          <div className="mt-12 pt-8 border-t border-white/[0.04] max-w-3xl mx-auto">
+            <p className="text-[10px] font-medium text-zinc-700 uppercase tracking-widest mb-4">
+              Built on enterprise-grade infrastructure
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+              {[
+                { label: "SOC 2 Type II",       sub: "via Supabase"  },
+                { label: "GDPR compliant",      sub: "EU users"      },
+                { label: "256-bit encryption",  sub: "TLS in transit"},
+                { label: "99.9% uptime SLA",    sub: "Vercel edge"   },
+              ].map((b) => (
+                <div key={b.label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.01]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[11px] font-medium text-zinc-300">{b.label}</span>
+                    <span className="text-[9px] text-zinc-600">{b.sub}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -476,45 +504,60 @@ export default async function LandingPage({
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/heatrank-logo.png"
-              alt="HeatRank AI"
-              width={20}
-              height={20}
-              className="rounded-xl w-5 h-5 opacity-60"
-            />
-            <span className="text-sm text-zinc-500 font-medium">HeatRank AI</span>
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
+            {/* Brand */}
+            <div className="col-span-2 md:col-span-2">
+              <div className="flex items-center gap-2 mb-3">
+                <Image src="/heatrank-logo.png" alt="HeatRank AI" width={24} height={24} className="rounded-xl w-6 h-6" />
+                <span className="text-base font-semibold text-zinc-100 tracking-tight">
+                  HeatRank<span className="text-zinc-500"> AI</span>
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500 leading-relaxed max-w-xs">
+                Local SEO tools built exclusively for HVAC contractors. Rank higher on Google without an agency.
+              </p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <p className="text-[11px] font-semibold text-zinc-300 uppercase tracking-widest mb-3">Product</p>
+              <ul className="space-y-2 text-xs text-zinc-500">
+                <li><Link href="/#features" className="hover:text-zinc-300 transition-colors">Features</Link></li>
+                <li><Link href="/pricing" className="hover:text-zinc-300 transition-colors">Pricing</Link></li>
+                <li><Link href="/vs-seo-agency" className="hover:text-zinc-300 transition-colors">vs SEO Agency</Link></li>
+                <li><Link href="/case-studies" className="hover:text-zinc-300 transition-colors">Case studies</Link></li>
+                <li><Link href="/login" className="hover:text-zinc-300 transition-colors">Sign in</Link></li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <p className="text-[11px] font-semibold text-zinc-300 uppercase tracking-widest mb-3">Resources</p>
+              <ul className="space-y-2 text-xs text-zinc-500">
+                <li><Link href="/resources" className="hover:text-zinc-300 transition-colors">SEO tips</Link></li>
+                <li><Link href="/tools" className="hover:text-zinc-300 transition-colors">Free tools</Link></li>
+                <li><Link href="/glossary" className="hover:text-zinc-300 transition-colors">SEO glossary</Link></li>
+                <li><Link href="/faq" className="hover:text-zinc-300 transition-colors">FAQ</Link></li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <p className="text-[11px] font-semibold text-zinc-300 uppercase tracking-widest mb-3">Company</p>
+              <ul className="space-y-2 text-xs text-zinc-500">
+                <li><Link href="/about" className="hover:text-zinc-300 transition-colors">About</Link></li>
+                <li><Link href="/contact" className="hover:text-zinc-300 transition-colors">Contact</Link></li>
+                <li><Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link></li>
+              </ul>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-600">
-            <Link href="/pricing" className="hover:text-zinc-400 transition-colors">
-              Pricing
-            </Link>
-            <Link href="/vs-seo-agency" className="hover:text-zinc-400 transition-colors">
-              vs SEO Agency
-            </Link>
-            <Link href="/resources" className="hover:text-zinc-400 transition-colors">
-              Resources
-            </Link>
-            <Link href="/about" className="hover:text-zinc-400 transition-colors">
-              About
-            </Link>
-            <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-zinc-400 transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/login" className="hover:text-zinc-400 transition-colors">
-              Sign In
-            </Link>
+          <div className="pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-zinc-700">© {year} HeatRank AI. All rights reserved.</p>
+            <p className="text-[11px] text-zinc-700">Built for HVAC contractors in the US</p>
           </div>
-
-          <p className="text-xs text-zinc-700">
-            © {year} HeatRank AI. All rights reserved.
-          </p>
         </div>
       </footer>
     </div>
