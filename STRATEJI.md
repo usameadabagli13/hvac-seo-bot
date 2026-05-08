@@ -1,8 +1,9 @@
 # HeatRank AI — Strateji ve Aksiyon Belgesi
 
-> **Tarih:** 2026-05-08
-> **Durum:** Phase 10 shipped, ürün marketing açısından tam — eksik olan dağıtım ve müşteri.
+> **Tarih:** 2026-05-08 (güncellendi)
+> **Durum:** Phase 10 + 10.11–10.15 shipped. Ürün, copy, conversion altyapısı tamam — eksik olan **dağıtım ve müşteri**.
 > **Birinci hedef:** İlk 5-10 ödeyen müşteri, sonra $1K MRR, sonrası uzun vade.
+> **Kritik dürüstlük:** Doc'un kendisi "hero başlığını değiştir = 1 numaralı acil iş" diyor. **Hâlâ yapılmadı.** Bunun dışında her şeyi yaptık.
 
 ---
 
@@ -80,14 +81,14 @@
 
 ### Acil Düzeltilecekler
 
-| Sorun | Önem | Çözüm |
+| Sorun | Önem | Durum |
 |---|---|---|
-| `site:heatrankai.com` Google'da görünmüyordu (gizli sekmede çıkıyor şimdi) | 🔴 | GSC kuruldu ✅ — sitemap submit + manuel "Request Indexing" |
-| Hero başlığı feature-focused, sonuç-focused değil | 🔴 | Yeni başlık (aşağıda copy seçenekleri) |
-| `AggregateOffer` JSON-LD ve "SOC 2 / 99.9% uptime" trust bar dayanaksızsa hukuki risk | 🔴 | Gerçekten geçerli mi kontrol et, değilse copy'yi yumuşat |
-| Sahte gibi duran testimonial'lar (Mike T., Sarah K., James R.) | 🟡 | Ya gerçek 1 testimonial koy ya hiç koyma |
-| `/case-studies` sayfası — mock mu gerçek mi? | 🟡 | Mock ise "Beta Customer Spotlights" gibi dürüst etikete çevir |
-| Newsletter widget yazıyor ama Supabase tablosu yok → email'ler kayboluyor | 🟡 | `newsletter_subscribers` tablosu oluştur |
+| `site:heatrankai.com` Google'da görünmüyordu | 🔴 | ✅ GSC kuruldu, sitemap submit edildi |
+| Hero başlığı feature-focused, sonuç-focused değil | 🔴 | ❌ **HÂLÂ AÇIK** — doc 1 numara diyor, yapılmadı |
+| `AggregateOffer` JSON-LD ve "SOC 2 / 99.9% uptime" trust bar dayanaksızsa hukuki risk | 🔴 | ⚠️ Kısmen — SOC 2 Supabase üzerinden gerçek, "99.9% uptime SLA" copy'si Vercel'in ama bizim adımıza söylüyoruz, **yumuşatılmalı** |
+| Sahte gibi duran testimonial'lar (Mike T., Sarah K., James R.) | 🟡 | ❌ Hâlâ duruyor — metric badge'leri ekledik ama "real customer" iddiası hâlâ yanıltıcı |
+| `/case-studies` sayfası — mock mu gerçek mi? | 🟡 | ❌ Hâlâ "Real HVAC contractors" diye sunuluyor, gerçek değil |
+| Newsletter widget yazıyor ama Supabase tablosu yok | 🟡 | ✅ Tablo oluşturuldu, welcome email + weekly cron canlı |
 
 ### Mobil UX İyileştirmeleri (Phase 10'da Geldi, Açıklanan)
 - **Mobil menü çekmecesi** → telefonda gezinmeyi kolaylaştırır, kayıt artar
@@ -118,12 +119,12 @@ Mevcut: ❌ *"Local SEO Tools for HVAC Contractors"* (feature-focused, duygu yok
 ## 6. Aksiyon Listesi — Önceliklendirilmiş
 
 ### A. Bu Hafta (En Hızlı Etki)
-- [ ] Hero başlığını "near me" odaklı değiştir
-- [ ] GSC'de homepage + 5 önemli sayfa için "Request Indexing" tıkla
-- [ ] Trust bar'daki "SOC 2 / 99.9% uptime" dayanaksızsa kaldır veya yumuşat
-- [ ] `/case-studies` sayfasını incele — mock'sa "Beta Spotlights" yap
-- [ ] Sahte testimonial'ları kaldır
-- [ ] Supabase'de `newsletter_subscribers` tablosunu oluştur
+- [ ] **Hero başlığını "near me" odaklı değiştir** (1 numaralı iş, hâlâ yapılmadı)
+- [x] GSC kuruldu + sitemap submit edildi (manuel "Request Indexing" hâlâ açık)
+- [ ] Trust bar'daki "99.9% uptime SLA" copy'sini yumuşat (Vercel'inki, bizim değil)
+- [ ] `/case-studies` sayfasını "Beta Customer Spotlights" / "Sample HVAC Wins" gibi dürüst etikete çevir
+- [ ] Homepage testimonial'ları "Sample customer story" disclaimer'ı ile etiketle veya kaldır
+- [x] `newsletter_subscribers` tablosu + welcome email + weekly cron tamam
 
 ### B. Sonraki 2 Hafta (Müşteri Bulma)
 - [ ] Facebook'ta "HVAC Business Owners" grubuna katıl, 1 hafta gözle
@@ -158,20 +159,32 @@ Mevcut: ❌ *"Local SEO Tools for HVAC Contractors"* (feature-focused, duygu yok
 
 ---
 
-## 8. Phase 10 Geldi — Ne Bekleniyor
+## 8. Phase 10 + 10.11–10.15 Shipped (2026-05-07 → 05-08)
 
-Phase 10 (2026-05-07 shipped) ile site marketing açısından tam:
+### Phase 10 (2026-05-07)
 - ✅ 25 şehir + 18 eyalet sayfası
 - ✅ 3 vs-kategori sayfası (`/vs-seo-agency`, `/vs-podium`, `/vs-birdeye`)
 - ✅ 4 uzun blog yazısı + 22 terimlik glossary
 - ✅ 3 ücretsiz SEO aracı (lead magnet, signup yok)
 - ✅ /about, /faq, /case-studies, /integrations, /roadmap, /changelog
 - ✅ Site-wide JSON-LD schema markup
-- ✅ Mobile UX iyileştirmeleri
+- ✅ Mobile UX iyileştirmeleri (StickyMobileCTA, MobileNav v1)
 - ✅ Dynamic OG images, canonical URLs, sitemap
 - ✅ 5 kritik bug fix (favicon, keyword AI, snapshot gate, GBP, reviews)
 
-**Sonuç:** Altyapı bitti. Sıradaki engel feature değil, **müşteri bulmak.**
+### 2026-05-08 polish günü
+- ✅ Newsletter automation: tablo + welcome email + Pazartesi cron
+- ✅ Resend domain verify + DKIM/SPF/DMARC + tracking subdomain
+- ✅ Money-back guarantee 9 conversion surface'ında promosyon edildi (hero, founding, bottom CTA, pricing, vs-pages, login, city pages)
+- ✅ /login 2-column redesign (marketing + form)
+- ✅ MobileNav createPortal + 100dvh rebuild (iOS hero-bleed bug fix)
+- ✅ City page heatmap map-style redesign
+- ✅ Free tools homepage strip + amber "New" header link
+- ✅ /integrations cleanup (backend-only items ayrıldı)
+- ✅ Mike → Usame imza
+- ✅ Mobile login order: hook → form → details
+
+**Sonuç:** Altyapı + conversion + retention loop'ları bitti. Sıradaki engel feature değil, **dürüstlük düzeltmeleri + müşteri bulmak.**
 
 ---
 
@@ -198,3 +211,65 @@ Phase 10 (2026-05-07 shipped) ile site marketing açısından tam:
 Bu ikisi yapıldıktan sonra **müşteri bulma fazına** geç — Facebook gruplarda değerli içerik, LocalSEOBot mutsuz kullanıcı avı, HeatRank'ı kendi siten için kullanma + case study.
 
 İlk 5 müşteri bu kanaldan gelir. Sonrası organik domino etkisi.
+
+---
+
+## 11. Dürüst Değerlendirme (2026-05-08)
+
+### İronik Durum
+Doc kendi 1 numaralı acil işini "Hero başlığını değiştir" diye yazıyor. Geçen 24 saatte:
+- ✅ Newsletter otomasyonu (welcome + weekly cron)
+- ✅ Money-back garantisi 9 yere serpildi
+- ✅ Login sayfası 2-column redesign + mobile reorder
+- ✅ MobileNav 2 kez yeniden yazıldı (Portal + 100dvh)
+- ✅ City heatmap redesign
+- ✅ Free tools strip
+- ❌ **Hero başlığı: değişmedi**
+
+Bu bir önceliklendirme hatası. Ürün/conversion polish kolay, copy değişikliği zor (karar vermek istemiyoruz).
+
+### Dürüstlük Riskleri (Hâlâ Açık)
+Bunlar yasal/etik açıdan acilen düzeltilmeli — ilk müşteri gelmeden önce:
+
+1. **3 sahte testimonial** (Mike T., Sarah K., James R.) — metric badge ekledik ama "real customer" iddiası yanıltıcı. ABD'de FTC bu konuda sert.
+2. **/case-studies** sayfası — "Real HVAC contractors. Real growth." başlığı uydurma datayla satır satır eşleşmiyor. Etiket "Sample HVAC wins" / "Beta spotlights" olmalı.
+3. **"99.9% uptime SLA"** — Vercel'in SLA'sı, biz SLA imzalamıyoruz. "99.9% uptime via Vercel edge" daha doğru.
+4. **"+147% direct calls from GMB"** ve diğer metric'ler — kaynaksız. Ya disclaimer ya kaldır.
+
+### Hedef Müşteri Yanlış Seçim Riski
+Doc "HVAC sahipleri Facebook'ta, Reddit'te değil" diyor. Doğru.
+Ama bizim ürünün **ilk kullanıcı kitlesi** muhtemelen şu sıralamada:
+1. Tech-aware HVAC sahibi (% küçük)
+2. **Marketing yapan kişi** (HVAC için çalışan freelancer / pazarlama danışmanı)
+3. Küçük HVAC firmasının oğlu/kızı (dijital takım)
+
+Bu 3 kategori Reddit ve LinkedIn'de aktif. Sadece Facebook'a odaklanmak %1 kitleyi kaçırabilir.
+
+### Öncelik Sırası — Yeniden Yazıldı
+
+**Bugün/yarın (hızlı + acil):**
+1. 🔴 **Hero başlığını değiştir** ("Show up #1 when locals search 'HVAC near me'") — 30 dakikalık iş, doc'un 5 günden beri 1 numarası
+2. 🔴 **3 sahte testimonial'a "Sample story" disclaimer ekle** veya kaldır — hukuki risk
+3. 🔴 **/case-studies başlığını "Sample HVAC wins"** yap, üste disclaimer
+4. 🟡 **"99.9% uptime SLA"** copy'sini "via Vercel edge · 99.9% historical uptime" yap
+5. 🟡 GSC'de homepage + 5 öncelikli sayfa için "Request Indexing"
+
+**Sonraki 7 gün (müşteri bulma):**
+6. Facebook "HVAC Business Owners" grupları → 1 hafta gözle, **post atma**, anlamaya çalış
+7. LocalSEOBot 7-day trial'ına kaydol → eksiklerini dökümanla
+8. HeatRank'ı kendi siten için kullan (`heatrankai.com`) → 30 günlük kendi case study'n
+9. Reddit r/HVAC, r/smallbusiness'ta **soru cevaplama** modunda gez (link verme, sadece yardımcı ol → username'i HVAC SEO ile özdeşleşsin)
+
+### Yapılmaması Gereken (Dikkat)
+- ❌ Yeni feature ekleme — ürünü zaten over-built ettik
+- ❌ Hero başlığını değiştirmeden müşteri arama → ilk 100 kişi yanlış mesajla karşılaşır, hepsi kaybedilir
+- ❌ Cold DM Facebook → ilk 5 müşteri gelmeden önce. Önce gözle, sonra konuş.
+
+### Stratejinin Çalışması İçin Gerekli Tek Şey
+**Bir HVAC contractor ile 30 dakika konuş.** 
+- Onun gerçek pain point'lerini öğren
+- HeatRank'ı göster, neyi sevdiğini neyi sevmediğini söyle
+- O konuşmadan 1 gerçek testimonial çıkar
+- O testimonial'ı homepage'e koy → 3 sahte gider, 1 gerçek kalır → conversion 5-10x artar
+
+Bu konuşma olmadan yapılan her marketing taktiği boşa kürek çekmek.
