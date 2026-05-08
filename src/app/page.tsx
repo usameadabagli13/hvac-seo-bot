@@ -446,16 +446,23 @@ export default async function LandingPage({
 
         {/* ── Pricing ─────────────────────────────────────────────────────────── */}
         <section id="pricing" className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24 scroll-mt-20">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Simple pricing
             </p>
             <h2 className="text-3xl font-bold text-zinc-100 tracking-tight mb-3">
               14 days free. Then pick your plan.
             </h2>
-            <p className="text-sm text-zinc-500 max-w-md mx-auto">
+            <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6">
               No credit card required to start. Upgrade, downgrade, or cancel anytime.
             </p>
+
+            {/* Money-back guarantee — front and center */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/[0.08]">
+              <span className="text-base">🛡️</span>
+              <span className="text-sm font-semibold text-emerald-300">30-day money-back guarantee</span>
+              <span className="hidden sm:inline text-xs text-emerald-200/70">— full refund if HeatRank doesn&apos;t move the needle</span>
+            </div>
           </div>
 
           <PricingToggle plans={PLANS} />
