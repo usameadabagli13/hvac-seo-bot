@@ -172,7 +172,7 @@ export default function LoginPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold text-zinc-300 truncate">James R., ProClimate HVAC</p>
-                  <p className="text-[10px] text-zinc-600 truncate">Houston, TX · +147% direct calls from GMB</p>
+                  <p className="text-[10px] text-zinc-600 truncate">Houston, TX · More direct calls from GMB</p>
                 </div>
               </div>
             </div>
@@ -332,7 +332,7 @@ export default function LoginPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[11px] font-semibold text-zinc-300 truncate">James R., ProClimate HVAC</p>
-                    <p className="text-[10px] text-zinc-600 truncate">Houston, TX · +147% direct calls from GMB</p>
+                    <p className="text-[10px] text-zinc-600 truncate">Houston, TX · More direct calls from GMB</p>
                   </div>
                 </div>
               </div>

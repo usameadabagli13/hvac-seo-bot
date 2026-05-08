@@ -68,37 +68,39 @@ export default async function OGImage() {
         >
           <div
             style={{
-              fontSize: 28,
+              fontSize: 26,
               color: "#a1a1aa",
               marginBottom: 16,
               letterSpacing: 4,
               textTransform: "uppercase",
             }}
           >
-            Local SEO for HVAC Contractors
+            HVAC Local SEO · Built for Contractors
           </div>
           <div
             style={{
-              fontSize: 76,
+              fontSize: 68,
               fontWeight: 800,
               lineHeight: 1.05,
               letterSpacing: -2,
               color: "#fafafa",
               display: "flex",
-              flexWrap: "wrap",
+              flexDirection: "column",
             }}
           >
-            Rank higher.{" "}
-            <span
-              style={{
-                background: "linear-gradient(90deg, #fbbf24 0%, #f97316 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                marginLeft: 16,
-              }}
-            >
-              Win more calls.
+            <span>Show up first when locals</span>
+            <span>
+              Google{" "}
+              <span
+                style={{
+                  background: "linear-gradient(90deg, #fbbf24 0%, #f97316 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                &ldquo;HVAC near me&rdquo;
+              </span>
             </span>
           </div>
         </div>

@@ -67,8 +67,8 @@ const TESTIMONIALS = [
     initials: "MT",
     name: "Mike T.",
     company: "Comfort Air HVAC, Dallas TX",
-    metric: "+34% calls",
-    metricLabel: "in 60 days",
+    metric: "More calls",
+    metricLabel: "every week",
     quote:
       "Used to take a whole afternoon to research keywords. Now I generate 12 great ones in seconds. The ROI is insane.",
   },
@@ -76,8 +76,8 @@ const TESTIMONIALS = [
     initials: "SK",
     name: "Sarah K.",
     company: "Arctic Cool Services, Phoenix AZ",
-    metric: "5★ avg rating",
-    metricLabel: "across 87 reviews",
+    metric: "Faster replies",
+    metricLabel: "to every review",
     quote:
       "The review reply AI is my favorite feature. My response time dropped from days to minutes — customers notice.",
   },
@@ -85,8 +85,8 @@ const TESTIMONIALS = [
     initials: "JR",
     name: "James R.",
     company: "ProClimate HVAC, Houston TX",
-    metric: "Top 3 ranks",
-    metricLabel: "for 8 keywords",
+    metric: "Better ranks",
+    metricLabel: "in core keywords",
     quote:
       "First month using the rank tracker, I could see exactly which keywords needed work. Rankings improved in 6 weeks.",
   },
@@ -201,16 +201,15 @@ export default async function LandingPage({
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-zinc-100 tracking-tight leading-[1.1] mb-6 max-w-3xl mx-auto">
-            Local SEO Tools for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-500">
-              HVAC Contractors
+            Show up first when locals Google{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">
+              &ldquo;HVAC near me&rdquo;
             </span>
           </h1>
 
-          <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed">
-            AI-powered local SEO tools built for HVAC contractors. Generate
-            keywords, manage reviews, and track your Google rankings — without an
-            agency.
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            AI-powered local SEO built for HVAC contractors who want the phone to ring.
+            No agency, no contracts, no <span className="text-zinc-300 font-medium">$2,000/mo</span> bills.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">

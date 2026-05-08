@@ -14,25 +14,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.heatrankai.com"),
-  title: "HeatRank AI: Local SEO Tools for HVAC Contractors",
+  title: "HeatRank AI — Show Up First When Locals Google 'HVAC Near Me'",
   description:
-    "Boost your HVAC business rankings with HeatRank AI. Access local keyword research, automated review management, and SEO audits. Start your 14-day free trial today!",
+    "AI-powered local SEO built for HVAC contractors who want the phone to ring. Rank higher on Google, manage reviews, and track your local rankings — no agency, no contracts, no $2,000/mo bills. 14-day free trial, 30-day money-back guarantee.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "HeatRank AI: Local SEO Tools for HVAC Contractors",
+    title: "Show up first when locals Google 'HVAC near me' | HeatRank AI",
     description:
-      "Boost your HVAC business rankings with HeatRank AI. Access local keyword research, automated review management, and SEO audits.",
+      "AI-powered local SEO built for HVAC contractors who want the phone to ring. No agency, no contracts, no $2,000/mo bills.",
     type: "website",
     url: "/",
     siteName: "HeatRank AI",
   },
   twitter: {
     card: "summary_large_image",
-    title: "HeatRank AI: Local SEO Tools for HVAC Contractors",
+    title: "Show up first when locals Google 'HVAC near me'",
     description:
-      "AI-powered local SEO tools for HVAC contractors. Generate keywords, manage reviews, and track Google rankings — without an agency.",
+      "AI-powered local SEO for HVAC contractors. Rank higher on Google — no agency, no contracts, no $2,000/mo bills.",
   },
 };
 
