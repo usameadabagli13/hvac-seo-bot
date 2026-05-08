@@ -1,5 +1,5 @@
 # PROJECT_MASTER.md — HVAC SEO Bot
-> **Living document. Update checkboxes as features ship. Last reviewed: 2026-05-07.**
+> **Living document. Update checkboxes as features ship. Last reviewed: 2026-05-08.**
 
 ---
 
@@ -257,21 +257,21 @@ outreach_prospects (id, user_id, business_name, city, email, template_used, stat
 
 **Goal:** Concrete, actionable to-do list that delivers immediate felt value.
 
-### 5.1 Website Crawler (`src/lib/crawler.ts`)
-- [x] Server-side `fetch()` of `website_url`
-- [x] Validate URL with `new URL()` before crawling (Critique #3)
-- [x] Parse: title, H1, H2 count, meta description, body text, image alt coverage, JSON-LD presence, word count
-- [x] Handle redirects (follow), 8s timeout, non-HTML responses (415)
-- [x] Check `robots.txt` before crawling (best-effort, refuses on explicit deny)
-- [x] Store in `seo_audits` table (migration 20260506000007)
+  ### 5.1 Website Crawler (`src/lib/crawler.ts`)
+  - [x] Server-side `fetch()` of `website_url`
+  - [x] Validate URL with `new URL()` before crawling (Critique #3)
+  - [x] Parse: title, H1, H2 count, meta description, body text, image alt coverage, JSON-LD presence, word count
+  - [x] Handle redirects (follow), 8s timeout, non-HTML responses (415)
+  - [x] Check `robots.txt` before crawling (best-effort, refuses on explicit deny)
+  - [x] Store in `seo_audits` table (migration 20260506000007)
 
-### 5.2 SEO Gap Analyzer (Gemini)
-- [x] Send page data + `target_keywords` to Gemini
-- [x] Returns `{ score, issues: [{severity, element, current, recommended}] }` as JSON
-- [x] Concrete recommendations e.g. "Title is 38 chars, expand with city + service keyword"
-- [x] Score 0–100 — Gemini self-scores with severity guidance baked in
-- [x] Render as prioritized checklist: Critical / Warning / Info badges in business detail SEO Audit tab
-- **Freemium:** Free = 1 audit/month, Pro = unlimited + weekly auto-recrawl
+  ### 5.2 SEO Gap Analyzer (Gemini)
+  - [x] Send page data + `target_keywords` to Gemini
+  - [x] Returns `{ score, issues: [{severity, element, current, recommended}] }` as JSON
+  - [x] Concrete recommendations e.g. "Title is 38 chars, expand with city + service keyword"
+  - [x] Score 0–100 — Gemini self-scores with severity guidance baked in
+  - [x] Render as prioritized checklist: Critical / Warning / Info badges in business detail SEO Audit tab
+  - **Freemium:** Free = 1 audit/month, Pro = unlimited + weekly auto-recrawl
 
 ---
 
@@ -491,11 +491,17 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [x] Pricing page money-back guarantee card
 - [x] Founding member offer with claimed-counter on homepage
 
-### 10.7 Newsletter capture
+### 10.7 Newsletter capture ✅ FULLY AUTOMATED
 - [x] `Newsletter` component (email capture, success/error states)
-- [x] `/api/newsletter` — writes to `newsletter_subscribers` table (silent OK if table missing)
+- [x] `/api/newsletter` — writes to `newsletter_subscribers` table + sends welcome email
 - [x] Widget added to homepage footer
-- [ ] **Required setup:** Supabase table `newsletter_subscribers (email text primary key, subscribed_at timestamptz, source text)` — must be created manually in production
+- [x] Supabase table `newsletter_subscribers (email text primary key, subscribed_at timestamptz, source text, unsubscribed_at timestamptz)` created in production
+- [x] **Welcome email** on first subscribe via Resend (plain-text style for Primary inbox delivery; signed by founder)
+- [x] **Weekly digest cron** at `/api/cron/newsletter-digest` — Mondays 14:00 UTC; rotates through `ARTICLES` by ISO week number so each week ships a different tip; queries `unsubscribed_at IS NULL`
+- [x] New `EmailPurpose: "newsletter"` with optional `RESEND_NEWSLETTER_API_KEY` / `RESEND_NEWSLETTER_FROM_EMAIL` env vars (falls back to `RESEND_API_KEY`)
+- [x] vercel.json: third cron entry registered
+- [x] Resend domain verified (heatrankai.com); SPF/DKIM/DMARC + tracking subdomain (`track.heatrankai.com`) configured
+- [x] Form success message nudges user to check Promotions/Junk and drag to Primary
 
 ### 10.8 Mobile + accessibility
 - [x] `MobileNav` slide-out drawer (15 links + sign-in CTAs)
@@ -512,6 +518,50 @@ Annual pricing (~20% discount): Starter $32/mo, Pro $55/mo, Agency $159/mo.
 - [x] `app/(app)/citations/loading.tsx` — skeleton rows
 - [x] `src/app/icon.png` + `apple-icon.png` (Next.js file convention) — replaces Vercel favicon
 - [x] Migrated `src/middleware.ts` → `src/proxy.ts` (Next.js 16 convention)
+
+### 10.11 Newsletter automation (2026-05-08)
+- [x] Welcome email fires on first subscribe (de-duped against re-subscribes by checking `unsubscribed_at`)
+- [x] Weekly tip cron: `/api/cron/newsletter-digest` Mondays 14:00 UTC; deterministic article-of-the-week via ISO week number `% ARTICLES.length`
+- [x] Plain-text-style HTML templates (no buttons, no card backgrounds, single contextual link, signed by founder) — optimized for Gmail Primary inbox delivery
+- [x] Subject lines lowercase + conversational (`thanks for signing up`, `quick tip: <article title>`) instead of marketing-y caps
+- [x] Resend domain verified, DKIM/SPF/DMARC live, tracking subdomain (`track.heatrankai.com`) wired
+
+### 10.12 Money-back guarantee as primary marketing pillar (2026-05-08)
+**Why:** First customers are taking maximum risk. Promoting the 30-day refund neutralizes the biggest objection ("what if it doesn't work for me?") at every conversion surface.
+- [x] Hero pill expanded: `14-day free trial · No credit card · 30-day money-back guarantee`
+- [x] `TRUST_SIGNALS` updated to include guarantee
+- [x] Bottom CTA section rebuilt as 'Risk-free way to rank higher' with emerald ribbon + refund mechanic explainer
+- [x] Founding offer section gains 3-card 'risk-free trio' grid (Trial / Founder pricing / Money-back)
+- [x] FoundingBanner top strip mentions guarantee
+- [x] /pricing: emerald pill above pricing cards + check in trust strip + detailed explainer card
+- [x] /vs-seo-agency, /vs-podium, /vs-birdeye: new comparison row (we have it, they don't)
+- [x] City pages hero subtext mentions guarantee
+- [x] /login: dedicated guarantee pill in marketing column + trust tick in form
+
+### 10.13 Login page redesign (2026-05-08)
+- [x] 2-column layout (lg+): marketing on left, auth form on right; mobile stacks form-first
+- [x] Marketing column: emerald guarantee pill, gradient headline, 3 value props (keywords / replies / heatmap), mini testimonial card with star rating + +147% calls metric
+- [x] Auth form: 12px taller buttons (h-12), solid bg-zinc-900 'Continue with Email' (was barely-visible /[0.03]), trust ticks inline, Promotions/Junk nudge in magic-link sent state
+- [x] Top bar with 'Back to home' link + brand
+- [x] Footer line: 🔒 Secured by Supabase Auth · SOC 2 Type II compliant
+
+### 10.14 Mobile UX rebuild (2026-05-08)
+- [x] MobileNav rebuilt with `createPortal(drawer, document.body)` + `style={{ height: '100dvh' }}` — fixes iOS Safari bug where hero text bled through the drawer
+- [x] Drawer reorganized into labelled groups: **Product** / **Compare** / **Resources** / **Company** — every desktop nav item plus subtitles for top items
+- [x] CTAs at top of drawer (Start free trial + Sign in, h-12, solid bg) so they're thumb-reachable without scrolling
+- [x] Trust strip footer: SOC 2 · GDPR · 99.9% uptime
+- [x] Header asymmetry fix: Sign in + Start Free Trial hidden on mobile (only visible on sm+); mobile header now shows just logo + hamburger
+- [x] OnboardingTour 'Setup' pill: `bottom-20` on mobile (was `bottom-4`, overlapped 64px bottom nav buttons)
+- [x] Hero pt-20 → pt-12 sm:pt-20; CTA copy switches to short 'Start Free Trial' on mobile
+- [x] Section padding tightened: pb-24 → pb-16 sm:pb-24 across the homepage
+- [x] Escape key closes drawer; 40px hamburger touch target
+
+### 10.15 City heatmap redesign (2026-05-08)
+- [x] Replaces flat 5×5 colored grid with a map-style mockup: subtle grid + diagonal 'streets' + amber radial glow background
+- [x] Pulsing amber center pin (the user's business)
+- [x] 25 ranked pins with rings (top 3 emerald / 4-5 amber / 6-7 orange / 8+ rose)
+- [x] Top-left compass label (N ↑) + clean color legend
+- [x] Looks like a real Google Maps preview at first glance instead of pixel art
 
 ### 10.10 Live-site bug fixes (2026-05-07)
 - [x] Vercel ▲ favicon replaced with HeatRank logo via `app/icon.png` + `app/apple-icon.png`
@@ -677,4 +727,12 @@ ADMIN_USER_ID=                      # Founder's Supabase user_id for /admin gate
 - [x] **Custom favicon** — `app/icon.png` + `apple-icon.png` (replaces Vercel default)
 - [x] **`middleware.ts` → `proxy.ts`** — Next.js 16 convention migration
 - [x] **5 live-site bug fixes** — favicon, keyword AI, snapshot gate, GBP errors, reviews crash
-- [ ] **Pending:** Create Supabase `newsletter_subscribers` table for newsletter widget to persist
+- [x] **Newsletter fully automated** (2026-05-08) — Supabase table created, welcome email on signup, weekly digest cron Mondays 14:00 UTC, plain-text templates for Primary inbox
+- [x] **Money-back guarantee promoted as primary marketing pillar** (2026-05-08) — emerald pill on hero, founding offer, bottom CTA, pricing header, vs-* comparison rows, city-page CTA, login page
+- [x] **Login page redesigned** (2026-05-08) — 2-column layout: marketing column (guarantee pill + 3 value props + mini testimonial) on left, taller solid-bg auth form on right with trust ticks (trial/money-back/cancel)
+- [x] **MobileNav rebuilt** (2026-05-08) — `createPortal` to body + `100dvh` to fix iOS Safari hero-bleed bug; grouped categories (Product / Compare / Resources / Company); Escape key closes
+- [x] **Free tools strip on homepage** + amber 'New' header link — surfaces /tools/* lead magnets without scrolling to footer
+- [x] **City-page heatmap redesign** — map-style mockup with grid + diagonal streets + pulsing center pin + ringed rank pins + compass; replaces flat colored boxes
+- [x] **404 popular-page links** corrected to use real city slugs (`dallas-tx` not `dallas`)
+- [x] **/integrations cleanup** — removed backend-only items (Resend, Dodo); added separate 'Built on infrastructure' grid for trust-building
+- [x] **Resend domain verified** + tracking subdomain configured for open/click metrics
