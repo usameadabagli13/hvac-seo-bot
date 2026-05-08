@@ -56,9 +56,9 @@ export default function NotFound() {
             </p>
             <div className="flex flex-col gap-2">
               {[
-                { href: "/hvac-seo/dallas", label: "HVAC SEO for Dallas" },
-                { href: "/hvac-seo/houston", label: "HVAC SEO for Houston" },
-                { href: "/hvac-seo/phoenix", label: "HVAC SEO for Phoenix" },
+                { href: "/hvac-seo/dallas-tx",  label: "HVAC SEO for Dallas" },
+                { href: "/hvac-seo/houston-tx", label: "HVAC SEO for Houston" },
+                { href: "/hvac-seo/phoenix-az", label: "HVAC SEO for Phoenix" },
                 { href: "/login", label: "Sign in / Start free trial" },
               ].map((l) => (
                 <Link

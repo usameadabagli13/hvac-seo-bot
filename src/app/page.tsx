@@ -306,7 +306,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── Live Demo Widget ────────────────────────────────────────────────── */}
-        <section id="demo" className="max-w-2xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24 scroll-mt-20">
+        <section id="demo" className="max-w-2xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24 scroll-mt-20">
           <div className="text-center mb-6">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Try it now — no sign-up
@@ -335,7 +335,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── How It Works ─────────────────────────────────────────────────────── */}
-        <section className="max-w-5xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24">
+        <section className="max-w-5xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
           <div className="text-center mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               How it works
@@ -364,7 +364,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── Features ────────────────────────────────────────────────────────── */}
-        <section id="features" className="max-w-6xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24 scroll-mt-20">
+        <section id="features" className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24 scroll-mt-20">
           <div className="text-center mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Everything you need
@@ -392,8 +392,49 @@ export default async function LandingPage({
           </div>
         </section>
 
+        {/* ── Free Tools strip ─────────────────────────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
+          <div className="rounded-3xl border border-amber-500/15 bg-gradient-to-br from-amber-500/[0.06] via-amber-500/[0.02] to-transparent px-6 py-10 sm:px-10 sm:py-12">
+            <div className="text-center mb-8">
+              <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">
+                Free tools — no signup
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight mb-2">
+                Try it before you sign up
+              </h2>
+              <p className="text-sm text-zinc-500 max-w-md mx-auto leading-relaxed">
+                Three quick utilities for HVAC contractors — works in your browser, no account needed.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {[
+                { href: "/tools/title-tag-checker",          label: "Title Tag Checker",       desc: "Grade your SEO title in 3 seconds" },
+                { href: "/tools/meta-description-generator", label: "Meta Description Generator", desc: "Get 3 variants per page" },
+                { href: "/tools/keyword-density",            label: "Keyword Density Analyzer", desc: "Spot missing HVAC keywords" },
+              ].map((t) => (
+                <Link
+                  key={t.href}
+                  href={t.href}
+                  className="group rounded-2xl border border-white/[0.08] bg-zinc-950/40 p-5 hover:border-amber-400/40 hover:bg-zinc-900/60 transition-all"
+                >
+                  <p className="text-sm font-semibold text-zinc-100 mb-1 group-hover:text-amber-300 transition-colors">{t.label}</p>
+                  <p className="text-xs text-zinc-500 leading-relaxed">{t.desc}</p>
+                  <span className="inline-flex items-center gap-1 mt-3 text-[11px] font-medium text-amber-400 group-hover:text-amber-300 transition-colors">
+                    Try it <ChevronRight className="w-3 h-3" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-6 text-center">
+              <Link href="/tools" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+                See all free tools →
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── Pricing ─────────────────────────────────────────────────────────── */}
-        <section id="pricing" className="max-w-6xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24 scroll-mt-20">
+        <section id="pricing" className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24 scroll-mt-20">
           <div className="text-center mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Simple pricing
@@ -410,7 +451,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── Founding Member offer (right after pricing for max impact) ───── */}
-        <section id="founding-offer" className="max-w-3xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24 scroll-mt-20">
+        <section id="founding-offer" className="max-w-3xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24 scroll-mt-20">
           <div className="rounded-3xl border border-amber-500/25 bg-gradient-to-br from-amber-500/[0.10] via-amber-500/[0.04] to-transparent px-6 py-8 sm:px-10 sm:py-10 shadow-2xl shadow-amber-500/[0.04]">
             <div className="mb-5">
               <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">
@@ -431,7 +472,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── Testimonials ────────────────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24">
+        <section className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
           <div className="text-center mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               Trusted by contractors
@@ -470,7 +511,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── FAQ ─────────────────────────────────────────────────────────────── */}
-        <section className="max-w-2xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24">
+        <section className="max-w-2xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
           <div className="text-center mb-10">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
               FAQ
@@ -483,7 +524,7 @@ export default async function LandingPage({
         </section>
 
         {/* ── Bottom CTA ──────────────────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 sm:px-5 sm:px-6 pb-12 sm:pb-16 sm:pb-24">
+        <section className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
           <div className="rounded-3xl border border-white/[0.08] bg-white/[0.02] px-8 py-16 text-center">
             <h2 className="text-3xl font-bold text-zinc-100 tracking-tight mb-3">
               Ready to rank higher?

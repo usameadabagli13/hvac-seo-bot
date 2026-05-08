@@ -176,7 +176,7 @@ export function newsletterWelcomeHtml(): string {
 
       <p>Hey,</p>
 
-      <p>I&apos;m Mike, one of the folks behind HeatRank AI. We help HVAC contractors rank higher on Google without paying agency rates.</p>
+      <p>I&apos;m Usame, the founder of HeatRank AI. We help HVAC contractors rank higher on Google without paying agency rates.</p>
 
       <p>Every Monday I&apos;ll send you one short tip you can actually apply that week. No fluff, no &ldquo;5 reasons SEO is important&rdquo; filler.</p>
 
@@ -186,7 +186,7 @@ export function newsletterWelcomeHtml(): string {
 
       <p>If anything&apos;s ever off, just hit reply — I read every email myself.</p>
 
-      <p style="margin-top: 24px;">— Mike<br/>
+      <p style="margin-top: 24px;">— Usame<br/>
         <span style="color: #888; font-size: 14px;">HeatRank AI</span>
       </p>
 
@@ -235,7 +235,7 @@ export function newsletterTipHtml(tip: NewsletterTip): string {
 
       <p>Reply if you have questions — I read every email myself.</p>
 
-      <p style="margin-top: 24px;">— Mike<br/>
+      <p style="margin-top: 24px;">— Usame<br/>
         <span style="color: #888; font-size: 14px;">HeatRank AI</span>
       </p>
 

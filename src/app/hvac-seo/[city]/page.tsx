@@ -212,14 +212,81 @@ export default async function CityPage({
             </div>
 
             <div className="border-t border-white/[0.05] pt-4">
-              <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Rank heatmap · {city.name} area</p>
-              <div className="grid grid-cols-5 gap-1 w-fit">
-                {[1,4,2,7,3,5,1,3,6,2,3,2,1,4,8,6,3,2,1,5,4,7,3,2,1].map((rank, i) => {
-                  const color = rank <= 3 ? "bg-emerald-500" : rank <= 5 ? "bg-amber-500" : rank <= 7 ? "bg-orange-500" : "bg-zinc-600";
-                  return <div key={i} className={`w-7 h-7 rounded ${color} opacity-80 flex items-center justify-center text-[9px] font-bold text-white/80`}>{rank}</div>;
-                })}
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] text-zinc-600 uppercase tracking-widest">Rank heatmap · {city.name} area</p>
+                <span className="text-[10px] text-zinc-600 border border-white/[0.06] px-2 py-0.5 rounded-full">5×5 grid</span>
               </div>
-              <p className="text-[10px] text-zinc-700 mt-2">Green = top 3 · Amber = 4–5 · Orange = 6–7</p>
+
+              {/* Map-style mock with subtle grid + "streets" */}
+              <div
+                className="relative rounded-xl border border-white/[0.06] bg-zinc-900 overflow-hidden aspect-[5/4]"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px),
+                    radial-gradient(circle at 30% 40%, rgba(245,158,11,0.06), transparent 50%),
+                    radial-gradient(circle at 70% 60%, rgba(245,158,11,0.04), transparent 50%)
+                  `,
+                  backgroundSize: "40px 40px, 40px 40px, 100% 100%, 100% 100%",
+                }}
+              >
+                {/* Diagonal "streets" */}
+                <div className="absolute inset-0 pointer-events-none" aria-hidden>
+                  <div className="absolute top-1/2 left-0 right-0 h-px bg-white/[0.05]" />
+                  <div className="absolute top-0 bottom-0 left-1/2 w-px bg-white/[0.05]" />
+                  <div className="absolute -inset-10 origin-center rotate-[15deg] flex flex-col gap-12 opacity-30">
+                    <div className="h-px bg-white/[0.06]" />
+                    <div className="h-px bg-white/[0.06]" />
+                  </div>
+                </div>
+
+                {/* Center business marker */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" style={{ width: 28, height: 28 }} />
+                    <div className="w-7 h-7 rounded-full bg-amber-400 border-[3px] border-zinc-950 shadow-lg shadow-amber-500/40" />
+                  </div>
+                </div>
+
+                {/* 5x5 rank pins */}
+                <div className="absolute inset-3 grid grid-cols-5 grid-rows-5 gap-1 sm:gap-1.5">
+                  {[1,4,2,7,3,5,1,3,6,2,3,2,1,4,8,6,3,2,1,5,4,7,3,2,1].map((rank, i) => {
+                    const isTop3   = rank <= 3;
+                    const isTop5   = rank <= 5;
+                    const isTop7   = rank <= 7;
+                    const bg       = isTop3 ? "bg-emerald-500" : isTop5 ? "bg-amber-500" : isTop7 ? "bg-orange-500" : "bg-rose-500/80";
+                    const ring     = isTop3 ? "ring-emerald-400/30" : isTop5 ? "ring-amber-400/30" : isTop7 ? "ring-orange-400/30" : "ring-rose-400/30";
+                    return (
+                      <div key={i} className="flex items-center justify-center">
+                        <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full ${bg} ring-4 ${ring} flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shadow-md`}>
+                          {rank}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Top-left compass label */}
+                <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-zinc-950/80 border border-white/[0.06] text-[9px] text-zinc-500 font-mono uppercase tracking-wider">
+                  N ↑
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="mt-3 flex items-center justify-center gap-3 sm:gap-4 flex-wrap text-[10px]">
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Top 3
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" /> 4–5
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <span className="w-2 h-2 rounded-full bg-orange-500" /> 6–7
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <span className="w-2 h-2 rounded-full bg-rose-500/80" /> 8+
+                </span>
+              </div>
             </div>
           </div>
         </section>

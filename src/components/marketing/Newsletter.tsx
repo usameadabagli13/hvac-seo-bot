@@ -38,7 +38,7 @@ export default function Newsletter() {
         <div>
           <p className="text-sm font-semibold text-emerald-300 mb-1">You&apos;re in.</p>
           <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-            A welcome email is on its way from <span className="font-medium text-emerald-200">Mike at HeatRank AI</span>.
+            A welcome email is on its way from <span className="font-medium text-emerald-200">Usame at HeatRank AI</span>.
           </p>
           <p className="text-[11px] text-emerald-200/60 leading-relaxed mt-1.5">
             <span className="font-semibold">Don&apos;t see it?</span> Check your{" "}

@@ -24,7 +24,7 @@ const INTEGRATIONS = [
   },
   {
     icon: Shield,
-    name: "Google OAuth",
+    name: "Google sign-in",
     status: "Live",
     desc: "Sign in to HeatRank AI with your existing Google account in two clicks — no password to remember.",
   },
@@ -35,35 +35,20 @@ const INTEGRATIONS = [
     desc: "No Google account? No problem. Sign in with your email and we'll send a one-click magic link.",
   },
   {
-    icon: CreditCard,
-    name: "Dodo Payments",
-    status: "Live",
-    desc: "Secure recurring billing with annual / monthly plan switching, automatic invoice generation, and one-click cancellation.",
-  },
-  {
-    icon: Database,
-    name: "Supabase",
-    status: "Live",
-    desc: "Your data is hosted on Supabase's SOC 2 Type II infrastructure with row-level security, daily backups, and end-to-end encryption.",
-  },
-  {
-    icon: MessageSquare,
-    name: "Resend",
-    status: "Live",
-    desc: "Transactional emails (trial reminders, login links, weekly digests) sent through Resend for industry-leading deliverability.",
-  },
-  {
-    icon: Zap,
-    name: "Google Gemini AI",
-    status: "Live",
-    desc: "Powers our keyword research, review reply generation, and on-page audit scoring with the latest Gemini models.",
-  },
-  {
     icon: Search,
-    name: "Mapbox",
+    name: "Google Maps",
     status: "Live",
-    desc: "Renders the 5×5 rank heatmap with live geocoding for any service area in the US.",
+    desc: "Powers the live 5×5 rank heatmap that shows where you rank across your service area.",
   },
+];
+
+// Behind-the-scenes infrastructure — shown separately so users know what
+// powers the platform without confusing it with first-class integrations.
+const INFRASTRUCTURE = [
+  { name: "Supabase",      desc: "SOC 2 Type II database & auth"   },
+  { name: "Vercel Edge",   desc: "Global hosting · 99.9% uptime"   },
+  { name: "Google Gemini", desc: "AI engine for keywords + reviews" },
+  { name: "Stripe-grade",  desc: "PCI-compliant payment processing" },
 ];
 
 const COMING_SOON = [
@@ -126,6 +111,22 @@ export default function IntegrationsPage() {
         </section>
 
         <section className="py-10 border-t border-white/[0.06]">
+          <p className="text-xs font-semibold text-zinc-300 uppercase tracking-widest mb-2">Built on enterprise-grade infrastructure</p>
+          <p className="text-xs text-zinc-500 mb-5 max-w-xl leading-relaxed">
+            HeatRank AI is built on the same platforms used by Fortune 500 companies. You don&apos;t configure these — they just power the product.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
+            {INFRASTRUCTURE.map(({ name, desc }) => (
+              <div key={name} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-zinc-200">{name}</p>
+                  <p className="text-[11px] text-zinc-500">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <p className="text-xs font-semibold text-zinc-300 uppercase tracking-widest mb-5">Coming soon</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {COMING_SOON.map(({ name, when }) => (
