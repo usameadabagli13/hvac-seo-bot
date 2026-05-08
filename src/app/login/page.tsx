@@ -105,29 +105,44 @@ export default function LoginPage() {
       </header>
 
       {/* Main content */}
-      <main className="relative flex-1 flex items-center justify-center px-5 sm:px-6 py-10 sm:py-16">
+      <main className="relative flex-1 flex items-center justify-center px-5 sm:px-6 py-8 sm:py-16">
         <div className="w-full max-w-5xl grid lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-14 items-center">
 
-          {/* ── Left: marketing column (hidden on mobile, shown above on tablet+) ─ */}
-          <div className="order-2 lg:order-1">
-            {/* Money-back guarantee — front and center */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/[0.08] text-emerald-200 mb-5">
+          {/* ── Mobile: top hook (pill + headline + sub) ──────────────────── */}
+          <div className="lg:hidden text-center max-w-md mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/[0.08] text-emerald-200 mb-4">
               <Shield className="w-3.5 h-3.5 text-emerald-400" />
               <span className="text-xs font-semibold text-emerald-300">30-day money-back guarantee</span>
             </div>
-
-            <h1 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight leading-tight mb-3">
+            <h1 className="text-3xl font-bold text-zinc-100 tracking-tight leading-tight mb-3">
               Rank higher on Google.{" "}
               <span className="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">
                 Risk-free.
               </span>
             </h1>
-            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed mb-8 max-w-md">
+            <p className="text-sm text-zinc-400 leading-relaxed">
+              14 days free, no credit card. Full refund if we don&apos;t move the needle in 30 days.
+            </p>
+          </div>
+
+          {/* ── Desktop: full marketing column (left side) ────────────────── */}
+          <div className="hidden lg:block lg:order-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/[0.08] text-emerald-200 mb-5">
+              <Shield className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-xs font-semibold text-emerald-300">30-day money-back guarantee</span>
+            </div>
+
+            <h1 className="text-4xl font-bold text-zinc-100 tracking-tight leading-tight mb-3">
+              Rank higher on Google.{" "}
+              <span className="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">
+                Risk-free.
+              </span>
+            </h1>
+            <p className="text-base text-zinc-400 leading-relaxed mb-8 max-w-md">
               14 days free, no credit card. Upgrade and we don&apos;t move the needle in 30 days?
               Email us for a full refund.
             </p>
 
-            {/* Value props */}
             <ul className="space-y-3.5 mb-8">
               {VALUE_PROPS.map(({ icon: Icon, title, desc }) => (
                 <li key={title} className="flex items-start gap-3">
@@ -142,7 +157,6 @@ export default function LoginPage() {
               ))}
             </ul>
 
-            {/* Mini testimonial */}
             <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
               <div className="flex items-center gap-1 mb-2">
                 {[1,2,3,4,5].map((i) => (
@@ -164,8 +178,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* ── Right: login form ───────────────────────────────────────────── */}
-          <div className="order-1 lg:order-2 w-full max-w-md mx-auto lg:mx-0">
+          {/* ── Login form (always middle on mobile, right on desktop) ────── */}
+          <div className="lg:order-2 w-full max-w-md mx-auto lg:mx-0">
             <div className="text-center lg:text-left mb-6">
               <h2 className="text-2xl font-bold text-zinc-100 tracking-tight">
                 {emailSent ? "Check your inbox" : "Sign in or create account"}
@@ -281,6 +295,48 @@ export default function LoginPage() {
             <p className="text-center lg:text-left text-[11px] text-zinc-700 mt-5">
               🔒 Secured by Supabase Auth · SOC 2 Type II compliant
             </p>
+
+            {/* ── Mobile-only details (value props + testimonial below the form) ── */}
+            <div className="lg:hidden mt-10 space-y-6">
+              <div>
+                <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest text-center mb-4">
+                  What you get on day 1
+                </p>
+                <ul className="space-y-3.5">
+                  {VALUE_PROPS.map(({ icon: Icon, title, desc }) => (
+                    <li key={title} className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Icon className="w-4 h-4 text-amber-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-zinc-100 leading-tight">{title}</p>
+                        <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">{desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                <div className="flex items-center gap-1 mb-2">
+                  {[1,2,3,4,5].map((i) => (
+                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs text-zinc-300 leading-relaxed mb-3 italic">
+                  &ldquo;First month using rank tracker, I saw exactly which keywords needed work. Rankings improved in 6 weeks.&rdquo;
+                </p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-[10px] font-bold text-zinc-300 select-none flex-shrink-0">
+                    JR
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold text-zinc-300 truncate">James R., ProClimate HVAC</p>
+                    <p className="text-[10px] text-zinc-600 truncate">Houston, TX · +147% direct calls from GMB</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
