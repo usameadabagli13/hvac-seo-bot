@@ -50,9 +50,11 @@ export default function FoundingBanner() {
           <span className="font-semibold tabular-nums text-amber-300">{remaining}</span>
           <span className="text-zinc-300"> founding spots left</span>
           <span className="text-zinc-400"> · </span>
-          <span className="text-zinc-500 tabular-nums">{claimed}/{total} already claimed</span>
+          <span className="text-zinc-500 tabular-nums">{claimed}/{total} claimed</span>
           <span className="text-zinc-400"> · </span>
-          <span className="text-zinc-300">30% off + lifetime ★ Founder badge</span>
+          <span className="text-zinc-300">30% off + ★ Founder badge</span>
+          <span className="text-zinc-400"> · </span>
+          <span className="text-emerald-300 font-medium">30-day money-back</span>
         </p>
 
         {/* Mobile copy (compact) */}

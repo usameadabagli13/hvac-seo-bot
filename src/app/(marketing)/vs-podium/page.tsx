@@ -29,6 +29,7 @@ const ROWS = [
   { label: "Setup time",                      heatrank: "3 minutes",      podium: "Days (sales call)", better: "heatrank" },
   { label: "Free trial",                      heatrank: "14 days",        podium: "No",              better: "heatrank" },
   { label: "Annual contract required",        heatrank: false,            podium: true,              better: "heatrank" },
+  { label: "30-day money-back guarantee",      heatrank: true,             podium: false,             better: "heatrank" },
 ];
 
 const HIGHLIGHTS = [

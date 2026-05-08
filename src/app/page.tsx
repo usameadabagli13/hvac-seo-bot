@@ -93,9 +93,9 @@ const TESTIMONIALS = [
 ];
 
 const TRUST_SIGNALS = [
-  { icon: Shield, label: "SOC 2 compliant infrastructure" },
-  { icon: Clock, label: "Set up in under 3 minutes" },
-  { icon: Zap, label: "First keywords in 30 seconds" },
+  { icon: Shield, label: "30-day money-back guarantee" },
+  { icon: Clock,  label: "Set up in under 3 minutes" },
+  { icon: Zap,    label: "First keywords in 30 seconds" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -191,9 +191,13 @@ export default async function LandingPage({
       <main id="main" className="relative">
         {/* ── Hero ──────────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-5 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-24 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] text-xs text-zinc-400 mb-6">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/[0.06] text-xs text-emerald-200 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            14-day free trial — no credit card required
+            <span className="font-medium">14-day free trial</span>
+            <span className="text-emerald-500/50">·</span>
+            <span>No credit card</span>
+            <span className="text-emerald-500/50">·</span>
+            <span className="font-semibold text-emerald-300">30-day money-back guarantee</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-zinc-100 tracking-tight leading-[1.1] mb-6 max-w-3xl mx-auto">
@@ -474,6 +478,24 @@ export default async function LandingPage({
                 founder status closes for good.
               </p>
             </div>
+
+            {/* Risk-free trio */}
+            <div className="grid sm:grid-cols-3 gap-2.5 mb-5">
+              {[
+                { icon: Clock,  label: "14-day free trial",          sub: "No credit card" },
+                { icon: Zap,    label: "30% off for 12 months",      sub: "Founder pricing" },
+                { icon: Shield, label: "30-day money-back guarantee", sub: "Full refund, no questions" },
+              ].map(({ icon: Icon, label, sub }) => (
+                <div key={label} className="rounded-xl border border-amber-500/15 bg-amber-500/[0.04] px-3 py-2.5 flex items-center gap-2.5">
+                  <Icon className="w-4 h-4 text-amber-300 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold text-amber-200 leading-tight truncate">{label}</p>
+                    <p className="text-[10px] text-amber-200/60 leading-tight truncate">{sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <WaitlistForm />
           </div>
         </section>
@@ -532,13 +554,23 @@ export default async function LandingPage({
 
         {/* ── Bottom CTA ──────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
-          <div className="rounded-3xl border border-white/[0.08] bg-white/[0.02] px-8 py-16 text-center">
-            <h2 className="text-3xl font-bold text-zinc-100 tracking-tight mb-3">
-              Ready to rank higher?
+          <div className="rounded-3xl border border-white/[0.08] bg-white/[0.02] px-6 sm:px-8 py-12 sm:py-16 text-center relative overflow-hidden">
+            {/* Money-back ribbon */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/25 bg-emerald-500/[0.08] text-[11px] font-semibold text-emerald-300 uppercase tracking-widest mb-5">
+              <Shield className="w-3 h-3" />
+              30-day money-back guarantee
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight mb-3">
+              Risk-free way to rank higher
             </h2>
-            <p className="text-zinc-500 text-sm mb-8 max-w-md mx-auto leading-relaxed">
-              Join HVAC contractors who are winning local search with AI. Start
-              your 14-day free trial — no credit card required.
+            <p className="text-zinc-400 text-sm sm:text-base mb-2 max-w-lg mx-auto leading-relaxed">
+              Try every Pro feature free for 14 days — no credit card required.
+            </p>
+            <p className="text-zinc-500 text-sm mb-8 max-w-lg mx-auto leading-relaxed">
+              Upgrade and HeatRank doesn&apos;t move the needle in 30 days?
+              <br className="hidden sm:block" />
+              Email us. Full refund. No phone tag, no questions asked.
             </p>
             <Link
               href="/login"
@@ -547,6 +579,9 @@ export default async function LandingPage({
               Start your 14-day free trial
               <ChevronRight className="w-4 h-4" />
             </Link>
+            <p className="mt-3 text-[11px] text-zinc-600">
+              14 days free · No credit card · 30-day money-back if you upgrade
+            </p>
           </div>
         </section>
 

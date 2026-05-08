@@ -28,6 +28,7 @@ const ROWS = [
   { label: "Listings management (50+)",      heatrank: "core directories only", birdeye: true,         better: "birdeye" },
   { label: "Free trial",                     heatrank: "14 days",       birdeye: "Demo only",          better: "heatrank" },
   { label: "Annual contract required",       heatrank: false,           birdeye: true,                 better: "heatrank" },
+  { label: "30-day money-back guarantee",     heatrank: true,            birdeye: false,                better: "heatrank" },
 ];
 
 const HIGHLIGHTS = [

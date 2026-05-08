@@ -24,6 +24,7 @@ const COMPARISON_ROWS = [
   { label: "On-page SEO audit",                heatrank: "Instant",           agency: "Quarterly",         heatrankBetter: true  },
   { label: "Competitor tracking",              heatrank: true,                 agency: true,                heatrankBetter: null  },
   { label: "Long-term contract required",      heatrank: false,                agency: true,                heatrankBetter: true  },
+  { label: "30-day money-back guarantee",       heatrank: true,                 agency: false,               heatrankBetter: true  },
   { label: "Speak to an account manager",      heatrank: false,                agency: true,                heatrankBetter: false },
   { label: "Done-for-you content writing",     heatrank: false,                agency: true,                heatrankBetter: false },
   { label: "You own all your data",            heatrank: true,                 agency: "Sometimes",         heatrankBetter: true  },
@@ -186,8 +187,11 @@ export default function ComparisonPage() {
           <h2 className="text-2xl sm:text-3xl font-semibold text-zinc-100 tracking-tight mb-3">
             Try it free for 14 days
           </h2>
-          <p className="text-sm text-zinc-500 mb-6 max-w-md mx-auto">
+          <p className="text-sm text-zinc-500 mb-2 max-w-md mx-auto">
             No credit card required. Cancel anytime. See your first keywords in 30 seconds.
+          </p>
+          <p className="text-xs text-emerald-400 mb-6 max-w-md mx-auto font-medium">
+            🛡️ 30-day money-back guarantee — if you upgrade and we don&apos;t move the needle, full refund
           </p>
           <Link
             href="/login"

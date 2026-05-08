@@ -180,7 +180,7 @@ export default async function CityPage({
               See pricing
             </Link>
           </div>
-          <p className="mt-3 text-xs text-zinc-600">No credit card required</p>
+          <p className="mt-3 text-xs text-zinc-600">No credit card required · 🛡️ 30-day money-back guarantee</p>
         </section>
 
         {/* Dashboard mockup */}

@@ -48,37 +48,46 @@ export default function PricingPage() {
           Back to home
         </Link>
 
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-3">Pricing</p>
           <h1 className="text-3xl sm:text-4xl font-semibold text-zinc-100 tracking-tight mb-3">
             Built for working contractors
           </h1>
-          <p className="text-sm text-zinc-500 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-zinc-500 max-w-xl mx-auto leading-relaxed mb-6">
             Start with a 14-day Pro trial. No credit card required. Cancel anytime —
             your data and audit history stay yours.
           </p>
+
+          {/* Guarantee — front and center, above pricing cards */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/[0.08] text-emerald-200">
+            <span className="text-base">🛡️</span>
+            <span className="text-sm font-semibold text-emerald-300">30-day money-back guarantee</span>
+            <span className="text-xs text-emerald-200/70 hidden sm:inline">— full refund if HeatRank doesn&apos;t move the needle</span>
+          </div>
         </div>
 
         <PricingToggle plans={PLANS} />
 
         {/* Trust strip */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs text-zinc-600">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500">
           <span>✓ 14-day free trial</span>
           <span>✓ No credit card</span>
+          <span className="text-emerald-400">✓ 30-day money-back</span>
           <span>✓ Cancel anytime</span>
           <span>✓ Annual saves ~20%</span>
         </div>
 
-        {/* Money-back guarantee */}
-        <div className="mt-10 max-w-2xl mx-auto rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] px-6 py-5 flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+        {/* Detailed money-back card */}
+        <div className="mt-8 max-w-2xl mx-auto rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.05] px-6 py-5 flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
             <span className="text-base">🛡️</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-emerald-300 mb-1">30-day money-back guarantee</p>
-            <p className="text-xs text-emerald-200/70 leading-relaxed">
-              Try Pro risk-free. If HeatRank AI isn&apos;t a fit in your first 30 days after billing,
-              email us and we&apos;ll refund every cent. No phone tag, no questions asked.
+            <p className="text-sm font-semibold text-emerald-300 mb-1">How the guarantee works</p>
+            <p className="text-xs text-emerald-200/80 leading-relaxed">
+              You get 14 days free with no card. If you upgrade and HeatRank AI isn&apos;t
+              moving the needle 30 days after billing, just email us — full refund, no
+              phone tag, no exit interview.
             </p>
           </div>
         </div>
