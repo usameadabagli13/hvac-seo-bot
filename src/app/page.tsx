@@ -166,6 +166,13 @@ export default async function LandingPage({
               Compare
             </Link>
             <Link
+              href="/tools"
+              className="hidden md:flex items-center gap-1.5 text-sm text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              Free tools
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 uppercase tracking-wider">New</span>
+            </Link>
+            <Link
               href="/login"
               className="hidden sm:block text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
             >
