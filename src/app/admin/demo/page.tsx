@@ -3,6 +3,18 @@
 import { useState } from "react";
 import { Link2, Check, Loader2, ExternalLink, Search } from "lucide-react";
 
+const CITY_SUGGESTIONS = [
+  "Dallas, TX", "Houston, TX", "San Antonio, TX", "Austin, TX",
+  "Phoenix, AZ", "Tucson, AZ", "Las Vegas, NV",
+  "Atlanta, GA", "Charlotte, NC", "Raleigh, NC",
+  "Miami, FL", "Tampa, FL", "Orlando, FL", "Jacksonville, FL",
+  "Chicago, IL", "Columbus, OH", "Indianapolis, IN", "Kansas City, MO",
+  "Denver, CO", "Nashville, TN", "Memphis, TN",
+  "Minneapolis, MN", "St. Louis, MO", "Louisville, KY",
+  "Seattle, WA", "Portland, OR", "Sacramento, CA",
+  "New York, NY", "Philadelphia, PA", "Baltimore, MD",
+];
+
 const KEYWORD_SUGGESTIONS = [
   "AC repair near me",
   "HVAC contractor near me",
@@ -100,8 +112,12 @@ export default function AdminDemoPage() {
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="ör. Dallas, TX"
+              list="city-list"
               className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/[0.08] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition-colors"
             />
+            <datalist id="city-list">
+              {CITY_SUGGESTIONS.map((c) => <option key={c} value={c} />)}
+            </datalist>
           </div>
         </div>
 
