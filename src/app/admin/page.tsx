@@ -45,23 +45,23 @@ export default async function AdminOverviewPage() {
   }
 
   const stats = [
-    { label: "Total users",        value: totalUsers ?? 0,       icon: <Users          className="w-4 h-4 text-zinc-400" /> },
-    { label: "Paid",               value: paidUsers ?? 0,        icon: <CreditCard     className="w-4 h-4 text-emerald-400" /> },
-    { label: "Active trials",      value: trialUsers ?? 0,       icon: <CreditCard     className="w-4 h-4 text-amber-400" /> },
-    { label: "Businesses",         value: businesses ?? 0,       icon: <Users          className="w-4 h-4 text-zinc-400" /> },
-    { label: "Reviews indexed",    value: reviews ?? 0,           icon: <MessageSquare  className="w-4 h-4 text-zinc-400" /> },
-    { label: "Snapshots (30d)",    value: snapshotsRecent ?? 0,   icon: <Map            className="w-4 h-4 text-zinc-400" /> },
-    { label: "SEO audits (30d)",   value: auditsRecent ?? 0,      icon: <FileSearch     className="w-4 h-4 text-zinc-400" /> },
-    { label: "Waitlist signups",   value: waitlist ?? 0,          icon: <Mail           className="w-4 h-4 text-zinc-400" /> },
+    { label: "Toplam kullanıcı",    value: totalUsers ?? 0,       icon: <Users          className="w-4 h-4 text-zinc-400" /> },
+    { label: "Ödeme yapan",        value: paidUsers ?? 0,        icon: <CreditCard     className="w-4 h-4 text-emerald-400" /> },
+    { label: "Aktif deneme",       value: trialUsers ?? 0,       icon: <CreditCard     className="w-4 h-4 text-amber-400" /> },
+    { label: "İşletme",            value: businesses ?? 0,       icon: <Users          className="w-4 h-4 text-zinc-400" /> },
+    { label: "İndexlenen yorum",   value: reviews ?? 0,           icon: <MessageSquare  className="w-4 h-4 text-zinc-400" /> },
+    { label: "Snapshot (30g)",     value: snapshotsRecent ?? 0,   icon: <Map            className="w-4 h-4 text-zinc-400" /> },
+    { label: "SEO denetim (30g)",  value: auditsRecent ?? 0,      icon: <FileSearch     className="w-4 h-4 text-zinc-400" /> },
+    { label: "Bekleme listesi",    value: waitlist ?? 0,          icon: <Mail           className="w-4 h-4 text-zinc-400" /> },
   ];
 
   return (
     <main className="relative max-w-5xl mx-auto px-6 py-12">
       <div className="mb-8">
         <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">Admin</p>
-        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Overview</h1>
+        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Genel Bakış</h1>
         <p className="mt-1.5 text-sm text-zinc-500">
-          Internal metrics. Last 30 days unless otherwise noted.
+          İç metrikler. Aksi belirtilmedikçe son 30 gün.
         </p>
       </div>
 
@@ -81,11 +81,11 @@ export default async function AdminOverviewPage() {
         {/* Usage breakdown */}
         <div>
           <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
-            AI usage this month
+            Bu ay AI kullanımı
           </p>
           <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] divide-y divide-white/[0.05]">
             {Object.entries(usageTotals).length === 0 && (
-              <p className="px-4 py-5 text-xs text-zinc-600">No usage yet this month.</p>
+              <p className="px-4 py-5 text-xs text-zinc-600">Bu ay henüz kullanım yok.</p>
             )}
             {Object.entries(usageTotals).map(([feature, count]) => (
               <div key={feature} className="px-4 py-3 flex items-center justify-between">
@@ -99,11 +99,11 @@ export default async function AdminOverviewPage() {
         {/* Recent signups */}
         <div>
           <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
-            Last 10 signups (30d)
+            Son 10 kayıt (30g)
           </p>
           <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] divide-y divide-white/[0.05]">
             {(signupsRecent ?? []).length === 0 && (
-              <p className="px-4 py-5 text-xs text-zinc-600">No new signups in the last 30 days.</p>
+              <p className="px-4 py-5 text-xs text-zinc-600">Son 30 günde yeni kayıt yok.</p>
             )}
             {(signupsRecent ?? []).map((row) => (
               <div key={row.user_id} className="px-4 py-2.5 flex items-center justify-between">

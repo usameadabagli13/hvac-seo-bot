@@ -48,8 +48,8 @@ export default async function AdminUsersPage({
     <main className="relative max-w-5xl mx-auto px-6 py-12">
       <div className="mb-8">
         <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">Admin</p>
-        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Users</h1>
-        <p className="mt-1.5 text-sm text-zinc-500">Most-recent 100 profiles. Search filters them client-side.</p>
+        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Kullanıcılar</h1>
+        <p className="mt-1.5 text-sm text-zinc-500">En son 100 profil. Arama client-side filtreler.</p>
       </div>
 
       <form className="mb-5">
@@ -57,7 +57,7 @@ export default async function AdminUsersPage({
           type="text"
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Search email, name, or user_id…"
+          placeholder="E-posta, ad veya user_id ara…"
           className="w-full max-w-sm rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-700 focus:outline-none focus:border-white/20"
         />
       </form>
@@ -66,18 +66,18 @@ export default async function AdminUsersPage({
         <table className="w-full text-sm">
           <thead className="bg-white/[0.03] border-b border-white/[0.05]">
             <tr className="text-[10px] font-semibold text-zinc-600 uppercase tracking-wider">
-              <th className="px-4 py-2.5 text-left">Email</th>
-              <th className="px-4 py-2.5 text-left">Name</th>
+              <th className="px-4 py-2.5 text-left">E-posta</th>
+              <th className="px-4 py-2.5 text-left">Ad</th>
               <th className="px-4 py-2.5 text-left">Plan</th>
-              <th className="px-4 py-2.5 text-left">Trial</th>
-              <th className="px-4 py-2.5 text-right">Joined</th>
+              <th className="px-4 py-2.5 text-left">Deneme</th>
+              <th className="px-4 py-2.5 text-right">Kayıt</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.05]">
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-12 text-center text-xs text-zinc-600">
-                  No users match.
+                  Eşleşen kullanıcı yok.
                 </td>
               </tr>
             )}
@@ -100,7 +100,7 @@ export default async function AdminUsersPage({
                   <td className="px-4 py-2.5 text-xs">
                     {trialActive ? (
                       <span className="text-amber-400">
-                        ends {new Date(p.trial_ends_at!).toLocaleDateString()}
+                        bitiş {new Date(p.trial_ends_at!).toLocaleDateString()}
                       </span>
                     ) : (
                       <span className="text-zinc-600">—</span>

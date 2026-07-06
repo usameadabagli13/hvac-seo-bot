@@ -31,9 +31,9 @@ export default async function AdminWaitlistPage() {
       <div className="flex items-center justify-between gap-4 mb-8">
         <div>
           <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">Admin</p>
-          <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Waitlist</h1>
+          <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Bekleme Listesi</h1>
           <p className="mt-1.5 text-sm text-zinc-500">
-            {rows.length} total signups · <span className="text-amber-400">{foundingCount} founding</span>
+            {rows.length} toplam kayıt · <span className="text-amber-400">{foundingCount} kurucu</span>
           </p>
         </div>
         <a
@@ -58,18 +58,18 @@ export default async function AdminWaitlistPage() {
         <table className="w-full text-sm">
           <thead className="bg-white/[0.03] border-b border-white/[0.05]">
             <tr className="text-[10px] font-semibold text-zinc-600 uppercase tracking-wider">
-              <th className="px-4 py-2.5 text-left">Email</th>
-              <th className="px-4 py-2.5 text-left">Name</th>
-              <th className="px-4 py-2.5 text-left">Company</th>
+              <th className="px-4 py-2.5 text-left">E-posta</th>
+              <th className="px-4 py-2.5 text-left">Ad</th>
+              <th className="px-4 py-2.5 text-left">Şirket</th>
               <th className="px-4 py-2.5 text-left">Tier</th>
-              <th className="px-4 py-2.5 text-right">Joined</th>
+              <th className="px-4 py-2.5 text-right">Kayıt</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.05]">
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-12 text-center text-xs text-zinc-600">
-                  No waitlist signups yet.
+                  Henüz bekleme listesi kaydı yok.
                 </td>
               </tr>
             )}

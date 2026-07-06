@@ -20,11 +20,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {[
-            { href: "/admin",             icon: LayoutDashboard, label: "Overview"  },
-            { href: "/admin/users",       icon: Users,           label: "Users"     },
-            { href: "/admin/waitlist",    icon: Mail,            label: "Waitlist"  },
-            { href: "/admin/health",      icon: AlertTriangle,   label: "Health"    },
-            { href: "/admin/demo",        icon: Presentation,    label: "Demo"      },
+            { href: "/admin",             icon: LayoutDashboard, label: "Genel Bakış" },
+            { href: "/admin/users",       icon: Users,           label: "Kullanıcılar" },
+            { href: "/admin/waitlist",    icon: Mail,            label: "Bekleme Listesi" },
+            { href: "/admin/health",      icon: AlertTriangle,   label: "Sistem Durumu" },
+            { href: "/admin/demo",        icon: Presentation,    label: "Prospect Analizi" },
           ].map(({ href, icon: Icon, label }) => (
             <Link
               key={href}
@@ -38,7 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
         <div className="px-3 py-4 border-t border-white/[0.06]">
           <Link href="/dashboard" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
-            ← Back to user app
+            ← Uygulamaya dön
           </Link>
         </div>
       </aside>

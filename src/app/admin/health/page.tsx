@@ -50,14 +50,14 @@ export default async function AdminHealthPage() {
     <main className="relative max-w-5xl mx-auto px-6 py-12">
       <div className="mb-8">
         <p className="text-xs font-medium text-amber-400 uppercase tracking-widest mb-2">Admin</p>
-        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">System Health</h1>
-        <p className="mt-1.5 text-sm text-zinc-500">Env status, recent webhook deliveries.</p>
+        <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Sistem Durumu</h1>
+        <p className="mt-1.5 text-sm text-zinc-500">Ortam değişkenleri ve son webhook teslimatları.</p>
       </div>
 
       {/* Env */}
       <div className="mb-8">
         <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
-          Environment variables {missing.length > 0 && (
+          Ortam değişkenleri {missing.length > 0 && (
             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/25 text-rose-400 text-[10px]">
               {missing.length} missing
             </span>
@@ -83,22 +83,22 @@ export default async function AdminHealthPage() {
       {/* Webhook deliveries */}
       <div>
         <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
-          Dodo webhooks · {events30 ?? 0} in last 30 days
+          Dodo webhook&apos;ları · son 30 günde {events30 ?? 0} teslim
         </p>
         <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-white/[0.03] border-b border-white/[0.05]">
               <tr className="text-[10px] font-semibold text-zinc-600 uppercase tracking-wider">
-                <th className="px-4 py-2.5 text-left">Event ID</th>
-                <th className="px-4 py-2.5 text-left">Type</th>
-                <th className="px-4 py-2.5 text-right">Processed</th>
+                <th className="px-4 py-2.5 text-left">Olay ID</th>
+                <th className="px-4 py-2.5 text-left">Tür</th>
+                <th className="px-4 py-2.5 text-right">İşlendi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.05]">
               {events.length === 0 && (
                 <tr>
                   <td colSpan={3} className="px-4 py-10 text-center text-xs text-zinc-600">
-                    No webhook events recorded yet.
+                    Henüz webhook olayı kaydedilmedi.
                   </td>
                 </tr>
               )}
