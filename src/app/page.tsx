@@ -248,7 +248,7 @@ export default async function LandingPage({
                 { label: "SOC 2 Type II",       sub: "via Supabase"  },
                 { label: "GDPR compliant",      sub: "EU users"      },
                 { label: "256-bit encryption",  sub: "TLS in transit"},
-                { label: "99.9% uptime SLA",    sub: "Vercel edge"   },
+                { label: "99.9% historical uptime", sub: "via Vercel edge" },
               ].map((b) => (
                 <div key={b.label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.01]">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -510,19 +510,25 @@ export default async function LandingPage({
         <section className="max-w-6xl mx-auto px-5 sm:px-6 pb-16 sm:pb-24">
           <div className="text-center mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
-              Trusted by contractors
+              Sample customer stories
             </p>
             <h2 className="text-3xl font-bold text-zinc-100 tracking-tight">
-              Real results from real HVAC owners
+              How HVAC owners use HeatRank AI
             </h2>
+            <p className="text-xs text-zinc-600 mt-3 max-w-xl mx-auto leading-relaxed">
+              Illustrative scenarios while our first cohort builds real results. Verified customer testimonials publish here as they ship.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {TESTIMONIALS.map(({ initials, name, company, quote, metric, metricLabel }) => (
               <div
                 key={name}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 flex flex-col gap-4"
+                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 flex flex-col gap-4 relative"
               >
+                <span className="absolute top-3 right-3 text-[9px] font-medium text-zinc-500 uppercase tracking-wider px-1.5 py-0.5 rounded border border-white/[0.08] bg-white/[0.02]">
+                  Sample
+                </span>
                 {/* Metric badge */}
                 <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   <span className="text-xs font-bold text-emerald-300">{metric}</span>

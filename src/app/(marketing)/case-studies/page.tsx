@@ -4,12 +4,12 @@ import Image from "next/image";
 import { ChevronRight, TrendingUp, Star, Phone } from "lucide-react";
 
 export const metadata: Metadata = {
-  title:       "HVAC SEO Case Studies | HeatRank AI",
-  description: "Real HVAC contractors who used HeatRank AI to rank higher on Google, fill their pipeline, and grow their business.",
+  title:       "Sample HVAC Wins | HeatRank AI",
+  description: "Illustrative HVAC SEO scenarios showing how HeatRank AI helps contractors rank higher on Google, fill their pipeline, and grow their business.",
   alternates:  { canonical: "/case-studies" },
   openGraph: {
-    title:       "HVAC SEO Case Studies",
-    description: "How HVAC contractors grew their pipeline with HeatRank AI.",
+    title:       "Sample HVAC Wins",
+    description: "Illustrative scenarios showing how HVAC contractors use HeatRank AI to grow.",
     url:         "/case-studies",
     type:        "website",
   },
@@ -85,22 +85,29 @@ export default function CaseStudiesPage() {
       <main className="relative max-w-4xl mx-auto px-6">
         <section className="pt-16 pb-12 text-center">
           <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">
-            Case studies
+            Sample customer stories
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-100 mb-5 leading-tight">
-            Real HVAC contractors.{" "}
+            Sample HVAC wins.{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">
-              Real growth.
+              Built from customer playbooks.
             </span>
           </h1>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Three HVAC owners. Three markets. One platform. Here&apos;s how they used HeatRank AI to outrank competitors and fill their pipeline.
+            Three illustrative scenarios showing how HVAC contractors put HeatRank AI to work. Verified customer case studies publish here as our first cohort ships results.
           </p>
+          <div className="mt-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/[0.06] text-[11px] font-medium text-amber-200/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Illustrative scenarios — not real customer testimonials yet
+          </div>
         </section>
 
         <section className="pb-16 space-y-6">
           {STUDIES.map(({ company, city, initials, headline, bullets, quote, name }) => (
-            <article key={company} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
+            <article key={company} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8 relative">
+              <span className="absolute top-4 right-4 text-[10px] font-medium text-zinc-500 uppercase tracking-wider px-2 py-0.5 rounded border border-white/[0.08] bg-white/[0.02]">
+                Sample scenario
+              </span>
               <div className="flex items-center gap-4 mb-5 pb-5 border-b border-white/[0.05]">
                 <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-sm font-bold text-amber-300 flex-shrink-0">
                   {initials}

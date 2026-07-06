@@ -119,8 +119,8 @@ Mevcut: ❌ *"Local SEO Tools for HVAC Contractors"* (feature-focused, duygu yok
 ## 6. Aksiyon Listesi — Önceliklendirilmiş
 
 ### A. Bu Hafta (En Hızlı Etki)
-- [ ] **Hero başlığını "near me" odaklı değiştir** (1 numaralı iş, hâlâ yapılmadı)
-- [x] GSC kuruldu + sitemap submit edildi (manuel "Request Indexing" hâlâ açık)
+- [x] **Hero başlığını "near me" odaklı değiştir** — ✅ "Show Up First When Locals Google 'HVAC Near Me'"
+- [x] GSC kuruldu + sitemap submit + manuel "Request Indexing" yapıldı
 - [ ] Trust bar'daki "99.9% uptime SLA" copy'sini yumuşat (Vercel'inki, bizim değil)
 - [ ] `/case-studies` sayfasını "Beta Customer Spotlights" / "Sample HVAC Wins" gibi dürüst etikete çevir
 - [ ] Homepage testimonial'ları "Sample customer story" disclaimer'ı ile etiketle veya kaldır

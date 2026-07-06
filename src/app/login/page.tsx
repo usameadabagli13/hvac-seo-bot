@@ -157,7 +157,10 @@ export default function LoginPage() {
               ))}
             </ul>
 
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 relative">
+              <span className="absolute top-2.5 right-2.5 text-[9px] font-medium text-zinc-500 uppercase tracking-wider px-1.5 py-0.5 rounded border border-white/[0.08] bg-white/[0.02]">
+                Sample
+              </span>
               <div className="flex items-center gap-1 mb-2">
                 {[1,2,3,4,5].map((i) => (
                   <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
@@ -317,7 +320,10 @@ export default function LoginPage() {
                 </ul>
               </div>
 
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 relative">
+                <span className="absolute top-2.5 right-2.5 text-[9px] font-medium text-zinc-500 uppercase tracking-wider px-1.5 py-0.5 rounded border border-white/[0.08] bg-white/[0.02]">
+                  Sample
+                </span>
                 <div className="flex items-center gap-1 mb-2">
                   {[1,2,3,4,5].map((i) => (
                     <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />

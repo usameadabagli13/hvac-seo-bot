@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, Mail, Users, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, Mail, Users, AlertTriangle, Presentation } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -20,10 +20,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {[
-            { href: "/admin",          icon: LayoutDashboard, label: "Overview"  },
-            { href: "/admin/users",    icon: Users,           label: "Users"     },
-            { href: "/admin/waitlist", icon: Mail,            label: "Waitlist"  },
-            { href: "/admin/health",   icon: AlertTriangle,   label: "Health"    },
+            { href: "/admin",             icon: LayoutDashboard, label: "Overview"  },
+            { href: "/admin/users",       icon: Users,           label: "Users"     },
+            { href: "/admin/waitlist",    icon: Mail,            label: "Waitlist"  },
+            { href: "/admin/health",      icon: AlertTriangle,   label: "Health"    },
+            { href: "/admin/demo",        icon: Presentation,    label: "Demo"      },
           ].map(({ href, icon: Icon, label }) => (
             <Link
               key={href}
