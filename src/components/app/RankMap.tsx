@@ -24,6 +24,7 @@ interface Props {
   centerLng:    number;
   isMock:       boolean;
   gbpConnected: boolean;
+  readOnly?:    boolean;
 }
 
 interface PopupInfo {
@@ -104,7 +105,7 @@ const labelLayer: LayerProps = {
 
 const KEYWORD_CHIPS = ["AC repair", "furnace install", "emergency HVAC", "ductwork", "heat pump"];
 
-export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng, isMock, gbpConnected }: Props) {
+export default function RankMap({ keyword, snapshotDate, points, businessId, centerLat, centerLng, isMock, gbpConnected, readOnly = false }: Props) {
   const router  = useRouter();
   const mapRef  = useRef<MapRef>(null);
   const [popup,      setPopup]      = useState<PopupInfo | null>(null);
@@ -286,59 +287,66 @@ export default function RankMap({ keyword, snapshotDate, points, businessId, cen
           <p className="text-xs text-zinc-600 uppercase tracking-widest">Keyword</p>
           <p className="text-xs text-zinc-600">{snapshotDate}</p>
         </div>
-        <input
-          type="text"
-          value={keywordVal}
-          onChange={(e) => setKeywordVal(e.target.value)}
-          placeholder="e.g. AC repair"
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20"
-        />
-        <div className="flex flex-wrap gap-2">
-          {KEYWORD_CHIPS.map((chip) => (
-            <button
-              key={chip}
-              type="button"
-              onClick={() => setKeywordVal(chip)}
-              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-100 ${
-                keywordVal === chip
-                  ? "border-white/30 bg-white/10 text-zinc-100"
-                  : "border-white/[0.08] bg-white/[0.02] text-zinc-500 hover:border-white/20 hover:text-zinc-300"
-              }`}
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
 
-        {/* Run Snapshot */}
-        <div className="flex flex-col gap-2 pt-1">
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={handleRunSnapshot}
-              disabled={running || !keywordVal.trim()}
-              title="Uses 1 of your monthly rank snapshot credits"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
-            >
-              {running
-                ? <Loader2 className="w-4 h-4 animate-spin" />
-                : <Play className="w-4 h-4" />}
-              {running ? "Scanning 25 grid points…" : "Run Snapshot"}
-            </button>
-            <span className="text-[11px] text-zinc-600">Uses 1 monthly credit</span>
-            {runMsg && !running && (
-              <p className="text-xs text-emerald-400">{runMsg}</p>
-            )}
-          </div>
-          {runError && (
-            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
-              {runError}
-            </p>
-          )}
-          <p className="text-[11px] text-zinc-600 leading-relaxed">
-            We find your listing by business name and location. No credit is used
-            if you don&apos;t rank in the top 20 anywhere in the search area.
-          </p>
-        </div>
+        {readOnly ? (
+          <p className="text-sm font-semibold text-zinc-200 px-1">{keyword}</p>
+        ) : (
+          <>
+            <input
+              type="text"
+              value={keywordVal}
+              onChange={(e) => setKeywordVal(e.target.value)}
+              placeholder="e.g. AC repair"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+            />
+            <div className="flex flex-wrap gap-2">
+              {KEYWORD_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => setKeywordVal(chip)}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-100 ${
+                    keywordVal === chip
+                      ? "border-white/30 bg-white/10 text-zinc-100"
+                      : "border-white/[0.08] bg-white/[0.02] text-zinc-500 hover:border-white/20 hover:text-zinc-300"
+                  }`}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+
+            {/* Run Snapshot */}
+            <div className="flex flex-col gap-2 pt-1">
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={handleRunSnapshot}
+                  disabled={running || !keywordVal.trim()}
+                  title="Uses 1 of your monthly rank snapshot credits"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
+                >
+                  {running
+                    ? <Loader2 className="w-4 h-4 animate-spin" />
+                    : <Play className="w-4 h-4" />}
+                  {running ? "Scanning 25 grid points…" : "Run Snapshot"}
+                </button>
+                <span className="text-[11px] text-zinc-600">Uses 1 monthly credit</span>
+                {runMsg && !running && (
+                  <p className="text-xs text-emerald-400">{runMsg}</p>
+                )}
+              </div>
+              {runError && (
+                <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+                  {runError}
+                </p>
+              )}
+              <p className="text-[11px] text-zinc-600 leading-relaxed">
+                We find your listing by business name and location. No credit is used
+                if you don&apos;t rank in the top 20 anywhere in the search area.
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Seed button (dev only, shown below map when empty) */}

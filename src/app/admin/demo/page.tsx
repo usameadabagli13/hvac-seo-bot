@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import RankHeatmap from "@/components/app/RankHeatmap";
 import type { HeatmapPoint } from "@/components/app/RankHeatmap";
-import { Zap, RefreshCw } from "lucide-react";
+import { Zap, RefreshCw, Link2, Check, Loader2, ExternalLink } from "lucide-react";
 
 const LAT_SPACING = 0.0145;
 
@@ -128,11 +128,25 @@ function generateGrid(
 }
 
 export default function AdminDemoPage() {
+  // ── Mock heatmap state ─────────────────────────────────────────────────────
   const [cityIndex,    setCityIndex]    = useState(0);
   const [keyword,      setKeyword]      = useState("AC repair near me");
   const [pattern,      setPattern]      = useState<Pattern>("bad");
   const [businessName, setBusinessName] = useState("");
   const [seed,         setSeed]         = useState(1337);
+
+  // ── Real prospect snapshot state ───────────────────────────────────────────
+  const [realBizName,  setRealBizName]  = useState("");
+  const [realCity,     setRealCity]     = useState("");
+  const [realKeyword,  setRealKeyword]  = useState("AC repair near me");
+  const [realLoading,  setRealLoading]  = useState(false);
+  const [realError,    setRealError]    = useState<string | null>(null);
+  const [realResult,   setRealResult]   = useState<{
+    shareUrl: string;
+    ranked:   number;
+    total:    number;
+  } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const [result, setResult] = useState<{
     points:       HeatmapPoint[];
@@ -156,6 +170,38 @@ export default function AdminDemoPage() {
   }, [cityIndex, keyword, pattern, businessName, seed]);
 
   const reroll = () => generate(Date.now() & 0xffff);
+
+  const handleRealSnapshot = async () => {
+    if (!realBizName.trim() || !realCity.trim() || !realKeyword.trim()) return;
+    setRealLoading(true);
+    setRealError(null);
+    setRealResult(null);
+    try {
+      const res  = await fetch("/api/admin/prospect-snapshot", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          business_name: realBizName.trim(),
+          city:          realCity.trim(),
+          keyword:       realKeyword.trim(),
+        }),
+      });
+      const data = await res.json() as { shareUrl?: string; ranked?: number; total?: number; error?: string };
+      if (!res.ok) { setRealError(data.error ?? "Request failed."); return; }
+      setRealResult({ shareUrl: data.shareUrl!, ranked: data.ranked!, total: data.total! });
+    } catch {
+      setRealError("Network error. Please try again.");
+    } finally {
+      setRealLoading(false);
+    }
+  };
+
+  const copyLink = async () => {
+    if (!realResult) return;
+    await navigator.clipboard.writeText(realResult.shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-10">
@@ -282,6 +328,121 @@ export default function AdminDemoPage() {
 
           <p className="text-[11px] text-zinc-700 text-center pt-2">
             Admin-only · Bu veriler gerçek değil — yalnızca satış gösterimi içindir
+          </p>
+        </div>
+      )}
+
+      {/* ── Divider ──────────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-4 my-10">
+        <div className="flex-1 h-px bg-white/[0.06]" />
+        <span className="text-xs text-zinc-600 font-medium uppercase tracking-widest">Real Prospect Analysis</span>
+        <div className="flex-1 h-px bg-white/[0.06]" />
+      </div>
+
+      {/* ── Real snapshot form ───────────────────────────────────────────────── */}
+      <div className="mb-2">
+        <h2 className="text-lg font-semibold text-zinc-100 tracking-tight">Gerçek Snapshot + Paylaşılabilir Link</h2>
+        <p className="mt-1 text-sm text-zinc-500 leading-relaxed">
+          Bir prospect'in adını ve şehrini gir. Sistem Google&apos;a gider, gerçek rank verisini çeker,
+          paylaşabileceğin bir link üretir. Prospekte at — login gerektirmez, ücretsiz analiz olarak görür.
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 space-y-4">
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs text-zinc-500 mb-1.5">Business name <span className="text-zinc-700">(Google&apos;daki tam adı)</span></label>
+            <input
+              type="text"
+              value={realBizName}
+              onChange={(e) => setRealBizName(e.target.value)}
+              placeholder="ör. Arctic Cool HVAC"
+              className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/[0.08] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-zinc-500 mb-1.5">City</label>
+            <input
+              type="text"
+              value={realCity}
+              onChange={(e) => setRealCity(e.target.value)}
+              placeholder="ör. Dallas, TX"
+              className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/[0.08] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition-colors"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs text-zinc-500 mb-1.5">Keyword</label>
+          <input
+            type="text"
+            value={realKeyword}
+            onChange={(e) => setRealKeyword(e.target.value)}
+            placeholder="AC repair near me"
+            list="kw-suggestions-real"
+            className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/[0.08] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition-colors"
+          />
+          <datalist id="kw-suggestions-real">
+            {KEYWORD_SUGGESTIONS.map((kw) => <option key={kw} value={kw} />)}
+          </datalist>
+        </div>
+
+        {realError && (
+          <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+            {realError}
+          </p>
+        )}
+
+        <button
+          onClick={handleRealSnapshot}
+          disabled={realLoading || !realBizName.trim() || !realCity.trim() || !realKeyword.trim()}
+          className="w-full h-11 rounded-xl bg-white hover:bg-zinc-100 active:scale-[0.98] text-zinc-950 text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
+        >
+          {realLoading
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> 25 nokta taranıyor… (~30 sn)</>
+            : <><Link2 className="w-4 h-4" /> Analiz Et &amp; Link Oluştur</>
+          }
+        </button>
+
+        <p className="text-[11px] text-zinc-600">
+          Google Places API — 25 sorgu · Tarama ~20-40 saniye sürer
+        </p>
+      </div>
+
+      {/* Result */}
+      {realResult && (
+        <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-400" />
+            <p className="text-sm font-semibold text-emerald-300">
+              Analiz tamamlandı — {realResult.ranked}/{realResult.total} noktada sıralandı
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              readOnly
+              value={realResult.shareUrl}
+              className="flex-1 h-9 px-3 rounded-lg bg-zinc-900/60 border border-white/[0.08] text-xs text-zinc-300 font-mono focus:outline-none"
+            />
+            <button
+              onClick={copyLink}
+              className="h-9 px-3 rounded-lg border border-white/[0.08] text-xs font-semibold text-zinc-300 hover:text-zinc-100 hover:border-white/20 transition-all flex items-center gap-1.5 flex-shrink-0"
+            >
+              {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /> Kopyalandı</> : <><Link2 className="w-3.5 h-3.5" /> Kopyala</>}
+            </button>
+            <a
+              href={realResult.shareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 px-3 rounded-lg border border-white/[0.08] text-xs font-semibold text-zinc-300 hover:text-zinc-100 hover:border-white/20 transition-all flex items-center gap-1.5 flex-shrink-0"
+            >
+              <ExternalLink className="w-3.5 h-3.5" /> Aç
+            </a>
+          </div>
+
+          <p className="text-[11px] text-zinc-600">
+            Link herkese açık, login gerektirmez. Prospete direkt at.
           </p>
         </div>
       )}

@@ -22,6 +22,7 @@ interface Props {
   centerLng:    number;
   isMock:       boolean;
   gbpConnected: boolean;
+  readOnly?:    boolean;
 }
 
 export default function RankMapLoader(props: Props) {
